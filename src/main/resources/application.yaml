@@ -1,0 +1,34 @@
+server:
+  port: 5567
+logging:
+  file:
+    path: /tool/log
+    name: tool.log
+spring:
+  main:
+    allow-circular-references: true
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
+  datasource:
+    url: jdbc:h2:file:./db/tool  # 使用内存数据库，数据库会在内存中创建
+    driver-class-name: org.h2.Driver
+    username: sa  # H2默认的用户名
+    password: password  # H2默认的密码
+    hikari:
+      maximum-pool-size: 10  # 设置连接池最大连接数
+  h2:
+    console:
+      enabled: true  # 启用H2控制台（默认通过浏览器访问 http://localhost:5567/h2-console）
+      path: /h2-console  # 控制台的访问路径
+  jpa:
+    hibernate:
+      ddl-auto: update  # 自动更新数据库结构（例如创建表等），可以选择 `none`, `update`, `create`, `create-drop`
+    database-platform: org.hibernate.dialect.H2Dialect  # 设置数据库方言，H2数据库使用H2Dialect
+    show-sql: true  # 显示SQL语句（开发阶段可以启用）
+  sql:
+    init:
+      platform: h2

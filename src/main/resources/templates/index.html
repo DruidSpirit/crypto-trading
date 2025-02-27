@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加密交易信号</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #22223b 0%, #4a4a75 100%);
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #2a2a4e;
+            padding: 15px 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        nav h1 {
+            font-size: 26px;
+            font-weight: 500;
+            margin: 0;
+            color: #00bfff;
+        }
+        .settings-btn {
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #00bfff, #0088ff);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        .settings-btn:hover {
+            background: linear-gradient(45deg, #0088ff, #00bfff);
+            box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .section {
+            background: #2a2a4e;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            margin-bottom: 25px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .section:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0, 191, 255, 0.2);
+        }
+        h2 {
+            margin: 0 0 20px;
+            color: #00bfff;
+            font-weight: 500;
+            text-shadow: 0 1px 3px rgba(0, 191, 255, 0.3);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+        }
+        .modal.active {
+            display: block;
+        }
+        .modal-content {
+            background: #333;
+            width: 450px;
+            max-height: 80vh;
+            margin: 40px auto;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.6);
+            overflow-y: auto;
+        }
+        .modal-content h3 {
+            margin: 0 0 15px;
+            color: #00bfff;
+            font-size: 20px;
+            font-weight: 500;
+            border-bottom: 1px solid #444;
+            padding-bottom: 8px;
+        }
+        .modal-content .setting-group {
+            margin-bottom: 15px;
+        }
+        .modal-content label {
+            display: block;
+            margin: 8px 0 4px;
+            font-size: 14px;
+            color: #ddd;
+        }
+        .modal-content input, .modal-content select, .modal-content textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #555;
+            border-radius: 6px;
+            background: #444;
+            color: #fff;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .modal-content textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .modal-content input:focus, .modal-content select:focus, .modal-content textarea:focus {
+            border-color: #00bfff;
+            outline: none;
+        }
+        .modal-content button {
+            margin-top: 15px;
+            padding: 10px;
+            width: 100%;
+            background: linear-gradient(45deg, #00bfff, #0088ff);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .modal-content button:hover:not(:disabled) {
+            background: linear-gradient(45deg, #0088ff, #00bfff);
+            box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);
+        }
+        .modal-content button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        .modal-content .disclaimer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #bbb;
+            text-align: center;
+        }
+        .collapsible {
+            cursor: pointer;
+            padding: 8px;
+            background: #444;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+        .collapsible:hover {
+            background: #555;
+        }
+        .collapsible-content {
+            display: none;
+            padding: 10px;
+        }
+        .collapsible-content.active {
+            display: block;
+        }
+        .crypto-list, .exchange-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 6px;
+            border: 1px solid #555;
+            border-radius: 6px;
+            background: #444;
+            min-height: 40px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+        .crypto-item, .exchange-item {
+            display: inline-flex;
+            align-items: center;
+            background: #00bfff;
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        .crypto-item.editing input {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 1px 3px;
+            border-radius: 2px;
+            font-size: 11px;
+            width: auto;
+        }
+        .crypto-item .remove-btn, .exchange-item .remove-btn {
+            margin-left: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #fff;
+            background: none;
+            border: none;
+            padding: 0;
+            font-size: 12px;
+        }
+        .crypto-item .remove-btn:hover, .exchange-item .remove-btn:hover:not(:disabled) {
+            color: #ff4444;
+        }
+        .crypto-item .remove-btn:disabled, .exchange-item .remove-btn:disabled {
+            color: #888;
+            cursor: not-allowed;
+        }
+        .crypto-add, .exchange-add {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+        }
+        .crypto-add input, .exchange-add select {
+            flex-grow: 1;
+        }
+        .crypto-add button, .exchange-add button {
+            width: auto;
+            padding: 8px 16px;
+            margin-top: 0;
+        }
+        form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            align-items: start;
+        }
+        form div {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: #ddd;
+        }
+        input, select {
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 6px;
+            background: #3c3c5e;
+            color: #fff;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus {
+            border-color: #00bfff;
+            outline: none;
+        }
+        button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: linear-gradient(45deg, #00bfff, #0088ff);
+        }
+        .filter-btn:hover {
+            background: linear-gradient(45deg, #0088ff, #00bfff);
+            box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);
+        }
+        .reset-btn {
+            background: #666;
+        }
+        .reset-btn:hover {
+            background: #555;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #333;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+        th {
+            background: #3c3c5e;
+            color: #00bfff;
+            font-weight: 500;
+        }
+        tr:nth-child(even) {
+            background: #2a2a4e;
+        }
+        .details-btn {
+            background: #666;
+        }
+        .details-btn:hover {
+            background: #555;
+        }
+        .no-results {
+            color: #ff4444;
+            text-align: center;
+            padding: 20px;
+            display: none;
+            font-size: 16px;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .pagination button {
+            padding: 8px 16px;
+            background: #666;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .pagination button:hover {
+            background: #555;
+        }
+        .pagination button.active {
+            background: #00bfff;
+        }
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 90%;
+            }
+            form {
+                grid-template-columns: 1fr;
+            }
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+        .clear-proxy-btn {
+            background: #ff4444;
+            margin-top: 10px;
+            width: auto;
+            padding: 8px 16px;
+        }
+        .clear-proxy-btn:hover {
+            background: #cc3333;
+        }
+        .time-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .time-input-group input {
+            width: 70px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <header>
+        <nav>
+            <h1>加密交易信号</h1>
+            <div class="settings-btn" @click="toggleSettings">设置</div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div :class="{ 'modal': true, 'active': showSettings }" @click.self="toggleSettings">
+            <div class="modal-content">
+                <h3>设置</h3>
+                <div class="setting-group">
+                    <h4 style="color: #00bfff; font-size: 16px; margin: 0 0 10px;">加密货币设置</h4>
+                    <label>选择模式:</label>
+                    <select v-model="settings.cryptoMode" @change="updateMinFetchFrequency">
+                        <option value="custom">自定义</option>
+                        <option value="all">All（抓取所有加密货币）</option>
+                    </select>
+                    <div v-if="settings.cryptoMode === 'custom'">
+                        <label>当前加密货币代号（双击编辑，点击 × 删除）:</label>
+                        <div class="crypto-list">
+                            <span v-for="(crypto, index) in settings.cryptoSymbols" :key="index" class="crypto-item" :class="{ editing: editingCryptoIndex === index }" @dblclick="editCrypto(index)">
+                                <span v-if="editingCryptoIndex !== index">{{ crypto }}</span>
+                                <input v-else v-model="settings.cryptoSymbols[index]" @blur="finishCryptoEdit" @keyup.enter="finishCryptoEdit" @keyup.esc="cancelCryptoEdit(index)">
+                                <button class="remove-btn" @click="removeCrypto(index)">×</button>
+                            </span>
+                        </div>
+                        <div class="crypto-add">
+                            <input v-model="newCrypto" placeholder="输入新代号" @keyup.enter="addCrypto">
+                            <button @click="addCrypto" :disabled="!newCrypto.trim()">添加</button>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <p style="color: #bbb; font-size: 12px;">All模式将抓取所有支持的加密货币数据</p>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <h4 style="color: #00bfff; font-size: 16px; margin: 0 0 10px;">数据抓取频率</h4>
+                    <label>抓取间隔:</label>
+                    <div class="time-input-group">
+                        <div v-if="showHoursInput">
+                            <input type="number" v-model="fetchHours" min="0" @input="updateFetchFrequency"> 小时
+                        </div>
+                        <div>
+                            <input type="number" v-model="fetchMinutes" min="0" @input="updateFetchFrequency"> 分
+                        </div>
+                    </div>
+                    <p style="color: #bbb; font-size: 12px;">最小值: {{ formatTime(minFetchFrequency) }}</p>
+                </div>
+                <div class="setting-group">
+                    <h4 style="color: #00bfff; font-size: 16px; margin: 0 0 10px;">抓取数据交易所设置</h4>
+                    <label>当前已选择交易所（点击 × 删除，至少保留一个）:</label>
+                    <div class="exchange-list">
+                        <span v-for="(exchange, index) in settings.exchangeTypes" :key="index" class="exchange-item">
+                            <span>{{ exchange }}</span>
+                            <button class="remove-btn" @click="removeExchange(index)" :disabled="settings.exchangeTypes.length <= 1">×</button>
+                        </span>
+                    </div>
+                    <div class="exchange-add">
+                        <select v-model="newExchange">
+                            <option value="" disabled selected>选择交易所</option>
+                            <option v-for="exchange in availableExchanges" :value="exchange" :key="exchange">{{ exchange }}</option>
+                        </select>
+                        <button @click="addExchange" :disabled="!newExchange">添加</button>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <div class="collapsible" @click="toggleProxySettings">代理设置（{{ proxyCount }} 个代理）</div>
+                    <div :class="{ 'collapsible-content': true, 'active': showProxySettings }">
+                        <div v-if="settings.cryptoMode === 'all'">
+                            <label>批量导入代理（格式：ip:端口:用户名:密码:代理方式，每行一个）:</label>
+                            <textarea v-model="proxyText" placeholder="示例：130.180.228.110:6394:caokuuoi:uunhw701tvvc:socks5"></textarea>
+                            <button @click="importProxies" :disabled="!proxyText.trim()" style="margin-top: 10px;">导入</button>
+                        </div>
+                        <div>
+                            <div v-for="(proxy, index) in settings.proxies" :key="index" class="proxy-item">
+                                <label>代理IP地址 {{ index + 1 }}:</label>
+                                <input v-model="proxy.ip" placeholder="如: 192.168.1.1" @input="updateMinFetchFrequency">
+                                <label>代理端口 {{ index + 1 }}:</label>
+                                <input type="number" v-model="proxy.port" placeholder="如: 8080" @input="updateMinFetchFrequency">
+                                <label>代理类型 {{ index + 1 }}:</label>
+                                <select v-model="proxy.type">
+                                    <option value="HTTP">HTTP</option>
+                                    <option value="HTTPS">HTTPS</option>
+                                    <option value="SOCKS5">SOCKS5</option>
+                                </select>
+                                <label>代理账号 {{ index + 1 }}:</label>
+                                <input v-model="proxy.username" placeholder="可选">
+                                <label>代理密码 {{ index + 1 }}:</label>
+                                <input type="password" v-model="proxy.password" placeholder="可选">
+                                <button @click="removeProxy(index)" v-if="settings.proxies.length > 1" style="margin-top: 10px; background: #ff4444;">删除</button>
+                                <hr v-if="index < settings.proxies.length - 1" style="border-color: #555;">
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button @click="addProxy" style="margin-top: 10px; flex: 1;">添加代理</button>
+                                <button @click="clearProxies" class="clear-proxy-btn" style="margin-top: 10px; flex: 1;" :disabled="settings.proxies.length === 0">清空代理</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button @click="saveSettings">保存设置</button>
+            </div>
+        </div>
+
+        <div :class="{ 'modal': true, 'active': showDetailsModal }" @click.self="closeDetailsModal">
+            <div class="modal-content">
+                <h3>交易计划详情</h3>
+                <div v-if="selectedSignal">
+                    <p><strong>信号ID:</strong> <span>{{ selectedSignal.id }}</span></p>
+                    <p><strong>信号类型:</strong> <span>{{ selectedSignal.signal }}</span></p>
+                    <p><strong>交易对:</strong> <span>{{ selectedSignal.symbol }}</span></p>
+                    <p><strong>策略:</strong> <span>{{ selectedSignal.strategy || '无' }}</span></p>
+                    <p><strong>交易所:</strong> <span>{{ selectedSignal.exchange }}</span></p>
+                    <p><strong>信号时间:</strong> <span>{{ formattedSignalTime(selectedSignal.signalTime) }}</span></p>
+                    <p><strong>当前价格:</strong> <span>${{ selectedSignal.price }}</span></p>
+                    <p><strong>买入价格:</strong> <span>${{ selectedSignal.buyPrice || '未设置' }}</span></p>
+                    <p><strong>止盈价格:</strong> <span>${{ selectedSignal.takeProfit || '未设置' }}</span></p>
+                    <p><strong>止损价格:</strong> <span>{{ selectedSignal.stopLoss || '未设置' }}</span></p>
+                    <p><strong>盈亏比:</strong> <span>{{ formatProfitLossRatio(selectedSignal.profitLossRatio) }}</span></p>
+                    <p><strong>计划有效期:</strong> <span>{{ selectedSignal.expiration || '未设置' }}</span></p>
+                    <p><strong>备注:</strong> <span>{{ selectedSignal.remark || '无' }}</span></p>
+                    <p class="disclaimer">生成的交易计划仅供学习参考，不构成任何投资建议</p>
+                </div>
+                <button @click="closeDetailsModal">关闭</button>
+            </div>
+        </div>
+
+        <section class="section">
+            <h2>筛选信号</h2>
+            <form @submit.prevent="applyFilter">
+                <div>
+                    <label>按交易对搜索:</label>
+                    <input v-model="filter.search" placeholder="如：BTCUSDT">
+                </div>
+                <div>
+                    <label>信号类型:</label>
+                    <select v-model="filter.signalType">
+                        <option value="">全部</option>
+                        <option value="BUY">买入</option>
+                        <option value="SELL">卖出</option>
+                    </select>
+                </div>
+                <div>
+                    <label>策略:</label>
+                    <select v-model="filter.strategy">
+                        <option value="">全部</option>
+                        <option v-for="strategy in selectOptions.strategyNames" :value="strategy" :key="strategy">{{ strategy }}</option>
+                    </select>
+                </div>
+                <div>
+                    <label>交易所:</label>
+                    <select v-model="filter.exchange">
+                        <option value="">全部</option>
+                        <option v-for="exchange in selectOptions.exchangeTypes" :value="exchange" :key="exchange">{{ exchange }}</option>
+                    </select>
+                </div>
+                <div>
+                    <label>开始日期:</label>
+                    <input type="date" v-model="filter.startDate">
+                </div>
+                <div>
+                    <label>结束日期:</label>
+                    <input type="date" v-model="filter.endDate">
+                </div>
+                <div>
+                    <button type="submit" class="filter-btn">应用过滤</button>
+                    <button type="button" class="reset-btn" @click="resetFilter">重置</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="section">
+            <h2>信号列表</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>信号ID</th>
+                    <th>信号类型</th>
+                    <th>交易对</th>
+                    <th>策略</th>
+                    <th>交易所</th>
+                    <th>信号时间</th>
+                    <th>当前价格</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="signal in signals" :key="signal.id" :data-id="signal.id">
+                    <td>{{ signal.id }}</td>
+                    <td>{{ signal.signal }}</td>
+                    <td>{{ signal.symbol }}</td>
+                    <td>{{ signal.strategy || '无' }}</td>
+                    <td>{{ signal.exchange }}</td>
+                    <td>{{ formattedSignalTime(signal.signalTime) }}</td>
+                    <td>${{ signal.price }}</td>
+                    <td><button class="details-btn" @click="showDetails(signal)">详情</button></td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="no-results" v-if="!signals.length">无匹配信号</div>
+            <div class="pagination">
+                <button @click="prevPage" :disabled="currentPage === 1">上一页</button>
+                <button v-for="page in visiblePages" :key="page" :class="{ active: page === currentPage }" @click="changePage(page)">{{ page }}</button>
+                <button v-if="totalPages > maxVisiblePages && currentPage < totalPages - Math.floor(maxVisiblePages / 2)" disabled>...</button>
+                <button @click="nextPage" :disabled="currentPage === totalPages">下一页</button>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    const { createApp } = Vue;
+    const ITEMS_PER_PAGE = 8;
+    const MAX_VISIBLE_PAGES = 5;
+
+    createApp({
+        data() {
+            return {
+                showSettings: false,
+                showProxySettings: false,
+                showDetailsModal: false,
+                settings: {
+                    cryptoMode: 'custom',
+                    cryptoSymbols: [],
+                    exchangeTypes: [],
+                    fetchFrequency: 15, // 默认15分钟，单位为分钟
+                    proxies: []
+                },
+                proxyText: '',
+                originalSettings: null,
+                filter: {
+                    search: '',
+                    signalType: '',
+                    strategy: '',
+                    exchange: '',
+                    startDate: '',
+                    endDate: ''
+                },
+                signals: [],
+                totalPages: 1,
+                currentPage: 1,
+                maxVisiblePages: MAX_VISIBLE_PAGES,
+                selectedSignal: null,
+                selectOptions: {
+                    exchangeTypes: [],
+                    strategyNames: [],
+                    defaultCryptoCoinSymbols: []
+                },
+                defaultCryptoList: [],
+                newCrypto: '',
+                newExchange: '',
+                editingCryptoIndex: null,
+                originalCryptoValue: '',
+                minFetchFrequency: 5, // 默认最小值5分钟
+                fetchHours: 0,
+                fetchMinutes: 15, // 默认15分钟
+                isInitialLoad: true // 标记是否初次加载
+            };
+        },
+        computed: {
+            proxyCount() {
+                const uniqueProxies = new Map();
+                this.settings.proxies
+                    .filter(this.isValidProxy)
+                    .forEach(proxy => {
+                        const key = `${proxy.ip}:${proxy.port}`;
+                        uniqueProxies.set(key, proxy);
+                    });
+                return uniqueProxies.size || 1; // 如果没有代理，默认算1个
+            },
+            visiblePages() {
+                const half = Math.floor(this.maxVisiblePages / 2);
+                let start = Math.max(1, this.currentPage - half);
+                let end = Math.min(this.totalPages, start + this.maxVisiblePages - 1);
+                if (end - start + 1 < this.maxVisiblePages) {
+                    start = Math.max(1, end - this.maxVisiblePages + 1);
+                }
+                return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+            },
+            availableExchanges() {
+                return this.selectOptions.exchangeTypes.filter(
+                    exchange => !this.settings.exchangeTypes.includes(exchange)
+                );
+            },
+            showHoursInput() {
+                return this.minFetchFrequency >= 60; // 如果最小值超过1小时，显示小时输入框
+            }
+        },
+        mounted() {
+            this.loadSelectOptions();
+            this.fetchSignals();
+        },
+        watch: {
+            'settings.cryptoSymbols'(newVal) {
+                this.updateMinFetchFrequency();
+            }
+        },
+        methods: {
+            toggleSettings() {
+                this.showSettings = !this.showSettings;
+                if (this.showSettings) {
+                    this.loadSettings();
+                }
+            },
+            toggleProxySettings() {
+                this.showProxySettings = !this.showProxySettings;
+            },
+            isValidProxy(proxy) {
+                return proxy.ip?.trim() && proxy.port?.toString().trim();
+            },
+            addProxy() {
+                this.settings.proxies.push({
+                    ip: '',
+                    port: '',
+                    type: 'SOCKS5',
+                    username: '',
+                    password: ''
+                });
+                this.updateMinFetchFrequency();
+            },
+            removeProxy(index) {
+                if (this.settings.proxies.length > 1) {
+                    this.settings.proxies.splice(index, 1);
+                    this.updateMinFetchFrequency();
+                }
+            },
+            clearProxies() {
+                if (this.settings.proxies.length > 0) {
+                    if (confirm('确定要清空所有代理吗？')) {
+                        this.settings.proxies = [];
+                        this.proxyText = '';
+                        this.updateMinFetchFrequency();
+                        alert('已清空所有代理！');
+                    }
+                }
+            },
+            importProxies() {
+                if (!this.proxyText.trim()) {
+                    alert('请输入代理信息！');
+                    return;
+                }
+                const lines = this.proxyText.trim().split('\n');
+                const newProxies = [];
+                for (const line of lines) {
+                    const parts = line.trim().split(':');
+                    if (parts.length < 2) {
+                        alert(`无效的代理格式: ${line}，至少需要ip和端口！`);
+                        return;
+                    }
+                    const [ip, port, username = '', password = '', type = 'SOCKS5'] = parts;
+                    if (!ip.trim() || !port.trim()) {
+                        alert(`代理 ${line} 中IP或端口为空！`);
+                        return;
+                    }
+                    newProxies.push({
+                        ip: ip.trim(),
+                        port: parseInt(port),
+                        type: type.toUpperCase() === 'HTTP' || type.toUpperCase() === 'HTTPS' ? type.toUpperCase() : 'SOCKS5',
+                        username: username.trim(),
+                        password: password.trim()
+                    });
+                }
+                const allProxies = [...this.settings.proxies, ...newProxies];
+                const uniqueProxies = new Map();
+                allProxies
+                    .filter(this.isValidProxy)
+                    .forEach(proxy => {
+                        const key = `${proxy.ip}:${proxy.port}`;
+                        uniqueProxies.set(key, proxy);
+                    });
+                this.settings.proxies = Array.from(uniqueProxies.values());
+                this.proxyText = '';
+                this.updateMinFetchFrequency();
+                alert(`成功导入并合并 ${newProxies.length} 个代理，总计 ${this.proxyCount} 个唯一代理！`);
+            },
+            calculateMinFetchFrequency() {
+                const baseTimePerCoin = 20; // 每个币种20秒
+                let coinCount = this.settings.cryptoMode === 'custom'
+                    ? this.settings.cryptoSymbols.length
+                    : 2000; // all模式默认2000个币种
+                const proxyCount = this.proxyCount;
+
+                let totalSeconds = coinCount * baseTimePerCoin / proxyCount;
+                let totalMinutes = Math.floor(totalSeconds / 60);
+                if (totalSeconds % 60 > 0) {
+                    totalMinutes += 1; // 有余数加1分钟
+                }
+
+                return Math.max(totalMinutes, 5); // 最小值为5分钟
+            },
+            formatTime(minutes) {
+                const hours = Math.floor(minutes / 60);
+                const mins = minutes % 60;
+
+                if (hours > 0) {
+                    return `${hours}小时${mins}分`;
+                } else {
+                    return `${mins}分`;
+                }
+            },
+            updateMinFetchFrequency() {
+                this.minFetchFrequency = this.calculateMinFetchFrequency();
+                if (!this.isInitialLoad) {
+                    this.validateAndUpdateFetchFrequency();
+                }
+            },
+            updateFetchFrequency() {
+                this.isInitialLoad = false; // 用户修改后取消初始加载状态
+                this.validateAndUpdateFetchFrequency();
+            },
+            validateAndUpdateFetchFrequency() {
+                let totalMinutes = (this.fetchHours || 0) * 60 + (this.fetchMinutes || 0);
+
+                if (totalMinutes < this.minFetchFrequency) {
+                    totalMinutes = this.minFetchFrequency;
+                    this.setTimeInputs(totalMinutes);
+                }
+
+                this.settings.fetchFrequency = totalMinutes;
+            },
+            setTimeInputs(minutes) {
+                this.fetchHours = Math.floor(minutes / 60);
+                this.fetchMinutes = minutes % 60;
+            },
+            loadSettings() {
+                axios.get('/api/getSettings')
+                    .then(response => {
+                        const settings = response.data || {};
+                        this.settings = {
+                            cryptoMode: settings.cryptoMode || 'custom',
+                            cryptoSymbols: settings.cryptoMode === 'custom' && settings.cryptoSymbols?.length > 0
+                                ? settings.cryptoSymbols
+                                : [...this.defaultCryptoList],
+                            exchangeTypes: settings.exchangeTypes?.length > 0
+                                ? settings.exchangeTypes
+                                : ['GATE_IO'],
+                            fetchFrequency: settings.fetchFrequency !== undefined ? settings.fetchFrequency : 15, // 默认15分钟
+                            proxies: settings.proxies?.length > 0
+                                ? settings.proxies.map(proxy => ({
+                                    ip: proxy.ip || '',
+                                    port: proxy.port || '',
+                                    type: (proxy.type || 'SOCKS5').toUpperCase(),
+                                    username: proxy.username || '',
+                                    password: proxy.password || ''
+                                }))
+                                : []
+                        };
+                        this.setTimeInputs(this.settings.fetchFrequency);
+                        this.updateMinFetchFrequency();
+                        this.isInitialLoad = true;
+                        this.originalSettings = JSON.parse(JSON.stringify(this.settings));
+                    })
+                    .catch(error => {
+                        console.error('加载设置失败:', error);
+                        this.settings = {
+                            cryptoMode: 'custom',
+                            cryptoSymbols: [...this.defaultCryptoList],
+                            exchangeTypes: ['GATE_IO'],
+                            fetchFrequency: 15, // 默认15分钟
+                            proxies: []
+                        };
+                        this.setTimeInputs(15);
+                        this.updateMinFetchFrequency();
+                        this.isInitialLoad = true;
+                        this.originalSettings = JSON.parse(JSON.stringify(this.settings));
+                    });
+            },
+            saveSettings() {
+                // 验证爬取频率，确保不低于最小值
+                if (this.settings.fetchFrequency < this.minFetchFrequency) {
+                    this.settings.fetchFrequency = this.minFetchFrequency;
+                    this.setTimeInputs(this.minFetchFrequency);
+                    alert(`爬取频率不能低于最小值 ${this.formatTime(this.minFetchFrequency)}，已自动调整为最小值。`);
+                }
+
+                const validProxies = this.settings.proxies.filter(this.isValidProxy);
+                const uniqueProxies = new Map();
+                validProxies.forEach(proxy => {
+                    const key = `${proxy.ip}:${proxy.port}`;
+                    uniqueProxies.set(key, { ...proxy, type: proxy.type.toUpperCase() });
+                });
+                const cleanedSettings = {
+                    ...this.settings,
+                    cryptoSymbols: this.settings.cryptoSymbols.map(symbol => symbol.trim().toUpperCase()),
+                    exchangeTypes: this.settings.exchangeTypes.slice().sort(),
+                    fetchFrequency: this.settings.fetchFrequency, // 直接传分钟
+                    proxies: Array.from(uniqueProxies.values()).sort((a, b) =>
+                        `${a.ip}:${a.port}`.localeCompare(`${b.ip}:${b.port}`))
+                };
+
+                if (JSON.stringify(cleanedSettings) === JSON.stringify(this.originalSettings)) {
+                    this.toggleSettings();
+                    return;
+                }
+
+                axios.post('/api/saveSettings', cleanedSettings)
+                    .then(() => {
+                        alert('设置已成功保存到数据库！');
+                        this.originalSettings = JSON.parse(JSON.stringify(cleanedSettings));
+                        this.toggleSettings();
+                    })
+                    .catch(error => {
+                        alert('保存设置失败：' + error.message);
+                        console.error('保存设置失败:', error);
+                    });
+            },
+            addCrypto() {
+                if (this.newCrypto) {
+                    const crypto = this.newCrypto.trim().toUpperCase();
+                    if (crypto && !this.settings.cryptoSymbols.includes(crypto)) {
+                        this.settings.cryptoSymbols = [...this.settings.cryptoSymbols, crypto];
+                        this.updateMinFetchFrequency();
+                    }
+                    this.newCrypto = '';
+                }
+            },
+            removeCrypto(index) {
+                this.settings.cryptoSymbols.splice(index, 1);
+                if (this.editingCryptoIndex === index) {
+                    this.editingCryptoIndex = null;
+                }
+                this.updateMinFetchFrequency();
+            },
+            editCrypto(index) {
+                this.editingCryptoIndex = index;
+                this.originalCryptoValue = this.settings.cryptoSymbols[index];
+                this.$nextTick(() => {
+                    this.$el.querySelector('.crypto-item.editing input').focus();
+                });
+            },
+            finishCryptoEdit() {
+                const editedValue = this.settings.cryptoSymbols[this.editingCryptoIndex].trim().toUpperCase();
+                if (!editedValue || (this.settings.cryptoSymbols.includes(editedValue) && editedValue !== this.originalCryptoValue)) {
+                    this.settings.cryptoSymbols[this.editingCryptoIndex] = this.originalCryptoValue;
+                }
+                this.editingCryptoIndex = null;
+                this.updateMinFetchFrequency();
+            },
+            cancelCryptoEdit(index) {
+                this.settings.cryptoSymbols[index] = this.originalCryptoValue;
+                this.editingCryptoIndex = null;
+                this.updateMinFetchFrequency();
+            },
+            addExchange() {
+                if (this.newExchange && !this.settings.exchangeTypes.includes(this.newExchange)) {
+                    this.settings.exchangeTypes = [...this.settings.exchangeTypes, this.newExchange];
+                    this.newExchange = '';
+                }
+            },
+            removeExchange(index) {
+                if (this.settings.exchangeTypes.length > 1) {
+                    this.settings.exchangeTypes.splice(index, 1);
+                } else {
+                    alert('至少需要保留一个交易所！');
+                }
+            },
+            loadSelectOptions() {
+                axios.get('/api/select-options')
+                    .then(response => {
+                        this.selectOptions = response.data;
+                        this.defaultCryptoList = [...this.selectOptions.defaultCryptoCoinSymbols];
+                        if (!this.settings.cryptoSymbols.length) {
+                            this.settings.cryptoSymbols = [...this.defaultCryptoList];
+                            this.updateMinFetchFrequency();
+                        }
+                    })
+                    .catch(error => console.error('加载选项失败:', error));
+            },
+            fetchSignals() {
+                const payload = {
+                    search: this.filter.search,
+                    signalType: this.filter.signalType,
+                    strategy: this.filter.strategy,
+                    exchange: this.filter.exchange,
+                    startDate: this.filter.startDate,
+                    endDate: this.filter.endDate,
+                    page: this.currentPage,
+                    size: ITEMS_PER_PAGE
+                };
+                axios.post('/api/signals/list', payload)
+                    .then(response => {
+                        this.signals = response.data.content;
+                        this.totalPages = response.data.totalPages;
+                    })
+                    .catch(error => console.error('获取信号失败:', error));
+            },
+            applyFilter() {
+                this.currentPage = 1;
+                this.selectedSignal = null;
+                this.fetchSignals();
+            },
+            resetFilter() {
+                this.filter = {
+                    search: '',
+                    signalType: '',
+                    strategy: '',
+                    exchange: '',
+                    startDate: '',
+                    endDate: ''
+                };
+                this.currentPage = 1;
+                this.selectedSignal = null;
+                this.fetchSignals();
+            },
+            changePage(page) {
+                this.currentPage = page;
+                this.selectedSignal = null;
+                this.fetchSignals();
+            },
+            prevPage() {
+                if (this.currentPage > 1) {
+                    this.currentPage--;
+                    this.fetchSignals();
+                }
+            },
+            nextPage() {
+                if (this.currentPage < this.totalPages) {
+                    this.currentPage++;
+                    this.fetchSignals();
+                }
+            },
+            showDetails(signal) {
+                this.selectedSignal = signal;
+                this.showDetailsModal = true;
+            },
+            closeDetailsModal() {
+                this.showDetailsModal = false;
+                this.selectedSignal = null;
+            },
+            formattedSignalTime(time) {
+                const date = new Date(time);
+                return date.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+            },
+            formatProfitLossRatio(ratio) {
+                if (ratio === null || ratio === undefined) {
+                    return '未设置';
+                }
+                // 将BigDecimal转换为字符串并格式化为比例
+                return `${parseFloat(ratio).toFixed(2)}:1`;
+            }
+        }
+    }).mount('#app');
+</script>
+</body>
+</html>
