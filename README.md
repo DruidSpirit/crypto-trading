@@ -22,9 +22,11 @@
 2. 打开终端，进入项目目录：
    ```bash
    cd /path/to/project
+   ```
 ###   启动：
    ```bash
 sh start.sh
+```
 ###   停止：
    ```bash
 sh stop.sh
