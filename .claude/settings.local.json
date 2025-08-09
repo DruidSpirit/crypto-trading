@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(test:*)",
+      "Bash(mkdir:*)",
+      "Bash(cmd.exe:*)",
+      "Bash(python test:*)",
+      "Bash(C:UsersdruidPycharmProjectscrypto-trading-strategyinstall_venv.bat)",
+      "Bash(python:*)",
+      "Bash(powershell.exe:*)",
+      "Bash(find:*)",
+      "Bash(mvn clean:*)",
+      "Bash(./mvnw.cmd clean compile)",
+      "Bash(java:*)",
+      "Bash(powershell:*)",
+      "Bash(pip install:*)",
+      "Bash(curl:*)",
+      "Bash(.mvnw.cmd --version)",
+      "Bash(cmd /c:*)",
+      "Bash(where java)",
+      "Bash(timeout:*)",
+      "Bash(./mvnw.cmd clean:*)",
+      "Bash(./mvnw.cmd spring-boot:run:*)",
+      "Bash(sed:*)",
+      "Bash(grep:*)",
+      "Bash(taskkill:*)",
+      "Bash(git restore:*)",
+      "Bash(.mvnw.cmd clean compile)",
+      "Bash(tasklist)",
+      "Bash(start cmd /c:*)"
+    ],
+    "deny": []
+  }
+}

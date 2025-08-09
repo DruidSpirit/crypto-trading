@@ -21,8 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import jakarta.persistence.criteria.Predicate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -144,5 +148,97 @@ public class TradeSignalService {
     @PreDestroy
     public void shutdown() {
         executor.shutdown();
+    }
+
+    /**
+     * 获取仪表板统计数据
+     */
+    public Map<String, Object> getDashboardStats() {
+        Map<String, Object> stats = new HashMap<>();
+        
+        // 获取总信号数
+        long totalSignals = tradeSignalRepository.count();
+        
+        // 获取买入信号数
+        long buySignals = tradeSignalRepository.countBySignal("BUY");
+        
+        // 获取卖出信号数
+        long sellSignals = tradeSignalRepository.countBySignal("SELL");
+        
+        // 获取活跃交易对数量
+        long activePairs = tradeSignalRepository.countDistinctSymbols();
+        
+        // 计算较昨日的变化百分比（模拟数据，实际应该从历史数据计算）
+        stats.put("totalSignals", totalSignals);
+        stats.put("buySignals", buySignals);
+        stats.put("sellSignals", sellSignals);
+        stats.put("activePairs", activePairs);
+        
+        // 模拟变化百分比
+        stats.put("totalChange", "+12%");
+        stats.put("buyChange", "+8%");
+        stats.put("sellChange", "-3%");
+        stats.put("pairsChange", "+5%");
+        
+        return stats;
+    }
+
+    /**
+     * 获取信号趋势图表数据
+     */
+    public Map<String, Object> getSignalChartData() {
+        Map<String, Object> chartData = new HashMap<>();
+        
+        // 获取最近6个月的数据
+        LocalDateTime sixMonthsAgo = LocalDateTime.now().minusMonths(6);
+        
+        // 按月份统计信号数量
+        List<Map<String, Object>> monthlyData = tradeSignalRepository.getMonthlySignalStats(sixMonthsAgo);
+        
+        List<String> labels = new ArrayList<>();
+        List<Integer> buyData = new ArrayList<>();
+        List<Integer> sellData = new ArrayList<>();
+        
+        // 生成最近6个月的标签和初始化数据
+        Map<String, Integer> buyMonthlyMap = new LinkedHashMap<>();
+        Map<String, Integer> sellMonthlyMap = new LinkedHashMap<>();
+        
+        for (int i = 5; i >= 0; i--) {
+            LocalDateTime month = LocalDateTime.now().minusMonths(i);
+            String monthKey = month.format(DateTimeFormatter.ofPattern("yyyy-M"));
+            String monthLabel = month.format(DateTimeFormatter.ofPattern("M月"));
+            labels.add(monthLabel);
+            buyMonthlyMap.put(monthKey, 0);
+            sellMonthlyMap.put(monthKey, 0);
+        }
+        
+        // 处理实际数据
+        for (Map<String, Object> data : monthlyData) {
+            Integer year = (Integer) data.get("year");
+            Integer month = (Integer) data.get("month");
+            String signal = (String) data.get("signal");
+            Long count = (Long) data.get("count");
+            
+            String monthKey = year + "-" + month;
+            
+            if ("BUY".equals(signal)) {
+                buyMonthlyMap.put(monthKey, count.intValue());
+            } else if ("SELL".equals(signal)) {
+                sellMonthlyMap.put(monthKey, count.intValue());
+            }
+        }
+        
+        // 转换为列表
+        buyData.addAll(buyMonthlyMap.values());
+        sellData.addAll(sellMonthlyMap.values());
+        
+        Map<String, Object> datasets = new HashMap<>();
+        datasets.put("labels", labels);
+        datasets.put("buyData", buyData);
+        datasets.put("sellData", sellData);
+        
+        chartData.put("chartData", datasets);
+        
+        return chartData;
     }
 }

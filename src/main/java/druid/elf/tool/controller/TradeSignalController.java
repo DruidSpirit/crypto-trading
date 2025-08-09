@@ -89,4 +89,24 @@ public class TradeSignalController {
 
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * 获取仪表板统计数据
+     */
+    @ResponseBody
+    @GetMapping("/dashboard/stats")
+    public ResponseEntity<Map<String, Object>> getDashboardStats() {
+        Map<String, Object> stats = tradeSignalService.getDashboardStats();
+        return ResponseEntity.ok(stats);
+    }
+
+    /**
+     * 获取信号趋势图表数据
+     */
+    @ResponseBody
+    @GetMapping("/dashboard/chart")
+    public ResponseEntity<Map<String, Object>> getSignalChart() {
+        Map<String, Object> chartData = tradeSignalService.getSignalChartData();
+        return ResponseEntity.ok(chartData);
+    }
 }

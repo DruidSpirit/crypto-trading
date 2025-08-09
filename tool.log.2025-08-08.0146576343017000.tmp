@@ -1,0 +1,22 @@
+2025-08-08T17:30:31.922+08:00  INFO 33464 --- [Proxy-Thread-1] d.e.t.s.s.impl.PythonStrategyAdapter     : Python策略服务未返回交易信号
+2025-08-08T17:30:31.924+08:00  INFO 33464 --- [Proxy-Thread-1] d.e.t.s.s.impl.SimpleMacdCrossStrategy   : 开始执行简单MACD金叉死叉短期波动策略...
+2025-08-08T17:30:31.925+08:00  INFO 33464 --- [Proxy-Thread-1] d.e.t.s.s.impl.SimpleMacdCrossStrategy   : K线数据加载成功：4H=300条, 1H=300条, 15M=300条
+2025-08-08T17:30:31.925+08:00  INFO 33464 --- [Proxy-Thread-1] d.e.t.s.s.impl.SimpleMacdCrossStrategy   : 第一步：计算4小时MACD趋势...
+2025-08-08T17:30:31.931+08:00  INFO 33464 --- [Proxy-Thread-1] d.e.t.s.s.impl.SimpleMacdCrossStrategy   : 当前价格：4.64，动态阈值：0.0464
+2025-08-08T17:30:31.932+08:00  INFO 33464 --- [Proxy-Thread-1] d.e.t.s.s.impl.SimpleMacdCrossStrategy   : MACD值：前值=0.0529093036846008416340403651199 当前值=0.0689730953354098005494769561278，信号线：前值=0.011283361554767609108494641596604 当前值=0.022821308310896047396691104502843，柱线：前值=0.041625942129833232525545723523296 当前值=0.046151787024513753152785851624957
+2025-08-08T17:30:31.933+08:00  INFO 33464 --- [Proxy-Thread-1] d.e.t.s.s.impl.SimpleMacdCrossStrategy   : 差值：前值=0.041625942129833232525545723523296 当前值=0.046151787024513753152785851624957，看多=false，看空=false
+2025-08-08T17:30:31.933+08:00  INFO 33464 --- [Proxy-Thread-1] d.e.t.s.s.impl.SimpleMacdCrossStrategy   : MACD趋势不明确，策略终止
+2025-08-08T17:30:31.933+08:00  INFO 33464 --- [Proxy-Thread-1] d.elf.tool.service.task.IndicatorTask    : 没有信号需要保存，交易所: GATE_IO，交易对: APT_USDT
+2025-08-08T17:30:31.933+08:00  INFO 33464 --- [Proxy-Thread-1] d.e.tool.service.proxy.ProxyPoolManager  : Proxy-Thread-1 开始执行任务，使用代理: 无
+2025-08-08T17:30:33.547+08:00  INFO 33464 --- [Proxy-Thread-1] d.e.t.s.e.AbstractExchangeDataService    : GATE_IO请求地址: https://api.gateio.ws/api/v4/spot/candlesticks?currency_pair=MKR_USDT&interval=15m&limit=300
+2025-08-08T17:30:34.092+08:00  INFO 33464 --- [Proxy-Thread-1] d.e.t.s.e.AbstractExchangeDataService    : Response from https://api.gateio.ws/api/v4/spot/candlesticks?currency_pair=MKR_USDT&interval=15m&limit=300: [["1754376300","2685.51237500","1887.61","1889.04","1881.93","1888.53","1.42380000","true"],["1754377200","3242.39318400","1877.61","1884.91","1877.61","1884.76","1.72260000","true"],["1754378100","56...
+2025-08-08T17:30:35.628+08:00  INFO 33464 --- [Proxy-Thread-1] d.e.t.s.e.AbstractExchangeDataService    : GATE_IO请求地址: https://api.gateio.ws/api/v4/spot/candlesticks?currency_pair=MKR_USDT&interval=1h&limit=300
+2025-08-08T17:30:35.951+08:00  INFO 33464 --- [Proxy-Thread-1] d.e.t.s.e.AbstractExchangeDataService    : Response from https://api.gateio.ws/api/v4/spot/candlesticks?currency_pair=MKR_USDT&interval=1h&limit=300: [["1753567200","26077.33827800","2277.09","2278.51","2257.26","2257.29","11.49600000","true"],["1753570800","16881.55876100","2279.69","2289.93","2263.5","2277.08","7.41170000","true"],["1753574400","...
+2025-08-08T17:30:36.751+08:00  INFO 33464 --- [Proxy-Thread-1] d.e.t.s.e.AbstractExchangeDataService    : GATE_IO请求地址: https://api.gateio.ws/api/v4/spot/candlesticks?currency_pair=MKR_USDT&interval=4h&limit=300
+2025-08-08T17:30:36.842+08:00  INFO 33464 --- [Proxy-Thread-1] d.e.t.s.e.AbstractExchangeDataService    : Response from https://api.gateio.ws/api/v4/spot/candlesticks?currency_pair=MKR_USDT&interval=4h&limit=300: [["1750334400","188278.51304924","1921.5","2012.96","1908.5","2002.98","95.73320400","true"],["1750348800","222465.39870129","1886.8","1948.21","1877.81","1921.99","115.87102800","true"],["1750363200"...
+2025-08-08T17:30:38.022+08:00  INFO 33464 --- [Proxy-Thread-1] d.e.t.s.e.AbstractExchangeDataService    : GATE_IO请求地址: https://api.gateio.ws/api/v4/spot/candlesticks?currency_pair=MKR_USDT&interval=1d&limit=300
+2025-08-08T17:30:38.108+08:00  WARN 33464 --- [Proxy-Thread-1] d.e.t.s.e.AbstractExchangeDataService    : 请求失败，第 1 次重试，等待 17121ms: Forbidden or Conflict (403)
+2025-08-08T17:30:55.307+08:00  WARN 33464 --- [Proxy-Thread-1] d.e.t.s.e.AbstractExchangeDataService    : 请求失败，第 2 次重试，等待 31162ms: Forbidden or Conflict (403)
+2025-08-08T17:31:13.617+08:00  INFO 33464 --- [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-08-08T17:31:13.645+08:00  INFO 33464 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-08-08T17:31:13.686+08:00  INFO 33464 --- [SpringApplicationShutdownHook] d.elf.tool.service.task.IndicatorTask    : 正在关闭 IndicatorTask 的线程池...
