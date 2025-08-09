@@ -6,695 +6,8 @@
     <title>CryptoSignal Pro - 智能加密交易信号平台</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --primary-color: #6366f1;
-            --primary-hover: #4f46e5;
-            --secondary-color: #8b5cf6;
-            --accent-color: #06b6d4;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --error-color: #ef4444;
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-tertiary: #334155;
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5e1;
-            --text-tertiary: #94a3b8;
-            --border-color: rgba(255, 255, 255, 0.1);
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-
-        .theme-light {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8fafc;
-            --bg-tertiary: #e2e8f0;
-            --text-primary: #1e293b;
-            --text-secondary: #475569;
-            --text-tertiary: #64748b;
-            --border-color: rgba(0, 0, 0, 0.1);
-            --glass-bg: rgba(255, 255, 255, 0.8);
-            --glass-border: rgba(0, 0, 0, 0.1);
-        }
-
-        /* 白天模式下的背景样式 */
-        body.theme-light {
-            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 25%, #00cec9 50%, #55a3ff 75%, #fd79a8 100%);
-            background-attachment: fixed;
-        }
-
-        /* 白天模式下调整玻璃拟态效果 */
-        .theme-light .section,
-        .theme-light .stat-card,
-        .theme-light .modal-content {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.9);
-            box-shadow: 0 10px 40px rgba(31, 38, 135, 0.2);
-        }
-
-        /* 白天模式下的导航栏 */
-        .theme-light .navbar {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px) saturate(180%);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.8);
-        }
-
-        /* 白天模式下的按钮悬停效果 */
-        .theme-light .theme-toggle:hover, 
-        .theme-light .settings-btn:hover,
-        .theme-light .btn-primary:hover {
-            box-shadow: 0 8px 25px rgba(116, 185, 255, 0.4);
-        }
-
-        /* 白天模式下的数据表格 */
-        .theme-light .data-table {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
-        }
-
-        .theme-light .data-table th {
-            background: rgba(116, 185, 255, 0.1);
-            color: var(--text-primary);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: radial-gradient(ellipse at top, #1e293b 0%, #0f172a 50%, #020617 100%);
-            background-attachment: fixed;
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Navbar */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px) saturate(180%);
-            border-bottom: 1px solid var(--glass-border);
-            padding: 1rem 2rem;
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-
-        .navbar-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .logo i {
-            font-size: 2rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .logo h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .navbar-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .theme-toggle, .settings-btn {
-            padding: 0.75rem;
-            border: none;
-            border-radius: 12px;
-            background: var(--glass-bg);
-            color: var(--text-primary);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-        }
-
-        .theme-toggle:hover, .settings-btn:hover {
-            background: var(--primary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
-        }
-
-        /* 主题模式指示器 */
-        .theme-indicator {
-            position: relative;
-        }
-
-        .theme-indicator::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            right: -2px;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--success-color);
-            border: 2px solid var(--bg-primary);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .theme-indicator.auto::after {
-            background: var(--warning-color);
-            opacity: 1;
-        }
-
-        /* Main Container */
-        .main-container {
-            padding-top: 5rem;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        /* Dashboard Grid */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .stat-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 2rem;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow);
-        }
-
-        .stat-card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-
-        .stat-icon {
-            width: 3rem;
-            height: 3rem;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-        }
-
-        .stat-icon.primary { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); }
-        .stat-icon.success { background: linear-gradient(135deg, var(--success-color), var(--accent-color)); }
-        .stat-icon.warning { background: linear-gradient(135deg, var(--warning-color), #fb923c); }
-        .stat-icon.error { background: linear-gradient(135deg, var(--error-color), #f87171); }
-
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            margin-bottom: 1rem;
-        }
-
-        .stat-change {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .stat-change.positive { color: var(--success-color); }
-        .stat-change.negative { color: var(--error-color); }
-
-        /* Card & Section Styles */
-        .section {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            transition: all 0.3s ease;
-        }
-
-        .section:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow);
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .section-title i {
-            font-size: 1.25rem;
-            color: var(--primary-color);
-        }
-
-        /* Charts */
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin: 2rem 0;
-        }
-
-        /* Filters */
-        .filters {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .filter-label {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
-
-        .filter-input {
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            background: var(--glass-bg);
-            color: var(--text-primary);
-            font-size: 0.875rem;
-            transition: all 0.3s ease;
-        }
-
-        .filter-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        /* 修复筛选区域select样式 */
-        .filter-input option {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            padding: 0.5rem;
-        }
-
-        select.filter-input {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.75rem center;
-            background-repeat: no-repeat;
-            background-size: 1.2em 1.2em;
-            padding-right: 2.5rem;
-        }
-
-        .theme-light select.filter-input {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23374151' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-        }
-
-        .filter-actions {
-            display: flex;
-            gap: 1rem;
-            grid-column: 1 / -1;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
-        }
-
-        .btn-secondary {
-            background: var(--glass-bg);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-secondary:hover {
-            background: var(--bg-tertiary);
-        }
-
-        /* Table Styles */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            border-radius: 12px;
-            overflow: hidden;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-        }
-
-        .data-table th {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-
-        .data-table td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-secondary);
-        }
-
-        .data-table tr:hover {
-            background: rgba(99, 102, 241, 0.05);
-        }
-
-        .signal-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            text-transform: uppercase;
-        }
-
-        .signal-badge.buy {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success-color);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-        }
-
-        .signal-badge.sell {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--error-color);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-
-        /* Pagination */
-        .pagination {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 2rem;
-        }
-
-        .pagination .btn {
-            min-width: 2.5rem;
-            height: 2.5rem;
-            padding: 0;
-            justify-content: center;
-        }
-
-        .pagination .btn.active {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 2000;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(10px);
-            padding: 2rem;
-            overflow-y: auto;
-        }
-
-        .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            width: 100%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-            padding: 2rem;
-            position: relative;
-        }
-
-        .modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .close-btn {
-            width: 2.5rem;
-            height: 2.5rem;
-            border: none;
-            border-radius: 50%;
-            background: var(--glass-bg);
-            color: var(--text-secondary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .close-btn:hover {
-            background: var(--error-color);
-            color: white;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            background: var(--glass-bg);
-            color: var(--text-primary);
-            transition: all 0.3s ease;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        /* 修复select在暗色模式下的样式问题 */
-        .form-input option {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            padding: 0.5rem;
-        }
-
-        /* 针对不同浏览器的select样式修复 */
-        select.form-input {
-            background-image: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.5rem center;
-            background-repeat: no-repeat;
-            background-size: 1.5em 1.5em;
-            padding-right: 2.5rem;
-        }
-
-        /* 亮色主题下的select箭头 */
-        .theme-light select.form-input {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23374151' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .filters {
-                grid-template-columns: 1fr;
-            }
-
-            .navbar-content {
-                padding: 0 1rem;
-            }
-
-            .filter-actions {
-                flex-direction: column;
-            }
-
-            .data-table {
-                font-size: 0.75rem;
-            }
-
-            .data-table th,
-            .data-table td {
-                padding: 0.5rem;
-            }
-        }
-
-        /* Loading Animation */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(99, 102, 241, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--primary-color);
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Toast Notifications */
-        .toast {
-            position: fixed;
-            top: 5rem;
-            right: 2rem;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 1rem 1.5rem;
-            color: var(--text-primary);
-            font-weight: 500;
-            z-index: 3000;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-        }
-
-        .toast.show {
-            transform: translateX(0);
-        }
-
-        .toast.success {
-            border-left: 4px solid var(--success-color);
-        }
-
-        .toast.error {
-            border-left: 4px solid var(--error-color);
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: var(--text-secondary);
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        .empty-state h3 {
-            font-size: 1.25rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-        }
-    </style>
 </head>
 <body>
 <div id="app">
@@ -709,290 +22,477 @@
                 <button class="theme-toggle theme-indicator" :class="{ 'auto': themeMode === 'auto' }" @click="toggleTheme" :title="getThemeTooltip()">
                     <i :class="getThemeIcon()"></i>
                 </button>
-                <button class="settings-btn" @click="toggleSettings">
-                    <i class="fas fa-cog"></i>
-                    <span>设置</span>
-                </button>
             </div>
         </div>
     </nav>
 
+    <!-- Tab Navigation -->
+    <div class="tab-nav">
+        <div class="tab-nav-content">
+            <button 
+                :class="['tab-nav-item', { 'active': currentTab === 'dashboard' }]" 
+                @click="switchTab('dashboard')">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>首页</span>
+            </button>
+            <button 
+                :class="['tab-nav-item', { 'active': currentTab === 'signals' }]" 
+                @click="switchTab('signals')">
+                <i class="fas fa-list"></i>
+                <span>信号列表</span>
+            </button>
+            <button 
+                :class="['tab-nav-item', { 'active': currentTab === 'settings' }]" 
+                @click="switchTab('settings')">
+                <i class="fas fa-cog"></i>
+                <span>设置</span>
+            </button>
+        </div>
+    </div>
+
     <!-- Main Container -->
     <div class="main-container">
         <div class="container">
-            <!-- Dashboard Stats -->
-            <div class="dashboard-grid">
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div class="stat-icon primary">
-                            <i class="fas fa-signal"></i>
+            <!-- Dashboard Tab -->
+            <div v-show="currentTab === 'dashboard'" class="tab-content">
+                <!-- Dashboard Stats -->
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-icon primary">
+                                <i class="fas fa-signal"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ dashboardStats.totalSignals }}</div>
+                        <div class="stat-label">总信号数</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+12%</span>
+                            <span>较昨日</span>
                         </div>
                     </div>
-                    <div class="stat-value">{{ dashboardStats.totalSignals }}</div>
-                    <div class="stat-label">总信号数</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>+12%</span>
-                        <span>较昨日</span>
-                    </div>
-                </div>
 
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div class="stat-icon success">
-                            <i class="fas fa-chart-line"></i>
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-icon success">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ dashboardStats.buySignals }}</div>
+                        <div class="stat-label">买入信号</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+8%</span>
+                            <span>较昨日</span>
                         </div>
                     </div>
-                    <div class="stat-value">{{ dashboardStats.buySignals }}</div>
-                    <div class="stat-label">买入信号</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>+8%</span>
-                        <span>较昨日</span>
-                    </div>
-                </div>
 
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div class="stat-icon error">
-                            <i class="fas fa-chart-line-down"></i>
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-icon error">
+                                <i class="fas fa-chart-line-down"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ dashboardStats.sellSignals }}</div>
+                        <div class="stat-label">卖出信号</div>
+                        <div class="stat-change negative">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>-3%</span>
+                            <span>较昨日</span>
                         </div>
                     </div>
-                    <div class="stat-value">{{ dashboardStats.sellSignals }}</div>
-                    <div class="stat-label">卖出信号</div>
-                    <div class="stat-change negative">
-                        <i class="fas fa-arrow-down"></i>
-                        <span>-3%</span>
-                        <span>较昨日</span>
-                    </div>
-                </div>
 
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div class="stat-icon warning">
-                            <i class="fas fa-coins"></i>
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-icon warning">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ dashboardStats.activePairs }}</div>
+                        <div class="stat-label">活跃交易对</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+5%</span>
+                            <span>较昨日</span>
                         </div>
                     </div>
-                    <div class="stat-value">{{ dashboardStats.activePairs }}</div>
-                    <div class="stat-label">活跃交易对</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>+5%</span>
-                        <span>较昨日</span>
-                    </div>
                 </div>
-            </div>
 
-            <!-- Chart Section -->
-            <div class="section">
-                <div class="section-header">
-                    <h2 class="section-title">
-                        <i class="fas fa-chart-area"></i>
-                        信号趋势分析
-                    </h2>
+                <!-- Chart Section -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-chart-area"></i>
+                            信号趋势分析
+                        </h2>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="signalChart"></canvas>
+                    </div>
                 </div>
-                <div class="chart-container">
-                    <canvas id="signalChart"></canvas>
-                </div>
-            </div>
 
-            <!-- Filters Section -->
-            <div class="section">
-                <div class="section-header">
-                    <h2 class="section-title">
-                        <i class="fas fa-filter"></i>
-                        筛选信号
-                    </h2>
-                </div>
-                <div class="filters">
-                    <div class="filter-group">
-                        <label class="filter-label">交易对搜索</label>
-                        <input v-model="filter.search" class="filter-input" placeholder="如：BTCUSDT" @input="debounceFilter">
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">信号类型</label>
-                        <select v-model="filter.signalType" class="filter-input" @change="applyFilter">
-                            <option value="">全部</option>
-                            <option value="BUY">买入</option>
-                            <option value="SELL">卖出</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">策略</label>
-                        <select v-model="filter.strategy" class="filter-input" @change="applyFilter">
-                            <option value="">全部</option>
-                            <option v-for="strategy in selectOptions.strategyNames" :value="strategy" :key="strategy">{{ strategy }}</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">交易所</label>
-                        <select v-model="filter.exchange" class="filter-input" @change="applyFilter">
-                            <option value="">全部</option>
-                            <option v-for="exchange in selectOptions.exchangeTypes" :value="exchange" :key="exchange">{{ exchange }}</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">开始日期</label>
-                        <input type="date" v-model="filter.startDate" class="filter-input" @change="applyFilter">
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">结束日期</label>
-                        <input type="date" v-model="filter.endDate" class="filter-input" @change="applyFilter">
-                    </div>
-                    <div class="filter-actions">
-                        <button class="btn btn-primary" @click="applyFilter">
-                            <i class="fas fa-search"></i>
-                            应用筛选
-                        </button>
-                        <button class="btn btn-secondary" @click="resetFilter">
-                            <i class="fas fa-undo"></i>
-                            重置筛选
+                <!-- Recent Signals Preview -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-clock"></i>
+                            最新信号
+                        </h2>
+                        <button class="btn btn-primary" @click="switchTab('signals')">
+                            <i class="fas fa-arrow-right"></i>
+                            查看全部
                         </button>
                     </div>
-                </div>
-            </div>
-
-            <!-- Signals Table -->
-            <div class="section">
-                <div class="section-header">
-                    <h2 class="section-title">
-                        <i class="fas fa-list"></i>
-                        信号列表
-                        <span v-if="loading" class="loading"></span>
-                    </h2>
-                    <div class="navbar-actions">
-                        <button class="btn btn-secondary" @click="refreshSignals">
-                            <i class="fas fa-sync-alt"></i>
-                            刷新
-                        </button>
+                    
+                    <div v-if="!signals.length && !loading" class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h3>暂无信号数据</h3>
+                        <p>请等待新的交易信号</p>
                     </div>
-                </div>
-                
-                <div v-if="!signals.length && !loading" class="empty-state">
-                    <i class="fas fa-inbox"></i>
-                    <h3>暂无信号数据</h3>
-                    <p>请调整筛选条件或等待新的交易信号</p>
-                </div>
 
-                <table v-if="signals.length" class="data-table">
-                    <thead>
-                        <tr>
-                            <th>信号ID</th>
-                            <th>信号类型</th>
-                            <th>交易对</th>
-                            <th>策略</th>
-                            <th>交易所</th>
-                            <th>信号时间</th>
-                            <th>当前价格</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="signal in signals" :key="signal.id">
-                            <td>{{ signal.id }}</td>
-                            <td>
+                    <!-- PC端最新信号表格 -->
+                    <div v-if="signals.length" class="data-table-wrapper dashboard-table">
+                        <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>信号类型</th>
+                                <th>交易对</th>
+                                <th>交易所</th>
+                                <th>信号时间</th>
+                                <th>当前价格</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="signal in signals.slice(0, 5)" :key="signal.id">
+                                <td>
+                                    <span :class="['signal-badge', signal.signal.toLowerCase()]">
+                                        {{ signal.signal }}
+                                    </span>
+                                </td>
+                                <td class="font-weight-bold">{{ signal.symbol }}</td>
+                                <td>{{ signal.exchange }}</td>
+                                <td>{{ formattedSignalTime(signal.signalTime) }}</td>
+                                <td class="font-weight-bold">${{ signal.price }}</td>
+                                <td>
+                                    <button class="btn btn-secondary btn-sm" @click="showDetails(signal)">
+                                        <i class="fas fa-eye"></i>
+                                        详情
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 移动端最新信号卡片 -->
+                    <div v-if="signals.length" class="mobile-signal-cards dashboard-cards">
+                        <div v-for="signal in signals.slice(0, 5)" :key="signal.id" class="signal-card">
+                            <div class="signal-card-header">
+                                <div class="signal-card-title">{{ signal.symbol }}</div>
                                 <span :class="['signal-badge', signal.signal.toLowerCase()]">
                                     {{ signal.signal }}
                                 </span>
-                            </td>
-                            <td class="font-weight-bold">{{ signal.symbol }}</td>
-                            <td>{{ signal.strategy || '无' }}</td>
-                            <td>{{ signal.exchange }}</td>
-                            <td>{{ formattedSignalTime(signal.signalTime) }}</td>
-                            <td class="font-weight-bold">${{ signal.price }}</td>
-                            <td>
+                            </div>
+                            <div class="signal-card-body">
+                                <div class="signal-field">
+                                    <div class="signal-field-label">交易所</div>
+                                    <div class="signal-field-value">{{ signal.exchange }}</div>
+                                </div>
+                                <div class="signal-field">
+                                    <div class="signal-field-label">当前价格</div>
+                                    <div class="signal-field-value font-weight-bold">${{ signal.price }}</div>
+                                </div>
+                                <div class="signal-field" style="grid-column: 1 / -1;">
+                                    <div class="signal-field-label">信号时间</div>
+                                    <div class="signal-field-value">{{ formattedSignalTime(signal.signalTime) }}</div>
+                                </div>
+                            </div>
+                            <div class="signal-card-actions">
                                 <button class="btn btn-secondary btn-sm" @click="showDetails(signal)">
                                     <i class="fas fa-eye"></i>
                                     详情
                                 </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                <!-- Pagination -->
-                <div v-if="signals.length" class="pagination">
-                    <button class="btn btn-secondary" @click="prevPage" :disabled="currentPage === 1">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <button 
-                        v-for="page in visiblePages" 
-                        :key="page" 
-                        :class="['btn', page === currentPage ? 'btn-primary active' : 'btn-secondary']" 
-                        @click="changePage(page)">
-                        {{ page }}
-                    </button>
-                    <button class="btn btn-secondary" @click="nextPage" :disabled="currentPage === totalPages">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
+            <!-- Signals Tab -->
+            <div v-show="currentTab === 'signals'" class="tab-content">
+                <!-- Filters Section -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-filter"></i>
+                            筛选信号
+                        </h2>
+                    </div>
+                    <!-- PC端完整筛选 -->
+                    <div class="filters desktop-filters">
+                        <div class="filter-group">
+                            <label class="filter-label">交易对搜索</label>
+                            <input v-model="filter.search" class="filter-input" placeholder="如：BTCUSDT" @input="debounceFilter">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">信号类型</label>
+                            <select v-model="filter.signalType" class="filter-input" @change="applyFilter">
+                                <option value="">全部</option>
+                                <option value="BUY">买入</option>
+                                <option value="SELL">卖出</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">策略</label>
+                            <select v-model="filter.strategy" class="filter-input" @change="applyFilter">
+                                <option value="">全部</option>
+                                <option v-for="strategy in selectOptions.strategyNames" :value="strategy" :key="strategy">{{ strategy }}</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">交易所</label>
+                            <select v-model="filter.exchange" class="filter-input" @change="applyFilter">
+                                <option value="">全部</option>
+                                <option v-for="exchange in selectOptions.exchangeTypes" :value="exchange" :key="exchange">{{ exchange }}</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">开始日期</label>
+                            <input type="date" v-model="filter.startDate" class="filter-input" @change="applyFilter">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">结束日期</label>
+                            <input type="date" v-model="filter.endDate" class="filter-input" @change="applyFilter">
+                        </div>
+                        <div class="filter-actions">
+                            <button class="btn btn-primary" @click="applyFilter">
+                                <i class="fas fa-search"></i>
+                                应用筛选
+                            </button>
+                            <button class="btn btn-secondary" @click="resetFilter">
+                                <i class="fas fa-undo"></i>
+                                重置筛选
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 移动端简化筛选 -->
+                    <div class="filters mobile-filters">
+                        <div class="filter-group">
+                            <label class="filter-label">搜索交易对</label>
+                            <input v-model="filter.search" class="filter-input" placeholder="如：BTCUSDT" @input="debounceFilter">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">信号类型</label>
+                            <select v-model="filter.signalType" class="filter-input" @change="applyFilter">
+                                <option value="">全部</option>
+                                <option value="BUY">买入</option>
+                                <option value="SELL">卖出</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">交易所</label>
+                            <select v-model="filter.exchange" class="filter-input" @change="applyFilter">
+                                <option value="">全部</option>
+                                <option v-for="exchange in selectOptions.exchangeTypes" :value="exchange" :key="exchange">{{ exchange }}</option>
+                            </select>
+                        </div>
+                        <div class="filter-actions">
+                            <button class="btn btn-primary" @click="applyFilter" style="flex: 1;">
+                                <i class="fas fa-search"></i>
+                                筛选
+                            </button>
+                            <button class="btn btn-secondary" @click="resetFilter" style="flex: 1;">
+                                <i class="fas fa-undo"></i>
+                                重置
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Signals Table -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-list"></i>
+                            信号列表
+                            <span v-if="loading" class="loading"></span>
+                        </h2>
+                        <div class="navbar-actions">
+                            <button class="btn btn-secondary" @click="refreshSignals">
+                                <i class="fas fa-sync-alt"></i>
+                                刷新
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div v-if="!signals.length && !loading" class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h3>暂无信号数据</h3>
+                        <p>请调整筛选条件或等待新的交易信号</p>
+                    </div>
+
+                    <!-- PC端表格视图 -->
+                    <div v-if="signals.length" class="data-table-wrapper">
+                        <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>信号ID</th>
+                                <th>信号类型</th>
+                                <th>交易对</th>
+                                <th>策略</th>
+                                <th>交易所</th>
+                                <th>信号时间</th>
+                                <th>当前价格</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="signal in signals" :key="signal.id">
+                                <td>{{ signal.id }}</td>
+                                <td>
+                                    <span :class="['signal-badge', signal.signal.toLowerCase()]">
+                                        {{ signal.signal }}
+                                    </span>
+                                </td>
+                                <td class="font-weight-bold">{{ signal.symbol }}</td>
+                                <td>{{ signal.strategy || '无' }}</td>
+                                <td>{{ signal.exchange }}</td>
+                                <td>{{ formattedSignalTime(signal.signalTime) }}</td>
+                                <td class="font-weight-bold">${{ signal.price }}</td>
+                                <td>
+                                    <button class="btn btn-secondary btn-sm" @click="showDetails(signal)">
+                                        <i class="fas fa-eye"></i>
+                                        详情
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 移动端卡片视图 -->
+                    <div v-if="signals.length" class="mobile-signal-cards">
+                        <div v-for="signal in signals" :key="signal.id" class="signal-card">
+                            <div class="signal-card-header">
+                                <div class="signal-card-title">{{ signal.symbol }}</div>
+                                <span :class="['signal-badge', signal.signal.toLowerCase()]">
+                                    {{ signal.signal }}
+                                </span>
+                            </div>
+                            <div class="signal-card-body">
+                                <div class="signal-field">
+                                    <div class="signal-field-label">交易所</div>
+                                    <div class="signal-field-value">{{ signal.exchange }}</div>
+                                </div>
+                                <div class="signal-field">
+                                    <div class="signal-field-label">当前价格</div>
+                                    <div class="signal-field-value font-weight-bold">${{ signal.price }}</div>
+                                </div>
+                                <div class="signal-field">
+                                    <div class="signal-field-label">策略</div>
+                                    <div class="signal-field-value">{{ signal.strategy || '无' }}</div>
+                                </div>
+                                <div class="signal-field">
+                                    <div class="signal-field-label">信号时间</div>
+                                    <div class="signal-field-value">{{ formattedSignalTime(signal.signalTime) }}</div>
+                                </div>
+                            </div>
+                            <div class="signal-card-actions">
+                                <button class="btn btn-secondary btn-sm" @click="showDetails(signal)">
+                                    <i class="fas fa-eye"></i>
+                                    详情
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div v-if="signals.length" class="pagination">
+                        <button class="btn btn-secondary" @click="prevPage" :disabled="currentPage === 1">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button 
+                            v-for="page in visiblePages" 
+                            :key="page" 
+                            :class="['btn', page === currentPage ? 'btn-primary active' : 'btn-secondary']" 
+                            @click="changePage(page)">
+                            {{ page }}
+                        </button>
+                        <button class="btn btn-secondary" @click="nextPage" :disabled="currentPage === totalPages">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div v-show="currentTab === 'settings'" class="tab-content">
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-cog"></i>
+                            系统设置
+                        </h2>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">加密货币模式</label>
+                        <select v-model="settings.cryptoMode" class="form-input" @change="updateMinFetchFrequency">
+                            <option value="custom">自定义</option>
+                            <option value="all">全部（抓取所有加密货币）</option>
+                        </select>
+                    </div>
+
+                    <div v-if="settings.cryptoMode === 'custom'" class="form-group">
+                        <label class="form-label">加密货币代号</label>
+                        <div class="crypto-tags">
+                            <span v-for="(crypto, index) in settings.cryptoSymbols" :key="index" class="tag">
+                                {{ crypto }}
+                                <button @click="removeCrypto(index)">×</button>
+                            </span>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                            <input v-model="newCrypto" class="form-input" placeholder="输入新代号" @keyup.enter="addCrypto">
+                            <button class="btn btn-primary" @click="addCrypto" :disabled="!newCrypto.trim()">添加</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">抓取频率 (分钟)</label>
+                        <input type="number" v-model="settings.fetchFrequency" class="form-input" min="5" @input="validateFetchFrequency">
+                        <small style="color: var(--text-tertiary);">最小值: {{ minFetchFrequency }} 分钟</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">交易所</label>
+                        <div class="exchange-tags">
+                            <span v-for="(exchange, index) in settings.exchangeTypes" :key="index" class="tag">
+                                {{ exchange }}
+                                <button @click="removeExchange(index)" :disabled="settings.exchangeTypes.length <= 1">×</button>
+                            </span>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                            <select v-model="newExchange" class="form-input">
+                                <option value="">选择交易所</option>
+                                <option v-for="exchange in availableExchanges" :value="exchange" :key="exchange">{{ exchange }}</option>
+                            </select>
+                            <button class="btn btn-primary" @click="addExchange" :disabled="!newExchange">添加</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-primary" @click="saveSettings" style="width: 100%;">
+                            <i class="fas fa-save"></i>
+                            保存设置
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Settings Modal -->
-    <div :class="{ 'modal': true, 'active': showSettings }" @click.self="toggleSettings">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">系统设置</h3>
-                <button class="close-btn" @click="toggleSettings">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">加密货币模式</label>
-                <select v-model="settings.cryptoMode" class="form-input" @change="updateMinFetchFrequency">
-                    <option value="custom">自定义</option>
-                    <option value="all">全部（抓取所有加密货币）</option>
-                </select>
-            </div>
-
-            <div v-if="settings.cryptoMode === 'custom'" class="form-group">
-                <label class="form-label">加密货币代号</label>
-                <div class="crypto-tags">
-                    <span v-for="(crypto, index) in settings.cryptoSymbols" :key="index" class="tag">
-                        {{ crypto }}
-                        <button @click="removeCrypto(index)">×</button>
-                    </span>
-                </div>
-                <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                    <input v-model="newCrypto" class="form-input" placeholder="输入新代号" @keyup.enter="addCrypto">
-                    <button class="btn btn-primary" @click="addCrypto" :disabled="!newCrypto.trim()">添加</button>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">抓取频率 (分钟)</label>
-                <input type="number" v-model="settings.fetchFrequency" class="form-input" min="5" @input="validateFetchFrequency">
-                <small style="color: var(--text-tertiary);">最小值: {{ minFetchFrequency }} 分钟</small>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">交易所</label>
-                <div class="exchange-tags">
-                    <span v-for="(exchange, index) in settings.exchangeTypes" :key="index" class="tag">
-                        {{ exchange }}
-                        <button @click="removeExchange(index)" :disabled="settings.exchangeTypes.length <= 1">×</button>
-                    </span>
-                </div>
-                <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                    <select v-model="newExchange" class="form-input">
-                        <option value="">选择交易所</option>
-                        <option v-for="exchange in availableExchanges" :value="exchange" :key="exchange">{{ exchange }}</option>
-                    </select>
-                    <button class="btn btn-primary" @click="addExchange" :disabled="!newExchange">添加</button>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <button class="btn btn-primary" @click="saveSettings" style="width: 100%;">
-                    <i class="fas fa-save"></i>
-                    保存设置
-                </button>
-            </div>
-        </div>
-    </div>
 
     <!-- Signal Details Modal -->
     <div :class="{ 'modal': true, 'active': showDetailsModal }" @click.self="closeDetailsModal">
@@ -1063,547 +563,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script>
-    const { createApp } = Vue;
-    const ITEMS_PER_PAGE = 10;
-    const MAX_VISIBLE_PAGES = 5;
+<script src="/js/api-service.js"></script>
+<script src="/js/main.js"></script>
 
-    createApp({
-        data() {
-            return {
-                isDarkTheme: true,
-                themeMode: 'auto', // auto, dark, light
-                loading: false,
-                showSettings: false,
-                showDetailsModal: false,
-                settings: {
-                    cryptoMode: 'custom',
-                    cryptoSymbols: [],
-                    exchangeTypes: [],
-                    fetchFrequency: 15,
-                    proxies: []
-                },
-                originalSettings: null,
-                filter: {
-                    search: '',
-                    signalType: '',
-                    strategy: '',
-                    exchange: '',
-                    startDate: '',
-                    endDate: ''
-                },
-                signals: [],
-                totalPages: 1,
-                currentPage: 1,
-                maxVisiblePages: MAX_VISIBLE_PAGES,
-                selectedSignal: null,
-                selectOptions: {
-                    exchangeTypes: [],
-                    strategyNames: [],
-                    defaultCryptoCoinSymbols: []
-                },
-                newCrypto: '',
-                newExchange: '',
-                minFetchFrequency: 5,
-                dashboardStats: {
-                    totalSignals: 0,
-                    buySignals: 0,
-                    sellSignals: 0,
-                    activePairs: 0
-                },
-                signalChart: null,
-                filterTimeout: null
-            };
-        },
-        computed: {
-            visiblePages() {
-                const half = Math.floor(this.maxVisiblePages / 2);
-                let start = Math.max(1, this.currentPage - half);
-                let end = Math.min(this.totalPages, start + this.maxVisiblePages - 1);
-                if (end - start + 1 < this.maxVisiblePages) {
-                    start = Math.max(1, end - this.maxVisiblePages + 1);
-                }
-                return Array.from({ length: end - start + 1 }, (_, i) => start + i);
-            },
-            availableExchanges() {
-                return this.selectOptions.exchangeTypes.filter(
-                    exchange => !this.settings.exchangeTypes.includes(exchange)
-                );
-            }
-        },
-        mounted() {
-            this.loadSelectOptions();
-            this.fetchSignals();
-            this.loadDashboardStats();
-            this.initChart();
-            this.initTheme();
-            
-            // 每分钟检查一次时间并更新主题
-            setInterval(() => {
-                if (this.themeMode === 'auto') {
-                    this.updateThemeByTime();
-                }
-            }, 60000);
-        },
-        methods: {
-            toggleTheme() {
-                // 循环切换: auto -> dark -> light -> auto
-                if (this.themeMode === 'auto') {
-                    this.themeMode = 'dark';
-                    this.isDarkTheme = true;
-                } else if (this.themeMode === 'dark') {
-                    this.themeMode = 'light';
-                    this.isDarkTheme = false;
-                } else {
-                    this.themeMode = 'auto';
-                    this.updateThemeByTime();
-                }
-                
-                this.saveThemePreference();
-                this.applyTheme();
-            },
-
-            initTheme() {
-                // 从localStorage加载主题偏好
-                const savedMode = localStorage.getItem('themeMode') || 'auto';
-                this.themeMode = savedMode;
-                
-                if (this.themeMode === 'auto') {
-                    this.updateThemeByTime();
-                } else {
-                    this.isDarkTheme = this.themeMode === 'dark';
-                }
-                
-                this.applyTheme();
-            },
-
-            updateThemeByTime() {
-                const now = new Date();
-                const hour = now.getHours();
-                
-                // 6点到18点为白天，18点到次日6点为夜晚
-                this.isDarkTheme = hour < 6 || hour >= 18;
-            },
-
-            applyTheme() {
-                document.body.classList.toggle('theme-light', !this.isDarkTheme);
-            },
-
-            saveThemePreference() {
-                localStorage.setItem('themeMode', this.themeMode);
-            },
-
-            getThemeIcon() {
-                if (this.themeMode === 'auto') {
-                    return 'fas fa-clock';
-                } else if (this.isDarkTheme) {
-                    return 'fas fa-sun';
-                } else {
-                    return 'fas fa-moon';
-                }
-            },
-
-            getThemeTooltip() {
-                if (this.themeMode === 'auto') {
-                    return '自动主题 (根据时间)';
-                } else if (this.isDarkTheme) {
-                    return '暗色主题';
-                } else {
-                    return '亮色主题';
-                }
-            },
-            
-            showToast(message, type = 'success') {
-                const toast = document.getElementById('toast');
-                const toastMessage = document.getElementById('toast-message');
-                
-                toastMessage.textContent = message;
-                toast.className = `toast ${type}`;
-                toast.classList.add('show');
-                
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 3000);
-            },
-
-            debounceFilter() {
-                if (this.filterTimeout) {
-                    clearTimeout(this.filterTimeout);
-                }
-                this.filterTimeout = setTimeout(() => {
-                    this.applyFilter();
-                }, 500);
-            },
-
-            toggleSettings() {
-                this.showSettings = !this.showSettings;
-                if (this.showSettings) {
-                    this.loadSettings();
-                }
-            },
-
-            loadSettings() {
-                axios.get('/api/getSettings')
-                    .then(response => {
-                        const settings = response.data || {};
-                        this.settings = {
-                            cryptoMode: settings.cryptoMode || 'custom',
-                            cryptoSymbols: settings.cryptoSymbols || this.selectOptions.defaultCryptoCoinSymbols.slice(0, 10),
-                            exchangeTypes: settings.exchangeTypes || ['GATE_IO'],
-                            fetchFrequency: settings.fetchFrequency || 15,
-                            proxies: settings.proxies || []
-                        };
-                        this.updateMinFetchFrequency();
-                        this.originalSettings = JSON.parse(JSON.stringify(this.settings));
-                    })
-                    .catch(error => {
-                        console.error('加载设置失败:', error);
-                        this.showToast('加载设置失败', 'error');
-                    });
-            },
-
-            saveSettings() {
-                if (this.settings.fetchFrequency < this.minFetchFrequency) {
-                    this.settings.fetchFrequency = this.minFetchFrequency;
-                    this.showToast(`频率已调整为最小值 ${this.minFetchFrequency} 分钟`, 'warning');
-                }
-
-                axios.post('/api/saveSettings', this.settings)
-                    .then(() => {
-                        this.showToast('设置保存成功！');
-                        this.originalSettings = JSON.parse(JSON.stringify(this.settings));
-                        this.toggleSettings();
-                    })
-                    .catch(error => {
-                        console.error('保存设置失败:', error);
-                        this.showToast('保存设置失败', 'error');
-                    });
-            },
-
-            addCrypto() {
-                if (this.newCrypto && this.newCrypto.trim()) {
-                    const crypto = this.newCrypto.trim().toUpperCase();
-                    if (!this.settings.cryptoSymbols.includes(crypto)) {
-                        this.settings.cryptoSymbols.push(crypto);
-                        this.newCrypto = '';
-                        this.updateMinFetchFrequency();
-                    }
-                }
-            },
-
-            removeCrypto(index) {
-                this.settings.cryptoSymbols.splice(index, 1);
-                this.updateMinFetchFrequency();
-            },
-
-            addExchange() {
-                if (this.newExchange && !this.settings.exchangeTypes.includes(this.newExchange)) {
-                    this.settings.exchangeTypes.push(this.newExchange);
-                    this.newExchange = '';
-                }
-            },
-
-            removeExchange(index) {
-                if (this.settings.exchangeTypes.length > 1) {
-                    this.settings.exchangeTypes.splice(index, 1);
-                } else {
-                    this.showToast('至少需要保留一个交易所', 'warning');
-                }
-            },
-
-            updateMinFetchFrequency() {
-                const baseTimePerCoin = 20;
-                let coinCount = this.settings.cryptoMode === 'custom' 
-                    ? this.settings.cryptoSymbols.length 
-                    : 2000;
-                const proxyCount = Math.max(1, this.settings.proxies.length);
-                let totalMinutes = Math.ceil(coinCount * baseTimePerCoin / proxyCount / 60);
-                this.minFetchFrequency = Math.max(totalMinutes, 5);
-            },
-
-            validateFetchFrequency() {
-                if (this.settings.fetchFrequency < this.minFetchFrequency) {
-                    this.settings.fetchFrequency = this.minFetchFrequency;
-                }
-            },
-
-            loadSelectOptions() {
-                axios.get('/api/select-options')
-                    .then(response => {
-                        this.selectOptions = response.data;
-                    })
-                    .catch(error => console.error('加载选项失败:', error));
-            },
-
-            loadDashboardStats() {
-                axios.get('/api/dashboard/stats')
-                    .then(response => {
-                        this.dashboardStats = response.data;
-                    })
-                    .catch(error => {
-                        console.error('获取统计数据失败:', error);
-                        // 使用默认数据
-                        this.dashboardStats = {
-                            totalSignals: this.signals.length || 156,
-                            buySignals: Math.floor((this.signals.length || 156) * 0.6),
-                            sellSignals: Math.floor((this.signals.length || 156) * 0.4),
-                            activePairs: 45
-                        };
-                    });
-            },
-
-            initChart() {
-                axios.get('/api/dashboard/chart')
-                    .then(response => {
-                        const chartData = response.data.chartData;
-                        this.createChart(chartData);
-                    })
-                    .catch(error => {
-                        console.error('获取图表数据失败:', error);
-                        // 显示空数据
-                        const emptyData = {
-                            labels: ['9月', '10月', '11月', '12月', '1月', '2月'],
-                            buyData: [0, 0, 0, 0, 0, 0],
-                            sellData: [0, 0, 0, 0, 0, 0]
-                        };
-                        this.createChart(emptyData);
-                    });
-            },
-
-            createChart(chartData) {
-                const ctx = document.getElementById('signalChart').getContext('2d');
-                this.signalChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: chartData.labels,
-                        datasets: [{
-                            label: '买入信号',
-                            data: chartData.buyData,
-                            borderColor: 'rgb(16, 185, 129)',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }, {
-                            label: '卖出信号',
-                            data: chartData.sellData,
-                            borderColor: 'rgb(239, 68, 68)',
-                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                labels: {
-                                    color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
-                                    usePointStyle: true,
-                                    padding: 20
-                                }
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                titleColor: '#fff',
-                                bodyColor: '#fff',
-                                cornerRadius: 8
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary')
-                                },
-                                grid: {
-                                    color: getComputedStyle(document.documentElement).getPropertyValue('--border-color')
-                                }
-                            },
-                            x: {
-                                ticks: {
-                                    color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary')
-                                },
-                                grid: {
-                                    color: getComputedStyle(document.documentElement).getPropertyValue('--border-color')
-                                }
-                            }
-                        },
-                        elements: {
-                            point: {
-                                radius: 4,
-                                hoverRadius: 8
-                            }
-                        }
-                    }
-                });
-            },
-
-            fetchSignals() {
-                this.loading = true;
-                const payload = {
-                    search: this.filter.search,
-                    signalType: this.filter.signalType,
-                    strategy: this.filter.strategy,
-                    exchange: this.filter.exchange,
-                    startDate: this.filter.startDate,
-                    endDate: this.filter.endDate,
-                    page: this.currentPage,
-                    size: ITEMS_PER_PAGE
-                };
-
-                axios.post('/api/signals/list', payload)
-                    .then(response => {
-                        this.signals = response.data.content;
-                        this.totalPages = response.data.totalPages;
-                        this.loadDashboardStats();
-                    })
-                    .catch(error => {
-                        console.error('获取信号失败:', error);
-                        this.showToast('获取信号失败', 'error');
-                    })
-                    .finally(() => {
-                        this.loading = false;
-                    });
-            },
-
-            refreshSignals() {
-                this.fetchSignals();
-                this.showToast('数据已刷新');
-            },
-
-            applyFilter() {
-                this.currentPage = 1;
-                this.selectedSignal = null;
-                this.fetchSignals();
-            },
-
-            resetFilter() {
-                this.filter = {
-                    search: '',
-                    signalType: '',
-                    strategy: '',
-                    exchange: '',
-                    startDate: '',
-                    endDate: ''
-                };
-                this.currentPage = 1;
-                this.selectedSignal = null;
-                this.fetchSignals();
-            },
-
-            changePage(page) {
-                this.currentPage = page;
-                this.selectedSignal = null;
-                this.fetchSignals();
-            },
-
-            prevPage() {
-                if (this.currentPage > 1) {
-                    this.currentPage--;
-                    this.fetchSignals();
-                }
-            },
-
-            nextPage() {
-                if (this.currentPage < this.totalPages) {
-                    this.currentPage++;
-                    this.fetchSignals();
-                }
-            },
-
-            showDetails(signal) {
-                this.selectedSignal = signal;
-                this.showDetailsModal = true;
-            },
-
-            closeDetailsModal() {
-                this.showDetailsModal = false;
-                this.selectedSignal = null;
-            },
-
-            formattedSignalTime(time) {
-                const date = new Date(time);
-                return date.toLocaleString('zh-CN', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-            },
-
-            formatProfitLossRatio(ratio) {
-                if (ratio === null || ratio === undefined) {
-                    return '未设置';
-                }
-                return `${parseFloat(ratio).toFixed(2)}:1`;
-            }
-        }
-    }).mount('#app');
-</script>
-
-<style>
-    /* Additional styles for new components */
-    .crypto-tags, .exchange-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        padding: 0.75rem;
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        background: var(--glass-bg);
-        min-height: 3rem;
-    }
-
-    .tag {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: var(--primary-color);
-        color: white;
-        padding: 0.25rem 0.75rem;
-        border-radius: 9999px;
-        font-size: 0.75rem;
-        font-weight: 500;
-    }
-
-    .tag button {
-        background: none;
-        border: none;
-        color: white;
-        cursor: pointer;
-        font-weight: bold;
-        padding: 0;
-        margin-left: 0.25rem;
-    }
-
-    .tag button:hover {
-        color: rgba(255, 255, 255, 0.7);
-    }
-
-    .detail-row {
-        display: flex;
-        justify-content: space-between;
-        padding: 0.75rem;
-        border-bottom: 1px solid var(--border-color);
-        align-items: center;
-    }
-
-    .detail-row:last-child {
-        border-bottom: none;
-    }
-
-    .btn-sm {
-        padding: 0.5rem 0.75rem;
-        font-size: 0.75rem;
-    }
-
-    .font-weight-bold {
-        font-weight: 600;
-        color: var(--text-primary);
-    }
-</style>
 </body>
 </html>

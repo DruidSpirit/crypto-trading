@@ -24,9 +24,15 @@ druid\elf\tool\service\task\SignalStorageService.class
 druid\elf\tool\service\strategy\TradeStrategy.class
 druid\elf\tool\service\task\IndicatorTask.class
 druid\elf\tool\service\TradingPairService.class
+druid\elf\tool\dto\StrategyResponseDTO.class
+druid\elf\tool\service\strategy\impl\PythonStrategyAdapter.class
+druid\elf\tool\dto\StrategyRequestDTO.class
 druid\elf\tool\enums\TradingPairStatus.class
 druid\elf\tool\service\strategy\impl\SimpleMacdCrossStrategy.class
+druid\elf\tool\service\client\PythonStrategyClient.class
 druid\elf\tool\service\strategy\impl\SimpleMacdCrossStrategy$1.class
+druid\elf\tool\service\client\PythonStrategyClientRestTemplate.class
+druid\elf\tool\service\strategy\impl\PythonMacdCrossStrategy.class
 druid\elf\tool\service\task\TradingPairTask$TradingPairSyncService.class
 druid\elf\tool\service\strategy\TradeStrategyDTO.class
 druid\elf\tool\entity\TradingPair.class
@@ -34,9 +40,12 @@ druid\elf\tool\repository\TradeSignalRepository.class
 druid\elf\tool\entity\SettingsProxy.class
 druid\elf\tool\repository\TradingPairRepository.class
 druid\elf\tool\service\task\TradingPairTask$SyncExecutor.class
+druid\elf\tool\dto\KlineDataDTO.class
 druid\elf\tool\service\proxy\ProxyPoolManager.class
+druid\elf\tool\dto\PythonTradeSignalDTO.class
 druid\elf\tool\enums\exchange\BinanceKlineInterval.class
 druid\elf\tool\enums\ExchangeType.class
+druid\elf\tool\config\WebConfig.class
 druid\elf\tool\service\task\TradingPairTask.class
 druid\elf\tool\service\DataService.class
 druid\elf\tool\service\exchangedata\impl\OkxDataService.class
@@ -44,6 +53,7 @@ druid\elf\tool\util\CommentIntegrator.class
 druid\elf\tool\repository\SettingsRepository.class
 druid\elf\tool\entity\Settings.class
 druid\elf\tool\CryptoTradingApplication.class
+druid\elf\tool\config\RestTemplateConfig.class
 druid\elf\tool\service\TradeStrategyService.class
 druid\elf\tool\service\proxy\ProxyPoolManager$1.class
 druid\elf\tool\enums\KlineInterval$1.class
