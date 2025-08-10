@@ -28,6 +28,7 @@ createApp({
                 endDate: ''
             },
             signals: [],
+            dashboardSignals: [], // 首页独立的最新信号数据
             totalPages: 1,
             currentPage: 1,
             maxVisiblePages: MAX_VISIBLE_PAGES,
@@ -48,7 +49,8 @@ createApp({
             },
             signalChart: null,
             filterTimeout: null,
-            mobileFilterCollapsed: true
+            filterToggleTimeout: null,
+            mobileFilterExpanded: false
         };
     },
     computed: {
@@ -65,12 +67,31 @@ createApp({
             return this.selectOptions.exchangeTypes.filter(
                 exchange => !this.settings.exchangeTypes.includes(exchange)
             );
+        },
+        hasActiveFilters() {
+            return this.filter.search || 
+                   this.filter.signalType || 
+                   this.filter.strategy || 
+                   this.filter.exchange || 
+                   this.filter.startDate || 
+                   this.filter.endDate;
+        },
+        activeFilterCount() {
+            let count = 0;
+            if (this.filter.search) count++;
+            if (this.filter.signalType) count++;
+            if (this.filter.strategy) count++;
+            if (this.filter.exchange) count++;
+            if (this.filter.startDate) count++;
+            if (this.filter.endDate) count++;
+            return count;
         }
     },
     mounted() {
         this.loadSelectOptions();
         this.fetchSignals();
         this.loadDashboardStats();
+        this.loadDashboardSignals();
         this.initChart();
         this.initTheme();
         this.loadSettings();
@@ -296,6 +317,18 @@ createApp({
                 });
         },
 
+        loadDashboardSignals() {
+            ApiService.getDashboardLatestSignals(5)
+                .then(response => {
+                    this.dashboardSignals = response.data;
+                })
+                .catch(error => {
+                    console.error('获取首页信号失败:', error);
+                    // 降级使用信号列表数据
+                    this.dashboardSignals = this.signals.slice(0, 5);
+                });
+        },
+
         initChart() {
             ApiService.getDashboardChart()
                 .then(response => {
@@ -400,7 +433,6 @@ createApp({
                 .then(response => {
                     this.signals = response.data.content;
                     this.totalPages = response.data.totalPages;
-                    this.loadDashboardStats();
                 })
                 .catch(error => {
                     console.error('获取信号失败:', error);
@@ -412,8 +444,14 @@ createApp({
         },
 
         refreshSignals() {
-            this.fetchSignals();
-            this.showToast('数据已刷新');
+            if (this.currentTab === 'dashboard') {
+                this.loadDashboardSignals();
+                this.loadDashboardStats();
+                this.showToast('首页数据已刷新');
+            } else {
+                this.fetchSignals();
+                this.showToast('数据已刷新');
+            }
         },
 
         applyFilter() {
@@ -485,8 +523,23 @@ createApp({
             return `${parseFloat(ratio).toFixed(2)}:1`;
         },
 
-        toggleMobileFilter() {
-            this.mobileFilterCollapsed = !this.mobileFilterCollapsed;
+        toggleMobileFilter(event) {
+            // 防止事件冒泡和重复触发
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            // 添加节流防止快速点击
+            if (this.filterToggleTimeout) {
+                return;
+            }
+            
+            this.filterToggleTimeout = setTimeout(() => {
+                this.filterToggleTimeout = null;
+            }, 100);
+            
+            this.mobileFilterExpanded = !this.mobileFilterExpanded;
         }
     }
 }).mount('#app');

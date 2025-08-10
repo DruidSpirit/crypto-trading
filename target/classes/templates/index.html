@@ -144,14 +144,14 @@
                         </button>
                     </div>
 
-                    <div v-if="!signals.length && !loading" class="empty-state">
+                    <div v-if="!dashboardSignals.length && !loading" class="empty-state">
                         <i class="fas fa-inbox"></i>
                         <h3>暂无信号数据</h3>
                         <p>请等待新的交易信号</p>
                     </div>
 
                     <!-- PC端最新信号表格 -->
-                    <div v-if="signals.length" class="data-table-wrapper dashboard-table">
+                    <div v-if="dashboardSignals.length" class="data-table-wrapper dashboard-table">
                         <table class="data-table">
                         <thead>
                             <tr>
@@ -164,7 +164,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="signal in signals.slice(0, 5)" :key="signal.id">
+                            <tr v-for="signal in dashboardSignals" :key="signal.id">
                                 <td>
                                     <span :class="['signal-badge', signal.signal.toLowerCase()]">
                                         {{ signal.signal }}
@@ -186,8 +186,8 @@
                     </div>
 
                     <!-- 移动端最新信号卡片 -->
-                    <div v-if="signals.length" class="mobile-signal-cards dashboard-cards">
-                        <div v-for="signal in signals.slice(0, 5)" :key="signal.id" class="signal-card">
+                    <div v-if="dashboardSignals.length" class="mobile-signal-cards dashboard-cards">
+                        <div v-for="signal in dashboardSignals" :key="signal.id" class="signal-card">
                             <div class="signal-card-header">
                                 <div class="signal-card-title">{{ signal.symbol }}</div>
                                 <span :class="['signal-badge', signal.signal.toLowerCase()]">
@@ -222,91 +222,96 @@
             <!-- Signals Tab -->
             <div v-show="currentTab === 'signals'" class="tab-content">
                 <!-- Filters Section -->
-                <div class="section">
-                    <div class="section-header">
+                <div class="section filter-section">
+                    <div class="section-header" @click="toggleMobileFilter($event)">
                         <h2 class="section-title">
                             <i class="fas fa-filter"></i>
                             筛选信号
+                            <span v-if="hasActiveFilters" class="filter-count mobile-only">{{ activeFilterCount }}</span>
                         </h2>
+                        <i class="fas fa-chevron-down mobile-filter-toggle mobile-only" :class="{ 'rotated': mobileFilterExpanded }"></i>
                     </div>
-                    <!-- PC端完整筛选 -->
-                    <div class="filters desktop-filters">
-                        <div class="filter-group">
-                            <label class="filter-label">交易对搜索</label>
-                            <input v-model="filter.search" class="filter-input" placeholder="如：BTCUSDT" @input="debounceFilter">
+                    
+                    <div class="filter-content" :class="{ 'collapsed': !mobileFilterExpanded }">
+                        <!-- PC端完整筛选 -->
+                        <div class="filters desktop-filters">
+                            <div class="filter-group">
+                                <label class="filter-label">交易对搜索</label>
+                                <input v-model="filter.search" class="filter-input" placeholder="如：BTCUSDT" @input="debounceFilter">
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">信号类型</label>
+                                <select v-model="filter.signalType" class="filter-input" @change="applyFilter">
+                                    <option value="">全部</option>
+                                    <option value="BUY">买入</option>
+                                    <option value="SELL">卖出</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">策略</label>
+                                <select v-model="filter.strategy" class="filter-input" @change="applyFilter">
+                                    <option value="">全部</option>
+                                    <option v-for="strategy in selectOptions.strategyNames" :value="strategy" :key="strategy">{{ strategy }}</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">交易所</label>
+                                <select v-model="filter.exchange" class="filter-input" @change="applyFilter">
+                                    <option value="">全部</option>
+                                    <option v-for="exchange in selectOptions.exchangeTypes" :value="exchange" :key="exchange">{{ exchange }}</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">开始日期</label>
+                                <input type="date" v-model="filter.startDate" class="filter-input" @change="applyFilter">
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">结束日期</label>
+                                <input type="date" v-model="filter.endDate" class="filter-input" @change="applyFilter">
+                            </div>
+                            <div class="filter-actions">
+                                <button class="btn btn-primary" @click="applyFilter">
+                                    <i class="fas fa-search"></i>
+                                    应用筛选
+                                </button>
+                                <button class="btn btn-secondary" @click="resetFilter">
+                                    <i class="fas fa-undo"></i>
+                                    重置筛选
+                                </button>
+                            </div>
                         </div>
-                        <div class="filter-group">
-                            <label class="filter-label">信号类型</label>
-                            <select v-model="filter.signalType" class="filter-input" @change="applyFilter">
-                                <option value="">全部</option>
-                                <option value="BUY">买入</option>
-                                <option value="SELL">卖出</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label class="filter-label">策略</label>
-                            <select v-model="filter.strategy" class="filter-input" @change="applyFilter">
-                                <option value="">全部</option>
-                                <option v-for="strategy in selectOptions.strategyNames" :value="strategy" :key="strategy">{{ strategy }}</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label class="filter-label">交易所</label>
-                            <select v-model="filter.exchange" class="filter-input" @change="applyFilter">
-                                <option value="">全部</option>
-                                <option v-for="exchange in selectOptions.exchangeTypes" :value="exchange" :key="exchange">{{ exchange }}</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label class="filter-label">开始日期</label>
-                            <input type="date" v-model="filter.startDate" class="filter-input" @change="applyFilter">
-                        </div>
-                        <div class="filter-group">
-                            <label class="filter-label">结束日期</label>
-                            <input type="date" v-model="filter.endDate" class="filter-input" @change="applyFilter">
-                        </div>
-                        <div class="filter-actions">
-                            <button class="btn btn-primary" @click="applyFilter">
-                                <i class="fas fa-search"></i>
-                                应用筛选
-                            </button>
-                            <button class="btn btn-secondary" @click="resetFilter">
-                                <i class="fas fa-undo"></i>
-                                重置筛选
-                            </button>
-                        </div>
-                    </div>
 
-                    <!-- 移动端简化筛选 -->
-                    <div class="filters mobile-filters">
-                        <div class="filter-group">
-                            <label class="filter-label">搜索交易对</label>
-                            <input v-model="filter.search" class="filter-input" placeholder="如：BTCUSDT" @input="debounceFilter">
-                        </div>
-                        <div class="filter-group">
-                            <label class="filter-label">信号类型</label>
-                            <select v-model="filter.signalType" class="filter-input" @change="applyFilter">
-                                <option value="">全部</option>
-                                <option value="BUY">买入</option>
-                                <option value="SELL">卖出</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label class="filter-label">交易所</label>
-                            <select v-model="filter.exchange" class="filter-input" @change="applyFilter">
-                                <option value="">全部</option>
-                                <option v-for="exchange in selectOptions.exchangeTypes" :value="exchange" :key="exchange">{{ exchange }}</option>
-                            </select>
-                        </div>
-                        <div class="filter-actions">
-                            <button class="btn btn-primary" @click="applyFilter" style="flex: 1;">
-                                <i class="fas fa-search"></i>
-                                筛选
-                            </button>
-                            <button class="btn btn-secondary" @click="resetFilter" style="flex: 1;">
-                                <i class="fas fa-undo"></i>
-                                重置
-                            </button>
+                        <!-- 移动端简化筛选 -->
+                        <div class="filters mobile-filters">
+                            <div class="filter-group">
+                                <label class="filter-label">搜索交易对</label>
+                                <input v-model="filter.search" class="filter-input" placeholder="如：BTCUSDT" @input="debounceFilter">
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">信号类型</label>
+                                <select v-model="filter.signalType" class="filter-input" @change="applyFilter">
+                                    <option value="">全部</option>
+                                    <option value="BUY">买入</option>
+                                    <option value="SELL">卖出</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">交易所</label>
+                                <select v-model="filter.exchange" class="filter-input" @change="applyFilter">
+                                    <option value="">全部</option>
+                                    <option v-for="exchange in selectOptions.exchangeTypes" :value="exchange" :key="exchange">{{ exchange }}</option>
+                                </select>
+                            </div>
+                            <div class="filter-actions">
+                                <button class="btn btn-primary" @click="applyFilter" style="flex: 1;">
+                                    <i class="fas fa-search"></i>
+                                    筛选
+                                </button>
+                                <button class="btn btn-secondary" @click="resetFilter" style="flex: 1;">
+                                    <i class="fas fa-undo"></i>
+                                    重置
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -109,4 +109,14 @@ public class TradeSignalController {
         Map<String, Object> chartData = tradeSignalService.getSignalChartData();
         return ResponseEntity.ok(chartData);
     }
+
+    /**
+     * 获取首页最新信号（不受筛选影响）
+     */
+    @ResponseBody
+    @GetMapping("/dashboard/latest-signals")
+    public ResponseEntity<List<TradeSignal>> getDashboardLatestSignals(@RequestParam(defaultValue = "5") int limit) {
+        List<TradeSignal> latestSignals = tradeSignalService.getLatestSignals(limit);
+        return ResponseEntity.ok(latestSignals);
+    }
 }

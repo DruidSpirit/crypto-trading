@@ -241,4 +241,12 @@ public class TradeSignalService {
         
         return chartData;
     }
+
+    /**
+     * 获取最新信号列表（不受筛选影响）
+     */
+    public List<TradeSignal> getLatestSignals(int limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+        return tradeSignalRepository.findByOrderBySignalTimeDesc(pageable).getContent();
+    }
 }

@@ -31,6 +31,11 @@ class ApiService {
         return axios.post('/api/signals/list', payload);
     }
 
+    // 获取首页最新信号（不受筛选影响）
+    static getDashboardLatestSignals(limit = 5) {
+        return axios.get(`/api/dashboard/latest-signals?limit=${limit}`);
+    }
+
     // 通用错误处理
     static handleError(error) {
         console.error('API请求失败:', error);

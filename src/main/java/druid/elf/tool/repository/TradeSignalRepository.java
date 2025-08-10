@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Repository
 public interface TradeSignalRepository extends JpaRepository<TradeSignal, String>, JpaSpecificationExecutor<TradeSignal> {
@@ -43,4 +45,9 @@ public interface TradeSignalRepository extends JpaRepository<TradeSignal, String
            "GROUP BY YEAR(ts.signalTime), MONTH(ts.signalTime), ts.signal " +
            "ORDER BY YEAR(ts.signalTime), MONTH(ts.signalTime)")
     List<Map<String, Object>> getMonthlySignalStats(LocalDateTime startDate);
+
+    /**
+     * 按信号时间倒序获取数据
+     */
+    Page<TradeSignal> findByOrderBySignalTimeDesc(Pageable pageable);
 }
