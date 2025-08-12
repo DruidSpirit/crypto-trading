@@ -105,6 +105,7 @@ createApp({
 
         // 策略管理方法
         async loadStrategies() {
+            console.log(11)
             this.loading = true;
             try {
                 const response = await fetch('/api/strategy/files');

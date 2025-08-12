@@ -42,6 +42,6 @@ strategy:
 python:
   strategy:
     api:
-      base-url: http://localhost:8000
+      base-url: http://localhost:8001
     service:
-      url: http://localhost:8000
+      url: http://localhost:8001

@@ -560,56 +560,6 @@
 
             <!-- Backtest Tab -->
             <div v-show="currentTab === 'backtest'" class="tab-content">
-                <!-- 数据管理部分 -->
-                <div class="section">
-                    <div class="section-header">
-                        <h2 class="section-title">
-                            <i class="fas fa-database"></i>
-                            数据管理
-                        </h2>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">交易对 (多个用逗号分隔)</label>
-                        <input type="text" v-model="backtest.downloadSymbols" class="form-input" placeholder="BTCUSDT,ETHUSDT">
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">开始日期</label>
-                            <input type="date" v-model="backtest.downloadStartDate" class="form-input">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">结束日期</label>
-                            <input type="date" v-model="backtest.downloadEndDate" class="form-input">
-                        </div>
-                    </div>
-                    
-                    <div class="btn-group">
-                        <button class="btn btn-success" @click="batchDownloadData" :disabled="backtest.downloading">
-                            <i :class="backtest.downloading ? 'fas fa-spinner fa-spin' : 'fas fa-download'"></i>
-                            {{ backtest.downloading ? '下载中...' : '批量下载数据' }}
-                        </button>
-                        <button class="btn btn-secondary" @click="getDataInfo">
-                            <i class="fas fa-info-circle"></i>
-                            查看本地数据
-                        </button>
-                    </div>
-                    
-                    <div v-if="backtest.dataInfo" class="data-info">
-                        <h4>本地数据信息</h4>
-                        <p>数据目录: {{ backtest.dataInfo.data_dir }}</p>
-                        <p>文件数量: {{ backtest.dataInfo.files_count }}</p>
-                        <div v-if="backtest.dataInfo.files && backtest.dataInfo.files.length > 0" style="max-height: 200px; overflow-y: auto;">
-                            <div v-for="file in backtest.dataInfo.files" :key="file.filename" class="file-info-item">
-                                <strong>{{ file.filename }}</strong>
-                                <span v-if="file.records_count"> - {{ file.records_count }} 条记录 ({{ file.start_date }} ~ {{ file.end_date }})</span>
-                                <span v-if="file.error" style="color: var(--error-color);">错误: {{ file.error }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
                 <!-- 回测配置 -->
                 <div class="section">
                     <div class="section-header">
@@ -632,18 +582,6 @@
                             <select v-model="backtest.symbol" class="form-input">
                                 <option value="BTCUSDT">BTCUSDT</option>
                                 <option value="ETHUSDT">ETHUSDT</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">时间周期</label>
-                            <select v-model="backtest.timeframe" class="form-input">
-                                <option value="1m">1分钟</option>
-                                <option value="5m">5分钟</option>
-                                <option value="15m">15分钟</option>
-                                <option value="30m">30分钟</option>
-                                <option value="1h">1小时</option>
-                                <option value="4h">4小时</option>
-                                <option value="1d">1天</option>
                             </select>
                         </div>
                     </div>

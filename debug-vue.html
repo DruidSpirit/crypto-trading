@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue.js调试</title>
+</head>
+<body>
+    <div id="app">
+        <h1>{{ message }}</h1>
+        <p>strategies length: {{ strategies.length }}</p>
+        <button @click="testFunction">测试按钮</button>
+        <ul>
+            <li v-for="strategy in strategies" :key="strategy.id">{{ strategy.displayName }}</li>
+        </ul>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <script>
+        const { createApp } = Vue;
+        
+        createApp({
+            data() {
+                return {
+                    message: 'Vue.js运行正常！',
+                    strategies: []
+                };
+            },
+            mounted() {
+                console.log('=== Vue应用已挂载 - 调试页面 ===');
+                this.loadStrategies();
+            },
+            methods: {
+                async loadStrategies() {
+                    console.log('loadStrategies开始执行...');
+                    try {
+                        console.log('发送API请求到: /api/strategies');
+                        const response = await fetch('/api/strategies');
+                        console.log('API响应状态:', response.status);
+                        
+                        const data = await response.json();
+                        console.log('API响应数据:', data);
+                        
+                        if (Array.isArray(data)) {
+                            this.strategies = data;
+                            console.log('成功加载策略:', this.strategies.length, '个');
+                        } else {
+                            console.error('响应格式不正确:', data);
+                        }
+                    } catch (error) {
+                        console.error('加载策略失败:', error);
+                    }
+                },
+                testFunction() {
+                    alert('测试按钮点击成功！');
+                    console.log('测试按钮被点击');
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

@@ -39,19 +39,19 @@ public class StrategyFileController {
         try {
             StrategyFile strategyFile = strategyFileService.uploadStrategy(file, description);
             log.info("策略文件上传成功: {}", strategyFile.getFilename());
-            return ResponseEntity.ok(strategyFile);
+            return ResponseEntity.ok(Map.of("success", true, "data", strategyFile, "message", "策略上传成功"));
         } catch (IllegalArgumentException e) {
             log.warn("策略文件上传参数错误: {}", e.getMessage());
             return ResponseEntity.badRequest()
-                    .body(Map.of("error", "参数错误", "message", e.getMessage()));
+                    .body(Map.of("success", false, "error", "参数错误", "message", e.getMessage()));
         } catch (IOException e) {
             log.error("策略文件上传IO错误", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "文件上传失败", "message", e.getMessage()));
+                    .body(Map.of("success", false, "error", "文件上传失败", "message", e.getMessage()));
         } catch (Exception e) {
             log.error("策略文件上传未知错误", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "上传失败", "message", "系统错误，请稍后重试"));
+                    .body(Map.of("success", false, "error", "上传失败", "message", "系统错误，请稍后重试"));
         }
     }
     
@@ -91,19 +91,19 @@ public class StrategyFileController {
         try {
             strategyFileService.hotReloadStrategy(id);
             log.info("策略文件热更新成功: {}", id);
-            return ResponseEntity.ok(Map.of("message", "策略热更新成功"));
+            return ResponseEntity.ok(Map.of("success", true, "message", "策略热更新成功"));
         } catch (IllegalArgumentException e) {
             log.warn("热更新策略文件参数错误: {}", e.getMessage());
             return ResponseEntity.badRequest()
-                    .body(Map.of("error", "参数错误", "message", e.getMessage()));
+                    .body(Map.of("success", false, "error", "参数错误", "message", e.getMessage()));
         } catch (RuntimeException e) {
             log.error("热更新策略文件失败", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "热更新失败", "message", e.getMessage()));
+                    .body(Map.of("success", false, "error", "热更新失败", "message", e.getMessage()));
         } catch (Exception e) {
             log.error("热更新策略文件未知错误", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "热更新失败", "message", "系统错误，请稍后重试"));
+                    .body(Map.of("success", false, "error", "热更新失败", "message", "系统错误，请稍后重试"));
         }
     }
     
@@ -135,19 +135,19 @@ public class StrategyFileController {
         try {
             strategyFileService.deleteStrategy(id);
             log.info("策略文件删除成功: {}", id);
-            return ResponseEntity.ok(Map.of("message", "策略删除成功"));
+            return ResponseEntity.ok(Map.of("success", true, "message", "策略删除成功"));
         } catch (IllegalArgumentException e) {
             log.warn("删除策略文件参数错误: {}", e.getMessage());
             return ResponseEntity.badRequest()
-                    .body(Map.of("error", "参数错误", "message", e.getMessage()));
+                    .body(Map.of("success", false, "error", "参数错误", "message", e.getMessage()));
         } catch (IOException e) {
             log.error("删除策略文件IO错误", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "删除失败", "message", e.getMessage()));
+                    .body(Map.of("success", false, "error", "删除失败", "message", e.getMessage()));
         } catch (Exception e) {
             log.error("删除策略文件未知错误", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "删除失败", "message", "系统错误，请稍后重试"));
+                    .body(Map.of("success", false, "error", "删除失败", "message", "系统错误，请稍后重试"));
         }
     }
     

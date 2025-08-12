@@ -18,7 +18,7 @@ public class PythonStrategyClient {
 
     private final WebClient webClient;
     
-    @Value("${python.strategy.service.url:http://localhost:8000}")
+    @Value("${python.strategy.service.url:http://localhost:8001}")
     private String pythonServiceUrl;
 
     public PythonStrategyClient() {

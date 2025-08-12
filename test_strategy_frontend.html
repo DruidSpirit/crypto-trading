@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>策略管理测试</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .strategy { border: 1px solid #ccc; margin: 10px 0; padding: 10px; }
+        .loading { color: #666; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>策略管理测试</h1>
+        
+        <div v-if="loading" class="loading">正在加载策略...</div>
+        <div v-else-if="error" class="error">{{ error }}</div>
+        <div v-else>
+            <p>找到 {{ strategies.length }} 个策略:</p>
+            <div v-for="strategy in strategies" :key="strategy.id" class="strategy">
+                <h3>{{ strategy.displayName || strategy.filename }}</h3>
+                <p><strong>文件名:</strong> {{ strategy.originalFilename }}</p>
+                <p><strong>描述:</strong> {{ strategy.description || '无' }}</p>
+                <p><strong>状态:</strong> {{ strategy.status }}</p>
+                <p><strong>上传时间:</strong> {{ strategy.uploadTime }}</p>
+                <p><strong>文件大小:</strong> {{ strategy.fileSize }} 字节</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+        
+        createApp({
+            data() {
+                return {
+                    strategies: [],
+                    loading: true,
+                    error: null
+                };
+            },
+            mounted() {
+                this.loadStrategies();
+            },
+            methods: {
+                async loadStrategies() {
+                    this.loading = true;
+                    this.error = null;
+                    
+                    try {
+                        const response = await fetch('/api/strategies');
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                        }
+                        
+                        const data = await response.json();
+                        console.log('API response:', data);
+                        
+                        if (Array.isArray(data)) {
+                            this.strategies = data;
+                            console.log(`加载了 ${data.length} 个策略`);
+                        } else {
+                            this.error = '响应格式不正确，期望数组格式';
+                        }
+                    } catch (error) {
+                        console.error('加载策略失败:', error);
+                        this.error = '加载策略失败: ' + error.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

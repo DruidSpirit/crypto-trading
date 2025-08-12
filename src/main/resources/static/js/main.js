@@ -1,6 +1,11 @@
+console.log('=== main.js开始加载 ===');
+console.log('Vue:', Vue);
+
 const { createApp } = Vue;
 const ITEMS_PER_PAGE = 10;
 const MAX_VISIBLE_PAGES = 5;
+
+console.log('=== 开始创建Vue应用 ===');
 
 createApp({
     data() {
@@ -64,15 +69,9 @@ createApp({
             
             // 回测相关数据
             backtest: {
-                downloadSymbols: 'BTCUSDT,ETHUSDT',
-                downloadStartDate: '',
-                downloadEndDate: '',
-                downloading: false,
-                dataInfo: null,
                 
                 strategyName: '',
                 symbol: 'BTCUSDT',
-                timeframe: '1m',
                 startDate: '',
                 endDate: '',
                 initialBalance: 10000,
@@ -116,6 +115,9 @@ createApp({
         }
     },
     mounted() {
+        console.log('=== Vue应用已挂载 ===');
+        console.log('开始初始化应用组件...');
+        
         this.loadSelectOptions();
         this.fetchSignals();
         this.loadDashboardStats();
@@ -123,7 +125,10 @@ createApp({
         this.initChart();
         this.initTheme();
         this.loadSettings();
+        
+        console.log('调用loadStrategies...');
         this.loadStrategies();
+        
         this.initBacktestDates();
 
         // 每分钟检查一次时间并更新主题
@@ -555,21 +560,30 @@ createApp({
 
         // 策略管理方法
         async loadStrategies() {
+            console.log('loadStrategies开始执行...');
             this.loading = true;
             try {
-                const response = await fetch('/api/strategy/files');
-                const data = await response.json();
+                console.log('发送API请求到: /api/strategies');
+                const response = await fetch('/api/strategies');
+                console.log('API响应状态:', response.status);
                 
-                if (data.success) {
-                    this.strategies = data.data || [];
+                const data = await response.json();
+                console.log('API响应数据:', data);
+                
+                // 后端直接返回策略数组，不是包装的格式
+                if (Array.isArray(data)) {
+                    this.strategies = data;
+                    console.log('成功加载策略:', this.strategies.length, '个');
                 } else {
-                    this.showToast(data.message || '加载策略失败', 'error');
+                    console.error('响应格式不正确:', data);
+                    this.showToast('加载策略失败: 响应格式不正确', 'error');
                 }
             } catch (error) {
                 console.error('加载策略失败:', error);
                 this.showToast('加载策略失败: ' + error.message, 'error');
             } finally {
                 this.loading = false;
+                console.log('loadStrategies执行完毕');
             }
         },
 
@@ -619,7 +633,7 @@ createApp({
             }
 
             try {
-                const response = await fetch('/api/strategy/upload', {
+                const response = await fetch('/api/strategies/upload', {
                     method: 'POST',
                     body: formData
                 });
@@ -643,7 +657,7 @@ createApp({
 
         async downloadStrategy(strategy) {
             try {
-                const response = await fetch(`/api/strategy/download/${strategy.id}`);
+                const response = await fetch(`/api/strategies/${strategy.id}/download`);
                 if (response.ok) {
                     const blob = await response.blob();
                     const url = window.URL.createObjectURL(blob);
@@ -666,7 +680,7 @@ createApp({
 
         async hotReloadStrategy(strategy) {
             try {
-                const response = await fetch(`/api/strategy/hot-reload/${strategy.id}`, {
+                const response = await fetch(`/api/strategies/${strategy.id}/reload`, {
                     method: 'POST'
                 });
                 const result = await response.json();
@@ -698,7 +712,7 @@ createApp({
             
             this.deleting = true;
             try {
-                const response = await fetch(`/api/strategy/delete/${this.strategyToDelete.id}`, {
+                const response = await fetch(`/api/strategies/${this.strategyToDelete.id}`, {
                     method: 'DELETE'
                 });
                 const result = await response.json();
@@ -716,6 +730,18 @@ createApp({
             } finally {
                 this.deleting = false;
             }
+        },
+
+        formattedTime(time) {
+            const date = new Date(time);
+            return date.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
         },
 
         formatFileSize(bytes) {
@@ -750,71 +776,12 @@ createApp({
         initBacktestDates() {
             const today = new Date();
             const oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
-            const fourYearsAgo = new Date(today.getFullYear() - 4, today.getMonth(), today.getDate());
             
             this.backtest.startDate = oneYearAgo.toISOString().split('T')[0];
             this.backtest.endDate = today.toISOString().split('T')[0];
-            this.backtest.downloadStartDate = fourYearsAgo.toISOString().split('T')[0];
-            this.backtest.downloadEndDate = today.toISOString().split('T')[0];
         },
 
-        async batchDownloadData() {
-            if (!this.backtest.downloadSymbols || !this.backtest.downloadStartDate || !this.backtest.downloadEndDate) {
-                this.showToast('请填写所有下载参数', 'warning');
-                return;
-            }
 
-            const symbols = this.backtest.downloadSymbols.split(',').map(s => s.trim()).filter(s => s);
-            
-            this.backtest.downloading = true;
-            try {
-                this.showToast('正在下载数据，请稍候...', 'info');
-                
-                const response = await fetch('/api/backtest/batch-download', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        symbols: symbols,
-                        startDate: this.backtest.downloadStartDate,
-                        endDate: this.backtest.downloadEndDate,
-                        timeframe: '1m'
-                    })
-                });
-
-                const result = await response.json();
-                
-                if (result.success) {
-                    this.showToast(`数据下载完成：${result.data?.success_count || 0}/${result.data?.total_symbols || 0}`, 'success');
-                    this.getDataInfo(); // 自动刷新数据信息
-                } else {
-                    this.showToast(result.message || '数据下载失败', 'error');
-                }
-            } catch (error) {
-                console.error('数据下载失败:', error);
-                this.showToast('数据下载失败: ' + error.message, 'error');
-            } finally {
-                this.backtest.downloading = false;
-            }
-        },
-
-        async getDataInfo() {
-            try {
-                const response = await fetch('/api/backtest/data-info');
-                const result = await response.json();
-                
-                if (result.success && result.data) {
-                    this.backtest.dataInfo = result.data;
-                } else {
-                    this.backtest.dataInfo = null;
-                    this.showToast(result.message || '获取数据信息失败', 'error');
-                }
-            } catch (error) {
-                console.error('获取数据信息失败:', error);
-                this.showToast('获取数据信息失败: ' + error.message, 'error');
-            }
-        },
 
         async runBacktest() {
             if (!this.backtest.strategyName || !this.backtest.symbol || 
@@ -832,8 +799,7 @@ createApp({
                     symbol: this.backtest.symbol,
                     start_date: this.backtest.startDate,
                     end_date: this.backtest.endDate,
-                    initial_balance: this.backtest.initialBalance,
-                    timeframe: this.backtest.timeframe
+                    initial_balance: this.backtest.initialBalance
                 };
 
                 const response = await fetch('/api/backtest/run', {
@@ -863,10 +829,8 @@ createApp({
         resetBacktestForm() {
             this.backtest.strategyName = '';
             this.backtest.symbol = 'BTCUSDT';
-            this.backtest.timeframe = '1m';
             this.backtest.initialBalance = 10000;
             this.backtest.results = null;
-            this.backtest.dataInfo = null;
             this.initBacktestDates();
         },
 
@@ -890,3 +854,5 @@ createApp({
         }
     }
 }).mount('#app');
+
+console.log('=== Vue应用挂载完成 ===');

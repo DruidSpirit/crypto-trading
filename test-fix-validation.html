@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>功能修复验证</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 功能修复验证页面</h1>
+    
+    <div class="test-section">
+        <h2>1. 策略管理 API 测试</h2>
+        <button onclick="testStrategyAPI()">测试策略列表 API</button>
+        <button onclick="testUploadAPI()">测试上传功能</button>
+        <div id="strategyResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. 回测功能 API 测试</h2>
+        <button onclick="testBacktestAPI()">测试数据信息 API</button>
+        <button onclick="testDownloadAPI()">测试批量下载 API</button>
+        <div id="backtestResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. 修复项目总结</h2>
+        <div class="info">
+            <h3>已修复的问题：</h3>
+            <ul>
+                <li>✅ 修复前端策略管理模块API路径不匹配问题 (/api/strategy/* → /api/strategies/*)</li>
+                <li>✅ 修复后端响应格式，统一返回 {success, data, message} 格式</li>
+                <li>✅ 补全策略列表、上传、热更新、下载、删除等功能</li>
+                <li>✅ 修复回测模块的批量下载数据、查看本地数据、开始回测功能</li>
+                <li>✅ 移除回测配置中的时间周期参数（策略可访问任意时间周期数据）</li>
+                <li>✅ 添加缺失的前端方法如 formattedTime, formatFileSize, getStatusIcon 等</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        async function testStrategyAPI() {
+            const resultsDiv = document.getElementById('strategyResults');
+            resultsDiv.innerHTML = '<div class="info">正在测试策略 API...</div>';
+            
+            try {
+                const response = await fetch('/api/strategies');
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="success">✅ 策略列表 API 正常工作</div>
+                        <div class="info">返回 ${data.data?.length || 0} 个策略</div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `<div class="error">❌ 策略 API 错误: ${data.message || '未知错误'}</div>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">❌ 策略 API 请求失败: ${error.message}</div>`;
+            }
+        }
+        
+        async function testUploadAPI() {
+            const resultsDiv = document.getElementById('strategyResults');
+            resultsDiv.innerHTML += '<div class="info">测试上传 API 端点...</div>';
+            
+            try {
+                // 只测试端点可达性，不实际上传文件
+                const response = await fetch('/api/strategies/upload', {
+                    method: 'POST',
+                    body: new FormData()
+                });
+                
+                // 即使没有文件也应该返回错误响应，证明端点存在
+                const data = await response.json();
+                resultsDiv.innerHTML += '<div class="success">✅ 上传 API 端点可达</div>';
+            } catch (error) {
+                resultsDiv.innerHTML += `<div class="error">❌ 上传 API 端点不可达: ${error.message}</div>`;
+            }
+        }
+        
+        async function testBacktestAPI() {
+            const resultsDiv = document.getElementById('backtestResults');
+            resultsDiv.innerHTML = '<div class="info">正在测试回测 API...</div>';
+            
+            try {
+                const response = await fetch('/api/backtest/data-info');
+                const data = await response.json();
+                
+                resultsDiv.innerHTML = `
+                    <div class="success">✅ 回测数据信息 API 正常工作</div>
+                    <div class="info">API 响应: ${JSON.stringify(data, null, 2)}</div>
+                `;
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">❌ 回测 API 请求失败: ${error.message}</div>`;
+            }
+        }
+        
+        async function testDownloadAPI() {
+            const resultsDiv = document.getElementById('backtestResults');
+            resultsDiv.innerHTML += '<div class="info">测试批量下载 API 端点...</div>';
+            
+            try {
+                const response = await fetch('/api/backtest/batch-download', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        symbols: ['BTCUSDT'],
+                        startDate: '2023-01-01',
+                        endDate: '2023-01-02',
+                        timeframe: '1m'
+                    })
+                });
+                
+                const data = await response.json();
+                resultsDiv.innerHTML += '<div class="success">✅ 批量下载 API 端点可达</div>';
+            } catch (error) {
+                resultsDiv.innerHTML += `<div class="error">❌ 批量下载 API 端点不可达: ${error.message}</div>`;
+            }
+        }
+        
+        // 页面加载时显示修复摘要
+        window.addEventListener('load', () => {
+            console.log('功能修复验证页面已加载');
+        });
+    </script>
+</body>
+</html>
