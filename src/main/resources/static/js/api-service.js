@@ -36,6 +36,39 @@ class ApiService {
         return axios.get(`/api/dashboard/latest-signals?limit=${limit}`);
     }
 
+    // 策略管理相关API
+    
+    // 获取策略列表
+    static getStrategies() {
+        return axios.get('/api/strategies');
+    }
+
+    // 上传策略文件
+    static uploadStrategy(formData) {
+        return axios.post('/api/strategies/upload', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+    }
+
+    // 下载策略文件
+    static downloadStrategy(strategyId) {
+        return axios.get(`/api/strategies/${strategyId}/download`, {
+            responseType: 'blob'
+        });
+    }
+
+    // 热更新策略
+    static hotReloadStrategy(strategyId) {
+        return axios.post(`/api/strategies/${strategyId}/reload`);
+    }
+
+    // 删除策略
+    static deleteStrategy(strategyId) {
+        return axios.delete(`/api/strategies/${strategyId}`);
+    }
+
     // 通用错误处理
     static handleError(error) {
         console.error('API请求失败:', error);

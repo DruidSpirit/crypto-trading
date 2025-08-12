@@ -9,9 +9,9 @@ import java.util.Map;
 public class StrategyRequestDTO {
     private String symbol;
     
-    @JsonProperty("strategy_name")
+    @JsonProperty("strategyName")
     private String strategyName;
     
-    @JsonProperty("kline_data")
+    @JsonProperty("klineData")
     private Map<String, List<KlineDataDTO>> klineData;
 }

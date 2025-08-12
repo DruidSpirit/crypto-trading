@@ -109,7 +109,7 @@ public class PythonStrategyClientRestTemplate {
             }
             
             // 返回默认策略
-            return new String[]{"SimpleMacdCrossStrategy"};
+            return new String[]{"ElderSwingStrategy", "ElderIntradayStrategy"};
             
         } catch (Exception e) {
             log.warn("获取策略列表失败", e);

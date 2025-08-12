@@ -12,6 +12,7 @@ public enum OkxKlineInterval {
     _1M("1m"),
     _5M("5m"),
     _15M("15m"),
+    _30M("30m"),
     _1H("1H"),
     _4H("4H"),
     _1D("1D"),

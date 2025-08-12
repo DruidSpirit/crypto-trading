@@ -63,19 +63,19 @@ public class IndicatorTask implements SchedulingConfigurer {
             new ThreadPoolExecutor.CallerRunsPolicy()
     );
 
-//    @PostConstruct
-//    public void init() {
-//        CompletableFuture<Void> tradingPairFuture = tradingPairSyncExecutor.executeSyncAsync();
-//        tradingPairFuture.thenRunAsync(this::generateAndStoreSignalAsync, executorService)
-//                .whenComplete((result, exception) -> {
-//                    if (exception != null) {
-//                        log.error("IndicatorTask 初始任务失败", exception);
-//                    } else {
-//                        log.info("IndicatorTask 初始任务完成");
-//                    }
-//                });
-//        log.info("已触发 IndicatorTask 异步初始化，等待 TradingPairTask 完成后执行，项目启动流程继续");
-//    }
+    @PostConstruct
+    public void init() {
+        CompletableFuture<Void> tradingPairFuture = tradingPairSyncExecutor.executeSyncAsync();
+        tradingPairFuture.thenRunAsync(this::generateAndStoreSignalAsync, executorService)
+                .whenComplete((result, exception) -> {
+                    if (exception != null) {
+                        log.error("IndicatorTask 初始任务失败", exception);
+                    } else {
+                        log.info("IndicatorTask 初始任务完成");
+                    }
+                });
+        log.info("已触发 IndicatorTask 异步初始化，等待 TradingPairTask 完成后执行，项目启动流程继续");
+    }
 
     @Async
     public void generateAndStoreSignalAsync() {

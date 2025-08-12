@@ -12,6 +12,7 @@ public enum KlineInterval {
     _1M,   // 1 minute
     _5M,   // 5 minutes
     _15M,  // 15 minutes
+    _30M,  // 30 minutes
     _1H,   // 1 hour
     _4H,   // 4 hours
     _1D,   // 1 day

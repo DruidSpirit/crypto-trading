@@ -33,7 +33,20 @@
       "Bash(mvnw.cmd spring-boot:*)",
       "Bash(tasklist:*)",
       "Bash(rm:*)",
-      "Bash(mvnw.cmd clean:*)"
+      "Bash(mvnw.cmd clean:*)",
+      "WebFetch(domain:fontawesome.com)",
+      "WebFetch(domain:www.angularjswiki.com)",
+      "Bash(start http://localhost:5567)",
+      "Bash(-H \"Content-Type: application/json\")",
+      "Bash(start \"http://localhost:5567\")",
+      "Bash(start \"C:\\Users\\druid\\IdeaProjects\\crypto-trading\\test-toast.html\")",
+      "Bash(ping:*)",
+      "Bash(start \"http://localhost:5567/api/backtest/page\")",
+      "Bash(git checkout:*)",
+      "Bash(start http://localhost:5567/signals)",
+      "Bash(start http://localhost:5567/strategies)",
+      "Bash(start http://localhost:5567/backtest)",
+      "Bash(start http://localhost:5567/settings)"
     ],
     "deny": []
   }

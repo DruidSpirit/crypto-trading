@@ -2,9 +2,11 @@ package druid.elf.tool.controller;
 
 import druid.elf.tool.dto.SignalFilterDTO;
 import druid.elf.tool.entity.Settings;
+import druid.elf.tool.entity.StrategyFile;
 import druid.elf.tool.entity.TradeSignal;
 import druid.elf.tool.enums.ExchangeType;
 import druid.elf.tool.enums.TopCryptoCoin;
+import druid.elf.tool.service.StrategyFileService;
 import druid.elf.tool.service.TradeSignalService;
 import druid.elf.tool.service.strategy.TradeStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class TradeSignalController {
 
     @Autowired
     private ApplicationContext applicationContext;
+    
+    @Autowired
+    private StrategyFileService strategyFileService;
 
     // 页面跳转到 IP 信息列表页面
     @GetMapping("/index")
@@ -74,10 +79,23 @@ public class TradeSignalController {
                 .map(Enum::name)
                 .toList();
 
-        // 通过 Spring 容器获取所有 TradeStrategy 类型的 bean
-        Map<String, TradeStrategy> strategyBeans = applicationContext.getBeansOfType(TradeStrategy.class);
-        List<String> strategyNames = strategyBeans.values().stream()
-                .map(TradeStrategy::getStrategyName)
+        // 只获取数据库中的策略显示名称，去除Spring Bean策略避免重复
+        // 优先使用displayName，然后是description，最后是文件名
+        List<String> strategyNames = strategyFileService.getAllStrategies().stream()
+                .filter(strategy -> strategy.getStatus() == StrategyFile.StrategyStatus.ACTIVE)
+                .map(strategy -> {
+                    // 优先使用displayName，如果为空则使用description，如果还是空则使用去掉.py扩展名的文件名
+                    if (strategy.getDisplayName() != null && !strategy.getDisplayName().trim().isEmpty()) {
+                        return strategy.getDisplayName();
+                    } else if (strategy.getDescription() != null && !strategy.getDescription().trim().isEmpty()) {
+                        return strategy.getDescription();
+                    } else {
+                        String filename = strategy.getOriginalFilename();
+                        return filename.endsWith(".py") ? filename.substring(0, filename.length() - 3) : filename;
+                    }
+                })
+                .distinct()  // 去重
+                .sorted()    // 排序
                 .toList();
 
         // 构造返回的 JSON 数据
@@ -118,5 +136,34 @@ public class TradeSignalController {
     public ResponseEntity<List<TradeSignal>> getDashboardLatestSignals(@RequestParam(defaultValue = "5") int limit) {
         List<TradeSignal> latestSignals = tradeSignalService.getLatestSignals(limit);
         return ResponseEntity.ok(latestSignals);
+    }
+
+    /**
+     * 获取信号列表（GET方式支持分页和筛选参数）
+     */
+    @ResponseBody
+    @GetMapping("/signals")
+    public ResponseEntity<Page<TradeSignal>> getSignalsWithParams(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String signalType,
+            @RequestParam(required = false) String strategy,
+            @RequestParam(required = false) String exchange,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate) {
+        
+        SignalFilterDTO filter = new SignalFilterDTO();
+        filter.setPage(page + 1);  // Convert 0-based to 1-based page number
+        filter.setSize(size);
+        filter.setSearch(search);
+        filter.setSignalType(signalType);
+        filter.setStrategy(strategy);
+        filter.setExchange(exchange);
+        filter.setStartDate(startDate);
+        filter.setEndDate(endDate);
+        
+        Page<TradeSignal> signals = tradeSignalService.getSignals(filter);
+        return ResponseEntity.ok(signals);
     }
 }

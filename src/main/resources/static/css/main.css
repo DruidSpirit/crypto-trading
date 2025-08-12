@@ -812,18 +812,26 @@ select.filter-input {
 .modal {
     display: none;
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 2000;
     background: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(10px);
     padding: 2rem;
     overflow-y: auto;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .modal.active {
     display: flex;
     align-items: center;
     justify-content: center;
+    opacity: 1;
+    visibility: visible;
 }
 
 .modal-content {
@@ -837,6 +845,30 @@ select.filter-input {
     overflow-y: auto;
     padding: 2rem;
     position: relative;
+    transform: scale(0.95);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* 确保未激活的模态框完全不可见和不可交互 */
+.modal:not(.active) {
+    pointer-events: none !important;
+    user-select: none !important;
+}
+
+.modal:not(.active) .modal-content {
+    pointer-events: none !important;
+    user-select: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: scale(0.9) translateY(20px) !important;
+}
+
+.modal.active .modal-content {
+    transform: scale(1);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    user-select: auto;
 }
 
 .modal-header {
@@ -965,6 +997,157 @@ select.form-input {
     .filters {
         grid-template-columns: repeat(3, 1fr);
     }
+}
+
+/* 策略管理样式 */
+.strategy-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.strategy-status.active {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success-color);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.strategy-status.inactive {
+    background: rgba(107, 114, 128, 0.1);
+    color: var(--text-tertiary);
+    border: 1px solid rgba(107, 114, 128, 0.2);
+}
+
+.strategy-status.updating {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning-color);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.strategy-status.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error-color);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.file-preview {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 0.5rem;
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.file-details {
+    flex: 1;
+}
+
+.file-name {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.file-size {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.form-help {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: var(--text-tertiary);
+}
+
+.warning-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    border-radius: 0.5rem;
+    color: var(--warning-color);
+    font-size: 0.875rem;
+}
+
+/* 移动端策略卡片 */
+.mobile-strategy-cards {
+    display: none;
+}
+
+.strategy-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.strategy-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.strategy-card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    flex: 1;
+}
+
+.strategy-card-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.strategy-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.strategy-field-label {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+}
+
+.strategy-field-value {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.strategy-card-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
 /* Medium screens (768px to 991px) */
@@ -1185,7 +1368,8 @@ select.form-input {
     }
 
     /* 移动端信号卡片容器 - 确保在信号列表页面显示 */
-    .mobile-signal-cards {
+    .mobile-signal-cards,
+    .mobile-strategy-cards {
         display: block !important;
     }
 
@@ -1193,6 +1377,15 @@ select.form-input {
     .mobile-signal-cards .signal-card {
         display: block !important;
         margin-bottom: 1rem;
+    }
+
+    /* 策略卡片移动端优化 */
+    .strategy-card-actions {
+        flex-direction: column;
+    }
+
+    .strategy-card-actions .btn {
+        width: 100%;
     }
 
     /* 首页移动端显示切换 */
@@ -1220,10 +1413,14 @@ select.form-input {
         right: 0;
         transform: translateY(100%);
         transition: transform 0.3s ease;
+        opacity: 0;
+        visibility: hidden;
     }
 
     .modal.active .modal-content {
         transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
     }
 
     /* 移动端统计卡片优化 */
@@ -1270,16 +1467,54 @@ select.form-input {
         min-height: 44px;
     }
 
-    /* Toast优化 */
+    /* Toast优化 - 移动端完全隐藏 */
     .toast {
-        right: 1rem;
-        left: 1rem;
-        top: 4.5rem;
-        transform: translateY(-100%);
+        right: 1rem !important;
+        left: 1rem !important;
+        top: 4.5rem !important;
+        /* 强制隐藏 */
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        transform: translateY(-200%) !important;
+        transition: all 0.3s ease !important;
     }
 
     .toast.show {
-        transform: translateY(0);
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+        transform: translateY(0) !important;
+    }
+    
+    /* 移动端强制隐藏Toast */
+    #toast:not(.show) {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        transform: translateY(-100vh) !important;
+        pointer-events: none !important;
+        position: fixed !important;
+        top: -1000px !important;
+        left: -1000px !important;
+        right: auto !important;
+        width: 0 !important;
+        height: 0 !important;
+        z-index: -1 !important;
+    }
+
+    /* 移动端Toast显示时的样式 */
+    #toast.show {
+        display: block !important;
+        position: fixed !important;
+        top: 4.5rem !important;
+        right: 1rem !important;
+        left: 1rem !important;
+        width: auto !important;
+        height: auto !important;
+        transform: translateY(0) !important;
     }
 
     /* 空状态优化 */
@@ -1755,10 +1990,7 @@ select.form-input {
     animation: pulse 2s infinite;
 }
 
-/* Toast通知动画 */
-.toast {
-    animation: slideInRight 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
+/* Toast通知动画 - 已移除，使用新的隐藏方案 */
 
 @keyframes slideInRight {
     from {
@@ -1780,25 +2012,36 @@ select.form-input {
     animation: fadeInUp 0.8s ease;
 }
 
-/* Toast Notifications */
+/* Toast Notifications - 完全隐藏方案 */
 .toast {
-    position: fixed;
-    top: 5rem;
-    right: 2rem;
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    padding: 1rem 1.5rem;
-    color: var(--text-primary);
-    font-weight: 500;
-    z-index: 3000;
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
+    position: fixed !important;
+    top: 5rem !important;
+    right: 2rem !important;
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 16px !important;
+    padding: 1rem 1.5rem !important;
+    color: var(--text-primary) !important;
+    font-weight: 500 !important;
+    z-index: 3000 !important;
+    max-width: 400px !important;
+    width: auto !important;
+    /* 默认完全隐藏 */
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transform: translateX(200%) !important;
+    transition: all 0.3s ease !important;
 }
 
 .toast.show {
-    transform: translateX(0);
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: translateX(0) !important;
 }
 
 .toast.success {
@@ -1807,6 +2050,52 @@ select.form-input {
 
 .toast.error {
     border-left: 4px solid var(--error-color);
+}
+
+/* 强制Toast完全隐藏 - 最高优先级 */
+#toast:not(.show) {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translateX(100vw) !important;
+    pointer-events: none !important;
+    position: fixed !important;
+    top: -1000px !important;
+    left: -1000px !important;
+    right: auto !important;
+    width: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    z-index: -1 !important;
+}
+
+/* Toast显示时的样式 */
+#toast.show {
+    display: block !important;
+    position: fixed !important;
+    top: 5rem !important;
+    right: 2rem !important;
+    left: auto !important;
+    width: auto !important;
+    height: auto !important;
+    max-width: 400px !important;
+    padding: 1rem 1.5rem !important;
+    margin: 0 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateX(0) !important;
+    pointer-events: auto !important;
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 16px !important;
+    color: var(--text-primary) !important;
+    font-weight: 500 !important;
+    z-index: 3000 !important;
+    transition: all 0.3s ease !important;
 }
 
 /* Empty State */
@@ -2067,4 +2356,167 @@ select.form-input {
     .section {
         border-width: 2px;
     }
+}
+
+/* 修复移动端下拉框抖动问题 - 添加到main.css文件末尾 */
+@media (max-width: 767px) {
+
+    /* 修复筛选内容区域的动画，防止影响下拉框 */
+    .filter-content {
+        overflow: hidden;
+        transition: max-height 0.25s ease-out !important;
+        max-height: 1000px;
+        opacity: 1;
+        /* 关键：防止内容在动画过程中的布局变化 */
+        transform: translateZ(0);
+        will-change: max-height;
+    }
+
+    .filter-content.collapsed {
+        max-height: 0 !important;
+        opacity: 0;
+        /* 确保折叠时不影响内部元素 */
+        pointer-events: none;
+    }
+
+    /* 为移动端筛选的下拉框提供稳定基础 */
+    .mobile-filters .filter-group {
+        position: relative;
+        z-index: 10;
+        /* 防止在动画过程中的重排 */
+        contain: layout style;
+    }
+
+    /* 关键修复：移动端下拉框的稳定样式 */
+    .mobile-filters .filter-input,
+    .mobile-filters select.filter-input {
+        position: relative;
+        z-index: 11;
+        /* 移除所有可能导致抖动的变换 */
+        transform: none !important;
+        will-change: auto !important;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        /* 只保留必要的过渡效果 */
+        transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+    }
+
+    /* 下拉框选项不受任何动画影响 */
+    .mobile-filters .filter-input option {
+        transform: none !important;
+        transition: none !important;
+    }
+
+    /* 聚焦状态的优化 */
+    .mobile-filters .filter-input:focus {
+        transform: none !important;
+        border-width: 2px;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        z-index: 12;
+    }
+
+    /* iOS Safari特殊优化 */
+    @supports (-webkit-touch-callout: none) {
+        .mobile-filters select.filter-input {
+            -webkit-appearance: none;
+            background-attachment: scroll;
+        }
+    }
+}
+
+/* 回测页面特定样式 */
+.form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    align-items: flex-end;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.metric-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    border-left: 4px solid var(--primary-color);
+}
+
+.metric-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.15);
+}
+
+.metric-card h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-tertiary);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.metric-card .value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.metric-card.positive {
+    border-left-color: var(--success-color);
+}
+
+.metric-card.negative {
+    border-left-color: var(--error-color);
+}
+
+.data-info {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+}
+
+.file-info-item {
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.file-info-item:last-child {
+    border-bottom: none;
+}
+
+.subsection {
+    margin-top: 2rem;
+}
+
+.subsection h3 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 1.125rem;
+    font-weight: 600;
 }

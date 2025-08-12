@@ -12,6 +12,7 @@ public enum BybitKlineInterval {
     _1M("1"),
     _5M("5"),
     _15M("15"),
+    _30M("30"),
     _1H("60"),
     _4H("240"),
     _1D("D"),

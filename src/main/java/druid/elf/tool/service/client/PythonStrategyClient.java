@@ -91,7 +91,7 @@ public class PythonStrategyClient {
                     
             log.info("获取策略列表响应：{}", response);
             // 这里可以解析JSON返回策略数组，暂时返回默认策略
-            return new String[]{"SimpleMacdCrossStrategy"};
+            return new String[]{"ElderSwingStrategy", "ElderIntradayStrategy"};
             
         } catch (Exception e) {
             log.warn("获取策略列表失败", e);

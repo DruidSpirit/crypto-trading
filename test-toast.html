@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Toast测试</title>
+    <style>
+        /* 复制关键的Toast CSS */
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f8fafc;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+        }
+        
+        body {
+            background: #1e293b;
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        
+        /* Toast Notifications - 完全隐藏方案 */
+        .toast {
+            position: fixed !important;
+            top: 5rem !important;
+            right: 2rem !important;
+            background: var(--glass-bg) !important;
+            backdrop-filter: blur(20px) saturate(180%) !important;
+            border: 1px solid var(--glass-border) !important;
+            border-radius: 16px !important;
+            padding: 1rem 1.5rem !important;
+            color: var(--text-primary) !important;
+            font-weight: 500 !important;
+            z-index: 3000 !important;
+            max-width: 400px !important;
+            width: auto !important;
+            /* 默认完全隐藏 */
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            transform: translateX(200%) !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .toast.show {
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+            transform: translateX(0) !important;
+        }
+        
+        /* 强制Toast完全隐藏 - 最高优先级 */
+        #toast:not(.show) {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            transform: translateX(100vw) !important;
+            pointer-events: none !important;
+            position: fixed !important;
+            top: -1000px !important;
+            left: -1000px !important;
+            right: auto !important;
+            width: 0 !important;
+            height: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            background: transparent !important;
+            z-index: -1 !important;
+        }
+
+        /* Toast显示时的样式 */
+        #toast.show {
+            display: block !important;
+            position: fixed !important;
+            top: 5rem !important;
+            right: 2rem !important;
+            left: auto !important;
+            width: auto !important;
+            height: auto !important;
+            max-width: 400px !important;
+            padding: 1rem 1.5rem !important;
+            margin: 0 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: translateX(0) !important;
+            pointer-events: auto !important;
+            background: var(--glass-bg) !important;
+            backdrop-filter: blur(20px) saturate(180%) !important;
+            border: 1px solid var(--glass-border) !important;
+            border-radius: 16px !important;
+            color: var(--text-primary) !important;
+            font-weight: 500 !important;
+            z-index: 3000 !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .toast.success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--error-color);
+        }
+        
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #6366f1;
+            color: white;
+        }
+        
+        .info {
+            color: white;
+            margin: 20px 0;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: white;">Toast隐藏测试</h1>
+    
+    <div class="info">
+        <h3>当前Toast状态:</h3>
+        <p id="status">检查中...</p>
+    </div>
+    
+    <button onclick="showToast('测试成功消息', 'success')">显示成功Toast</button>
+    <button onclick="showToast('测试错误消息', 'error')">显示错误Toast</button>
+    <button onclick="hideToast()">隐藏Toast</button>
+    <button onclick="checkToast()">检查Toast状态</button>
+    
+    <!-- Toast元素 -->
+    <div id="toast" class="toast">
+        <span id="toast-message"></span>
+    </div>
+
+    <script>
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+
+            toastMessage.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                checkToast();
+            }, 3000);
+        }
+        
+        function hideToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('show');
+            checkToast();
+        }
+        
+        function checkToast() {
+            const toast = document.getElementById('toast');
+            const computedStyle = window.getComputedStyle(toast);
+            const status = document.getElementById('status');
+            
+            status.innerHTML = `
+                <strong>类名:</strong> "${toast.className}"<br>
+                <strong>Display:</strong> ${computedStyle.display}<br>
+                <strong>Opacity:</strong> ${computedStyle.opacity}<br>
+                <strong>Visibility:</strong> ${computedStyle.visibility}<br>
+                <strong>Transform:</strong> ${computedStyle.transform}<br>
+                <strong>Top:</strong> ${computedStyle.top}<br>
+                <strong>Right:</strong> ${computedStyle.right}<br>
+                <strong>Position:</strong> ${computedStyle.position}<br>
+                <strong>Z-index:</strong> ${computedStyle.zIndex}
+            `;
+        }
+        
+        // 页面加载时检查状态
+        window.onload = function() {
+            checkToast();
+        };
+    </script>
+</body>
+</html>

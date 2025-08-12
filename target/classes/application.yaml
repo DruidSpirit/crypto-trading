@@ -33,8 +33,15 @@ spring:
     init:
       platform: h2
 
+# 策略文件上传配置
+strategy:
+  upload:
+    path: C:/Users/druid/PycharmProjects/crypto-trading-strategy/strategies
+
 # Python策略服务配置
 python:
   strategy:
+    api:
+      base-url: http://localhost:8000
     service:
       url: http://localhost:8000

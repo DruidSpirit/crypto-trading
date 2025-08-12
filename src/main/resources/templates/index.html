@@ -42,6 +42,18 @@
                 <span>信号列表</span>
             </button>
             <button
+                :class="['tab-nav-item', { 'active': currentTab === 'strategies' }]"
+                @click="switchTab('strategies')">
+                <i class="fas fa-code"></i>
+                <span>策略管理</span>
+            </button>
+            <button
+                :class="['tab-nav-item', { 'active': currentTab === 'backtest' }]"
+                @click="switchTab('backtest')">
+                <i class="fas fa-chart-bar"></i>
+                <span>策略回测</span>
+            </button>
+            <button
                 :class="['tab-nav-item', { 'active': currentTab === 'settings' }]"
                 @click="switchTab('settings')">
                 <i class="fas fa-cog"></i>
@@ -432,6 +444,320 @@
                 </div>
             </div>
 
+            <!-- Strategies Tab -->
+            <div v-show="currentTab === 'strategies'" class="tab-content">
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-code"></i>
+                            Python策略文件管理
+                        </h2>
+                        <button class="btn btn-primary" @click="showUploadModal">
+                            <i class="fas fa-plus"></i>
+                            上传策略
+                        </button>
+                    </div>
+
+                    <div v-if="!strategies.length && !loading" class="empty-state">
+                        <i class="fas fa-file-code"></i>
+                        <h3>暂无策略文件</h3>
+                        <p>点击上传策略按钮添加Python策略文件</p>
+                    </div>
+
+                    <!-- 策略文件列表 -->
+                    <div v-if="strategies.length" class="data-table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>文件名</th>
+                                    <th>中文名称</th>
+                                    <th>文件大小</th>
+                                    <th>上传时间</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="strategy in strategies" :key="strategy.id">
+                                    <td class="font-weight-bold">
+                                        <i class="fas fa-python text-primary"></i>
+                                        {{ strategy.filename }}
+                                    </td>
+                                    <td class="strategy-display-name">
+                                        {{ strategy.displayName || strategy.description || '无' }}
+                                    </td>
+                                    <td>{{ formatFileSize(strategy.fileSize) }}</td>
+                                    <td>{{ formattedTime(strategy.uploadTime) }}</td>
+                                    <td>
+                                        <span :class="['strategy-status', strategy.status.toLowerCase()]">
+                                            <i :class="getStatusIcon(strategy.status)"></i>
+                                            {{ getStatusText(strategy.status) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-secondary btn-sm" @click="downloadStrategy(strategy)" :title="'下载 ' + strategy.filename">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                            <button class="btn btn-warning btn-sm" @click="hotReloadStrategy(strategy)" :title="'热更新 ' + strategy.filename" :disabled="strategy.status === 'UPDATING'">
+                                                <i class="fas fa-sync-alt"></i>
+                                            </button>
+                                            <button class="btn btn-danger btn-sm" @click="deleteStrategy(strategy)" :title="'删除 ' + strategy.filename">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 移动端策略卡片 -->
+                    <div v-if="strategies.length" class="mobile-strategy-cards">
+                        <div v-for="strategy in strategies" :key="strategy.id" class="strategy-card">
+                            <div class="strategy-card-header">
+                                <div class="strategy-card-title">
+                                    <i class="fas fa-python text-primary"></i>
+                                    {{ strategy.filename }}
+                                </div>
+                                <span :class="['strategy-status', strategy.status.toLowerCase()]">
+                                    <i :class="getStatusIcon(strategy.status)"></i>
+                                    {{ getStatusText(strategy.status) }}
+                                </span>
+                            </div>
+                            <div class="strategy-card-body">
+                                <div class="strategy-field">
+                                    <div class="strategy-field-label">中文名称</div>
+                                    <div class="strategy-field-value">{{ strategy.displayName || strategy.description || '无' }}</div>
+                                </div>
+                                <div class="strategy-field">
+                                    <div class="strategy-field-label">文件大小</div>
+                                    <div class="strategy-field-value">{{ formatFileSize(strategy.fileSize) }}</div>
+                                </div>
+                                <div class="strategy-field">
+                                    <div class="strategy-field-label">上传时间</div>
+                                    <div class="strategy-field-value">{{ formattedTime(strategy.uploadTime) }}</div>
+                                </div>
+                            </div>
+                            <div class="strategy-card-actions">
+                                <button class="btn btn-secondary btn-sm" @click="downloadStrategy(strategy)">
+                                    <i class="fas fa-download"></i>
+                                    下载
+                                </button>
+                                <button class="btn btn-warning btn-sm" @click="hotReloadStrategy(strategy)" :disabled="strategy.status === 'UPDATING'">
+                                    <i class="fas fa-sync-alt"></i>
+                                    热更新
+                                </button>
+                                <button class="btn btn-danger btn-sm" @click="deleteStrategy(strategy)">
+                                    <i class="fas fa-trash"></i>
+                                    删除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backtest Tab -->
+            <div v-show="currentTab === 'backtest'" class="tab-content">
+                <!-- 数据管理部分 -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-database"></i>
+                            数据管理
+                        </h2>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">交易对 (多个用逗号分隔)</label>
+                        <input type="text" v-model="backtest.downloadSymbols" class="form-input" placeholder="BTCUSDT,ETHUSDT">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">开始日期</label>
+                            <input type="date" v-model="backtest.downloadStartDate" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">结束日期</label>
+                            <input type="date" v-model="backtest.downloadEndDate" class="form-input">
+                        </div>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button class="btn btn-success" @click="batchDownloadData" :disabled="backtest.downloading">
+                            <i :class="backtest.downloading ? 'fas fa-spinner fa-spin' : 'fas fa-download'"></i>
+                            {{ backtest.downloading ? '下载中...' : '批量下载数据' }}
+                        </button>
+                        <button class="btn btn-secondary" @click="getDataInfo">
+                            <i class="fas fa-info-circle"></i>
+                            查看本地数据
+                        </button>
+                    </div>
+                    
+                    <div v-if="backtest.dataInfo" class="data-info">
+                        <h4>本地数据信息</h4>
+                        <p>数据目录: {{ backtest.dataInfo.data_dir }}</p>
+                        <p>文件数量: {{ backtest.dataInfo.files_count }}</p>
+                        <div v-if="backtest.dataInfo.files && backtest.dataInfo.files.length > 0" style="max-height: 200px; overflow-y: auto;">
+                            <div v-for="file in backtest.dataInfo.files" :key="file.filename" class="file-info-item">
+                                <strong>{{ file.filename }}</strong>
+                                <span v-if="file.records_count"> - {{ file.records_count }} 条记录 ({{ file.start_date }} ~ {{ file.end_date }})</span>
+                                <span v-if="file.error" style="color: var(--error-color);">错误: {{ file.error }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 回测配置 -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-cogs"></i>
+                            回测配置
+                        </h2>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">策略名称</label>
+                            <select v-model="backtest.strategyName" class="form-input">
+                                <option value="">请选择策略...</option>
+                                <option v-for="strategy in selectOptions.strategyNames" :value="strategy" :key="strategy">{{ strategy }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">交易对</label>
+                            <select v-model="backtest.symbol" class="form-input">
+                                <option value="BTCUSDT">BTCUSDT</option>
+                                <option value="ETHUSDT">ETHUSDT</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">时间周期</label>
+                            <select v-model="backtest.timeframe" class="form-input">
+                                <option value="1m">1分钟</option>
+                                <option value="5m">5分钟</option>
+                                <option value="15m">15分钟</option>
+                                <option value="30m">30分钟</option>
+                                <option value="1h">1小时</option>
+                                <option value="4h">4小时</option>
+                                <option value="1d">1天</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">开始日期</label>
+                            <input type="date" v-model="backtest.startDate" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">结束日期</label>
+                            <input type="date" v-model="backtest.endDate" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">初始资金 (USDT)</label>
+                            <input type="number" v-model="backtest.initialBalance" class="form-input" step="1000" min="1000">
+                        </div>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button class="btn btn-primary" @click="runBacktest" :disabled="backtest.running || !backtest.strategyName">
+                            <i :class="backtest.running ? 'fas fa-spinner fa-spin' : 'fas fa-play'"></i>
+                            {{ backtest.running ? '回测中...' : '开始回测' }}
+                        </button>
+                        <button class="btn btn-secondary" @click="resetBacktestForm">
+                            <i class="fas fa-undo"></i>
+                            重置
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 回测结果 -->
+                <div v-if="backtest.results" class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-chart-bar"></i>
+                            回测结果
+                        </h2>
+                    </div>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-card" :class="{ 'positive': backtest.results.totalReturnPct >= 0, 'negative': backtest.results.totalReturnPct < 0 }">
+                            <h4>总收益</h4>
+                            <div class="value">{{ (backtest.results.totalReturn || 0).toFixed(2) }} USDT</div>
+                        </div>
+                        <div class="metric-card" :class="{ 'positive': backtest.results.totalReturnPct >= 0, 'negative': backtest.results.totalReturnPct < 0 }">
+                            <h4>收益率</h4>
+                            <div class="value">{{ (backtest.results.totalReturnPct || 0).toFixed(2) }}%</div>
+                        </div>
+                        <div class="metric-card">
+                            <h4>最大回撤</h4>
+                            <div class="value">{{ (backtest.results.maxDrawdownPct || 0).toFixed(2) }}%</div>
+                        </div>
+                        <div class="metric-card">
+                            <h4>夏普比率</h4>
+                            <div class="value">{{ (backtest.results.sharpeRatio || 0).toFixed(2) }}</div>
+                        </div>
+                        <div class="metric-card">
+                            <h4>总交易次数</h4>
+                            <div class="value">{{ backtest.results.totalTrades || 0 }}</div>
+                        </div>
+                        <div class="metric-card" :class="{ 'positive': backtest.results.winRate >= 50, 'negative': backtest.results.winRate < 50 }">
+                            <h4>胜率</h4>
+                            <div class="value">{{ (backtest.results.winRate || 0).toFixed(1) }}%</div>
+                        </div>
+                        <div class="metric-card">
+                            <h4>最终资产</h4>
+                            <div class="value">{{ (backtest.results.finalPortfolioValue || 0).toFixed(2) }} USDT</div>
+                        </div>
+                        <div class="metric-card">
+                            <h4>盈亏比</h4>
+                            <div class="value">{{ (backtest.results.profitFactor || 0).toFixed(2) }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="subsection">
+                        <h3>交易记录</h3>
+                        <div v-if="!backtest.results.tradeRecords || backtest.results.tradeRecords.length === 0" class="empty-state">
+                            <p>无交易记录</p>
+                        </div>
+                        <div v-else style="max-height: 400px; overflow-y: auto;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>时间</th>
+                                        <th>操作</th>
+                                        <th>价格</th>
+                                        <th>数量</th>
+                                        <th>余额</th>
+                                        <th>组合价值</th>
+                                        <th>原因</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="trade in backtest.results.tradeRecords" :key="trade.timestamp">
+                                        <td>{{ formattedTime(trade.timestamp) }}</td>
+                                        <td>
+                                            <span :class="['signal-badge', trade.action.toLowerCase()]">
+                                                {{ trade.action }}
+                                            </span>
+                                        </td>
+                                        <td>{{ (trade.price || 0).toFixed(2) }}</td>
+                                        <td>{{ (trade.quantity || 0).toFixed(6) }}</td>
+                                        <td>{{ (trade.balance || 0).toFixed(2) }}</td>
+                                        <td>{{ (trade.portfolioValue || 0).toFixed(2) }}</td>
+                                        <td>{{ trade.reason || '-' }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Settings Tab -->
             <div v-show="currentTab === 'settings'" class="tab-content">
                 <div class="section">
@@ -556,6 +882,77 @@
                 <div class="disclaimer" style="margin-top: 1rem; padding: 1rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; font-size: 0.875rem; color: var(--text-secondary); text-align: center;">
                     生成的交易信号仅供学习参考，不构成任何投资建议
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Strategy Upload Modal -->
+    <div :class="{ 'modal': true, 'active': showUploadStrategyModal }" @click.self="closeUploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">上传Python策略文件</h3>
+                <button class="close-btn" @click="closeUploadModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">选择Python文件</label>
+                    <input type="file" ref="strategyFileInput" @change="onFileSelected" accept=".py" class="form-input">
+                    <small class="form-help">支持.py格式的Python文件，最大10MB</small>
+                </div>
+                
+                <div v-if="selectedFile" class="file-preview">
+                    <div class="file-info">
+                        <i class="fas fa-python text-primary"></i>
+                        <div class="file-details">
+                            <div class="file-name">{{ selectedFile.name }}</div>
+                            <div class="file-size">{{ formatFileSize(selectedFile.size) }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">策略描述（可选）</label>
+                    <textarea v-model="strategyDescription" class="form-input" rows="3" placeholder="简单描述该策略的功能..."></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" @click="closeUploadModal">取消</button>
+                <button class="btn btn-primary" @click="uploadStrategy" :disabled="!selectedFile || uploading">
+                    <i :class="uploading ? 'fas fa-spinner fa-spin' : 'fas fa-upload'"></i>
+                    {{ uploading ? '上传中...' : '上传文件' }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Strategy Delete Confirmation Modal -->
+    <div :class="{ 'modal': true, 'active': showDeleteConfirmModal }" @click.self="closeDeleteConfirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">确认删除</h3>
+                <button class="close-btn" @click="closeDeleteConfirmModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body" v-if="strategyToDelete">
+                <p>确定要删除策略文件 <strong>{{ strategyToDelete.filename }}</strong> 吗？</p>
+                <div class="warning-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>删除后将无法恢复，并且会通知Python项目移除该策略。</span>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" @click="closeDeleteConfirmModal">取消</button>
+                <button class="btn btn-danger" @click="confirmDeleteStrategy" :disabled="deleting">
+                    <i :class="deleting ? 'fas fa-spinner fa-spin' : 'fas fa-trash'"></i>
+                    {{ deleting ? '删除中...' : '确认删除' }}
+                </button>
             </div>
         </div>
     </div>
