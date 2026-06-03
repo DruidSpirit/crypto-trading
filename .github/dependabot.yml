@@ -5,6 +5,19 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      # Spring Boot 4.x is a framework migration and should be handled manually.
+      - dependency-name: org.springframework.boot:spring-boot-starter-parent
+        versions:
+          - "[4,)"
+      # OkHttp 5.x changes Maven artifact behavior for JVM consumers.
+      - dependency-name: com.squareup.okhttp3:okhttp
+        versions:
+          - "[5,)"
+      # TA4J 0.16+ changes Bar/BarSeries APIs used by the exchange data layer.
+      - dependency-name: org.ta4j:ta4j-core
+        versions:
+          - "[0.16,)"
 
   - package-ecosystem: pip
     directory: /python-strategy-service
