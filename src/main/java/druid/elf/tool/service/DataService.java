@@ -15,23 +15,18 @@ public class DataService {
     @Autowired
     private ExchangeDataServiceBuilder exchangeDataServiceBuilder;
 
-    /**
-     * 创建交易所数据服务的实例
-     * @param exchangeType 交易所类型
-     * @param proxySettings 代理设置对象，可以为null表示不使用代理
-     * @return ExchangeDataService 实例
-     */
+
     public ExchangeDataService createExchangeDataService(ExchangeType exchangeType, SettingsProxy proxySettings) {
-        // 使用获取到的配置构建 ExchangeDataServiceBuilder
+
         ExchangeDataServiceBuilder builder = exchangeDataServiceBuilder
                 .withExchangeType(exchangeType)
                 .withProxySettings(proxySettings);
 
-        // 构建并返回 ExchangeDataService 实例
+
         try {
             return builder.build();
         } catch (Exception e) {
-            log.error("创建交易所数据服务失败, exchangeType: {}", exchangeType, e);
+            log.error("Failed to create exchange data service, exchangeType: {}", exchangeType, e);
             throw e;
         }
     }

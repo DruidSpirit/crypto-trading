@@ -42,7 +42,7 @@
             <artifactId>hutool-core</artifactId>
             <version>${hutool.version}</version>
         </dependency>
-        <!--雪花算法-->
+        <!-- Snowflake ID generator -->
         <dependency>
             <groupId>com.github.yitter</groupId>
             <artifactId>yitter-idgenerator</artifactId>

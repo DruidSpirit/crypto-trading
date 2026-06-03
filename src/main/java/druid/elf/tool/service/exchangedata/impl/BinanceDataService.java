@@ -12,9 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Binance 交易所数据服务实现类，提供Binance的K线数据获取功能和交易对信息
- */
+
 @Component
 public class BinanceDataService extends AbstractExchangeDataService {
 
@@ -55,43 +53,33 @@ public class BinanceDataService extends AbstractExchangeDataService {
         return ExchangeType.BINANCE;
     }
 
-    /**
-     * 构建Binance交易对信息的API请求URL
-     *
-     * @return 返回Binance的交易所信息API URL，用于获取所有交易对
-     */
+
     @Override
     protected String buildTradingPairsUrl() {
         return "https://api.binance.com/api/v3/exchangeInfo";
     }
 
-    /**
-     * 解析Binance返回的交易对数据JSON，转换为TradingPair对象列表
-     *
-     * @param responseBody API返回的JSON字符串，包含交易对信息
-     * @return 返回解析后的TradingPair列表
-     * @throws IOException 如果JSON解析失败或数据格式错误，抛出异常
-     */
+
     @Override
     protected List<TradingPair> fetchTradingPairs(String responseBody) throws IOException {
-        JsonNode rootNode = objectMapper.readTree(responseBody); // 解析JSON响应
-        JsonNode symbolsNode = rootNode.get("symbols"); // 获取交易对数组
+        JsonNode rootNode = objectMapper.readTree(responseBody);
+        JsonNode symbolsNode = rootNode.get("symbols");
         List<TradingPair> tradingPairs = new ArrayList<>();
 
         for (JsonNode symbolNode : symbolsNode) {
-            String symbol = symbolNode.get("symbol").asText(); // 交易对名称，例如BTCUSDT
-            String baseCurrency = symbolNode.get("baseAsset").asText(); // 基础货币，例如BTC
-            String quoteCurrency = symbolNode.get("quoteAsset").asText(); // 报价货币，例如USDT
-            String status = symbolNode.get("status").asText().equals("TRADING") ? "ACTIVE" : "INACTIVE"; // 状态转换为ACTIVE/INACTIVE
+            String symbol = symbolNode.get("symbol").asText();
+            String baseCurrency = symbolNode.get("baseAsset").asText();
+            String quoteCurrency = symbolNode.get("quoteAsset").asText();
+            String status = symbolNode.get("status").asText().equals("TRADING") ? "ACTIVE" : "INACTIVE";
 
             TradingPair tradingPair = new TradingPair()
                     .setSymbol(symbol)
                     .setBaseCurrency(baseCurrency)
                     .setQuoteCurrency(quoteCurrency)
-                    .setExchange(ExchangeType.BINANCE.name()) // 设置交易所名称
+                    .setExchange(ExchangeType.BINANCE.name())
                     .setStatus(status)
-                    .setInstrumentType("SPOT"); // 默认设置为现货交易
-            // 注意：Binance未提供listingDate，可通过其他API或公告补充
+                    .setInstrumentType("SPOT");
+
 
             tradingPairs.add(tradingPair);
         }

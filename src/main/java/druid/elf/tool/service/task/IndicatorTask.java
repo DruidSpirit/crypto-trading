@@ -69,17 +69,17 @@ public class IndicatorTask implements SchedulingConfigurer {
         tradingPairFuture.thenRunAsync(this::generateAndStoreSignalAsync, executorService)
                 .whenComplete((result, exception) -> {
                     if (exception != null) {
-                        log.error("IndicatorTask 初始任务失败", exception);
+                        log.error("IndicatorTask initial task failed", exception);
                     } else {
-                        log.info("IndicatorTask 初始任务完成");
+                        log.info("IndicatorTask initial task complete");
                     }
                 });
-        log.info("已触发 IndicatorTask 异步初始化，等待 TradingPairTask 完成后执行，项目启动流程继续");
+        log.info("Triggered IndicatorTask async initialization, waiting for TradingPairTask to complete, project startup continues");
     }
 
     @Async
     public void generateAndStoreSignalAsync() {
-        log.info("TradingPairTask 已完成，异步执行 IndicatorTask 的交易信号生成");
+        log.info("TradingPairTask completed, executing IndicatorTask trading signal generation");
         generateAndStoreSignal();
     }
 
@@ -111,7 +111,7 @@ public class IndicatorTask implements SchedulingConfigurer {
                     .map(Settings::getFetchFrequency)
                     .filter(f -> f > 0)
                     .orElse(15);
-            log.info("开始生成交易信号，当前频率：{} 分钟", frequency);
+            log.info("Starting trading signal generation, current frequency: {} minutes", frequency);
 
             List<CompletableFuture<Void>> futures = Arrays.stream(ExchangeType.values())
                     .map(exchangeType -> CompletableFuture.runAsync(
@@ -119,46 +119,42 @@ public class IndicatorTask implements SchedulingConfigurer {
                     .toList();
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-            log.info("本次交易信号生成任务已完成");
+            log.info("Trading signal generation task completed");
         } catch (Exception e) {
-            log.error("生成交易信号任务失败", e);
+            log.error("Trading signal generation task failed", e);
         }
     }
 
-    /**
-     * 处理交易所数据，使用局部代理池并在任务完成后关闭
-     * @param exchangeType 交易所类型
-     * @param settings     设置对象，包含交易所类型和代理列表
-     */
+
     private void processExchange(ExchangeType exchangeType, Settings settings) {
-        // 检查交易所类型是否有效
+
         if (settings == null || !settings.getExchangeTypes().contains(exchangeType.name())) {
-            log.info("交易所 {} 不在设置中，跳过处理", exchangeType);
+            log.info("Exchange {} not in settings, skipping", exchangeType);
             return;
         }
 
-        // 加载交易对数据
+
         List<TradingPair> pairs = tradingPairRepository.findByExchange(exchangeType.name());
         if (pairs == null || pairs.isEmpty()) {
-            log.warn("未找到 {} 的交易对，请检查数据初始化", exchangeType);
-            log.info("再次获取并初始化{} 的交易对", exchangeType);
+            log.warn("Not found {} trading pairs, please check data initialization", exchangeType);
+            log.info("Re-fetching and initializing {} trading pairs", exchangeType);
             pairs = tradingPairSyncService.syncTradingPairs(settings);
             if (pairs == null || pairs.isEmpty()) {
-                log.warn("再次获取后还是未找到 {} 的交易对，请检查数据初始化，结束K线数据获取运行。", exchangeType);
+                log.warn("Still not found {} trading pairs after re-fetch, ending K-line data fetch", exchangeType);
                 return;
             }
         }
-        log.info("加载 {} 的 {} 条交易对", exchangeType, pairs.size());
+        log.info("Loaded {} with {} trading pairs", exchangeType, pairs.size());
 
-        // 创建代理池，无代理时单线程运行
+
         ProxyPoolManager proxyPool = new ProxyPoolManager(settings.getProxies());
         try {
-            // 定义K线间隔，排除1分钟和5分钟
+
             List<KlineInterval> intervals = Arrays.stream(KlineInterval.values())
                     .filter(i -> i != KlineInterval._1M && i != KlineInterval._5M)
                     .toList();
 
-            // 提交任务并获取CompletableFuture列表
+
             List<CompletableFuture<Void>> futures = pairs.stream()
                     .map(pair -> proxyPool.submitTaskWithFuture(() -> {
                         String symbol = pair.getSymbol();
@@ -170,63 +166,63 @@ public class IndicatorTask implements SchedulingConfigurer {
                             try {
                                 series.put(interval.name(), service.getKlineData(symbol, interval, 300));
                             } catch (Exception e) {
-                                log.error("获取K线数据失败, 交易所: {}, 符号: {}, 间隔: {}, 代理: {}:{}, 错误: {}",
+                                log.error("Failed to get K-line data, exchange: {}, symbol: {}, interval: {}, proxy: {}:{}, error: {}",
                                         exchangeType, symbol, interval,
-                                        proxy != null ? proxy.getIp() : "无",
-                                        proxy != null ? proxy.getPort() : "无", e.getMessage());
+                                        proxy != null ? proxy.getIp() : "N/A",
+                                        proxy != null ? proxy.getPort() : "N/A", e.getMessage());
                                 break;
                             }
                         }
 
                         List<TradeSignal> signals = tradeStrategyService.generateSignal(series, symbol);
                         signals.forEach(s -> s.setExchange(exchangeType.name()));
-                        // signals 是否为空都要打印日志
+
                         if (!signals.isEmpty()) {
-                            // 不为空的情况
+
                             String priceInfo = (signals.get(0) != null && signals.get(0).getPrice() != null)
                                     ? signals.get(0).getPrice().toString()
-                                    : "无价格数据";
-                            log.info("正在保存 {} 个信号，交易所: {}，交易对: {}，首个信号价格: {}",
+                                    : "no price data";
+                            log.info("Saving {} signals, exchange: {}, pair: {}, first signal price: {}",
                                     signals.size(),
                                     exchangeType,
                                     symbol,
                                     priceInfo);
                             signalStorageService.saveSignals(signals, exchangeType, symbol);
                         } else {
-                            // 为空的情况
-                            log.info("没有信号需要保存，交易所: {}，交易对: {}",
+
+                            log.info("No signals to save, exchange: {}, pair: {}",
                                     exchangeType,
                                     symbol);
                         }
                     }))
                     .toList();
 
-            // 等待所有任务完成
+
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-            log.info("完成 {} 的所有交易对处理", exchangeType);
+            log.info("Completed all trading pair processing for {}", exchangeType);
         } catch (Exception e) {
-            log.error("处理交易所 {} 失败: {}", exchangeType, e.getMessage());
+            log.error("Processing exchange {} failed: {}", exchangeType, e.getMessage());
         } finally {
             proxyPool.shutdown();
-            log.info("代理池关闭 for {}", exchangeType);
+            log.info("Proxy pool shutdown for {}", exchangeType);
         }
     }
 
     @PreDestroy
     public void shutdown() {
-        log.info("正在关闭 IndicatorTask 的线程池...");
+        log.info("Shutting down IndicatorTask thread pool...");
         executorService.shutdown();
         try {
             if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
                 executorService.shutdownNow();
-                log.warn("线程池未能在 60 秒内正常关闭，已强制关闭");
+                log.warn("Thread pool failed to shutdown within 60s, forced shutdown");
             } else {
-                log.info("线程池已正常关闭");
+                log.info("Thread pool shutdown successfully");
             }
         } catch (InterruptedException e) {
             executorService.shutdownNow();
             Thread.currentThread().interrupt();
-            log.error("关闭线程池时被中断", e);
+            log.error("Thread pool shutdown interrupted", e);
         }
     }
 }
@@ -242,10 +238,10 @@ class SignalStorageService {
     public void saveSignals(List<TradeSignal> signals, ExchangeType exchangeType, String symbol) {
         try {
             tradeSignalRepository.saveAll(signals);
-            log.info("成功保存 {} 条交易信号, exchange: {}, symbol: {}",
+            log.info("Successfully saved {} trading signals, exchange: {}, symbol: {}",
                     signals.size(), exchangeType, symbol);
         } catch (Exception e) {
-            log.error("保存交易信号失败, exchange: {}, symbol: {}", exchangeType, symbol, e);
+            log.error("Failed to save trading signals, exchange: {}, symbol: {}", exchangeType, symbol, e);
             throw e;
         }
     }

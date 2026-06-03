@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface TradingPairRepository extends JpaRepository<TradingPair, String> {
 
-    // 按交易所查找交易对
+
     List<TradingPair> findByExchange(String exchange);
 
 }

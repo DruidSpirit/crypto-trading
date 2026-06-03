@@ -42,10 +42,10 @@ public class StrategyFile {
     private LocalDateTime lastUpdateTime;
     
     public enum StrategyStatus {
-        ACTIVE,     // 已激活
-        INACTIVE,   // 未激活  
-        UPDATING,   // 更新中
-        ERROR       // 错误
+        ACTIVE,
+        INACTIVE,
+        UPDATING,
+        ERROR
     }
     
     @PrePersist

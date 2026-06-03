@@ -68,10 +68,10 @@ public class PythonStrategyNotificationService {
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
             
             String response = restTemplate.postForObject(url, request, String.class);
-            log.info("Python API响应: {}", response);
+            log.info("Python API response: {}", response);
         } catch (Exception e) {
-            log.error("发送通知到Python API失败: {}", url, e);
-            throw new RuntimeException("通知Python项目失败", e);
+            log.error("Failed to send notification to Python API: {}", url, e);
+            throw new RuntimeException("Failed to notify Python project", e);
         }
     }
 }

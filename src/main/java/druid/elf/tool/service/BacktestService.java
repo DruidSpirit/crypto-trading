@@ -28,7 +28,7 @@ public class BacktestService {
 
     public BacktestResponseDTO runBacktest(BacktestRequestDTO request) {
         try {
-            log.info("开始回测请求：{}", request);
+            log.info("Starting backtest request: {}", request);
             
             BacktestResponseDTO response = webClient
                     .post()
@@ -36,34 +36,34 @@ public class BacktestService {
                     .bodyValue(request)
                     .retrieve()
                     .bodyToMono(BacktestResponseDTO.class)
-                    .timeout(Duration.ofMinutes(5)) // 回测可能需要较长时间
+                    .timeout(Duration.ofMinutes(5))
                     .block();
                     
-            log.info("回测响应：成功={}", response != null ? response.isSuccess() : "null");
+            log.info("Backtest response: success={}", response != null ? response.isSuccess() : "null");
             return response;
             
         } catch (WebClientResponseException e) {
-            log.error("回测请求失败，HTTP状态码：{}，响应体：{}", 
+            log.error("Backtest request failed, HTTP status code: {}, response body: {}",
                 e.getStatusCode(), e.getResponseBodyAsString());
-            
+
             BacktestResponseDTO errorResponse = new BacktestResponseDTO();
             errorResponse.setSuccess(false);
-            errorResponse.setMessage("回测请求失败: " + e.getResponseBodyAsString());
+            errorResponse.setMessage("Backtest request failed: " + e.getResponseBodyAsString());
             return errorResponse;
-            
+
         } catch (Exception e) {
-            log.error("回测请求失败", e);
-            
+            log.error("Backtest request failed", e);
+
             BacktestResponseDTO errorResponse = new BacktestResponseDTO();
             errorResponse.setSuccess(false);
-            errorResponse.setMessage("回测请求失败: " + e.getMessage());
+            errorResponse.setMessage("Backtest request failed: " + e.getMessage());
             return errorResponse;
         }
     }
 
     public Map<String, Object> downloadData(String symbol, String startDate, String endDate, String timeframe) {
         try {
-            log.info("下载数据请求：symbol={}, startDate={}, endDate={}, timeframe={}", 
+            log.info("Data download request: symbol={}, startDate={}, endDate={}, timeframe={}",
                 symbol, startDate, endDate, timeframe);
             
             Map<String, Object> request = Map.of(
@@ -80,24 +80,24 @@ public class BacktestService {
                     .bodyValue(request)
                     .retrieve()
                     .bodyToMono(Map.class)
-                    .timeout(Duration.ofMinutes(10)) // 数据下载可能需要较长时间
+                    .timeout(Duration.ofMinutes(10))
                     .block();
                     
-            log.info("数据下载响应：{}", response);
+            log.info("Data download response: {}", response);
             return response;
             
         } catch (Exception e) {
-            log.error("数据下载失败", e);
+            log.error("Data download failed", e);
             return Map.of(
                 "success", false,
-                "message", "数据下载失败: " + e.getMessage()
+                "message", "Data download failed: " + e.getMessage()
             );
         }
     }
 
     public Map<String, Object> batchDownloadData(String[] symbols, String startDate, String endDate, String timeframe) {
         try {
-            log.info("批量下载数据请求：symbols={}, startDate={}, endDate={}, timeframe={}", 
+            log.info("Batch data download request: symbols={}, startDate={}, endDate={}, timeframe={}",
                 java.util.Arrays.toString(symbols), startDate, endDate, timeframe);
             
             Map<String, Object> request = Map.of(
@@ -114,17 +114,17 @@ public class BacktestService {
                     .bodyValue(request)
                     .retrieve()
                     .bodyToMono(Map.class)
-                    .timeout(Duration.ofMinutes(20)) // 批量下载需要更长时间
+                    .timeout(Duration.ofMinutes(20))
                     .block();
                     
-            log.info("批量数据下载响应：{}", response);
+            log.info("Batch data download response: {}", response);
             return response;
             
         } catch (Exception e) {
-            log.error("批量数据下载失败", e);
+            log.error("Batch data download failed", e);
             return Map.of(
                 "success", false,
-                "message", "批量数据下载失败: " + e.getMessage()
+                "message", "Batch data download failed: " + e.getMessage()
             );
         }
     }
@@ -140,14 +140,14 @@ public class BacktestService {
                     .timeout(Duration.ofSeconds(30))
                     .block();
                     
-            log.info("获取数据信息成功");
+            log.info("Data info retrieved successfully");
             return response;
             
         } catch (Exception e) {
-            log.error("获取数据信息失败", e);
+            log.error("Failed to get data information", e);
             return Map.of(
                 "success", false,
-                "message", "获取数据信息失败: " + e.getMessage()
+                "message", "Failed to get data information: " + e.getMessage()
             );
         }
     }

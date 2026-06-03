@@ -29,7 +29,7 @@ public class PythonStrategyClient {
 
     public PythonTradeSignalDTO executeStrategy(StrategyRequestDTO request) {
         try {
-            log.info("调用Python策略服务，请求参数：{}", request);
+            log.info("Calling Python strategy service, request params: {}", request);
             
             StrategyResponseDTO response = webClient
                     .post()
@@ -40,23 +40,23 @@ public class PythonStrategyClient {
                     .timeout(Duration.ofSeconds(30))
                     .block();
                     
-            log.info("Python策略服务响应：{}", response);
+            log.info("Python strategy service response: {}", response);
             
             if (response != null && response.isSuccess()) {
                 return response.getData();
             } else {
-                log.info("Python策略服务未生成交易信号或执行失败: {}", 
-                    response != null ? response.getMessage() : "响应为空");
+                log.info("Python strategy service did not generate signal or execution failed: {}",
+                    response != null ? response.getMessage() : "Response is null");
                 return null;
             }
             
         } catch (WebClientResponseException e) {
-            log.error("调用Python策略服务失败，HTTP状态码：{}，响应体：{}", 
+            log.error("Failed to call Python strategy service, HTTP status code: {}, response body: {}",
                 e.getStatusCode(), e.getResponseBodyAsString());
             return null;
         } catch (Exception e) {
-            log.error("调用Python策略服务失败", e);
-            throw new RuntimeException("调用Python策略服务失败: " + e.getMessage(), e);
+            log.error("Failed to call Python strategy service", e);
+            throw new RuntimeException("Failed to call Python strategy service: " + e.getMessage(), e);
         }
     }
 
@@ -72,14 +72,14 @@ public class PythonStrategyClient {
             
             return response != null && response.contains("healthy");
         } catch (Exception e) {
-            log.warn("Python策略服务健康检查失败", e);
+            log.warn("Python strategy service health check failed", e);
             return false;
         }
     }
     
     public String[] getAvailableStrategies() {
         try {
-            log.info("获取可用策略列表");
+            log.info("Getting available strategy list");
             
             String response = webClient
                     .get()
@@ -89,12 +89,12 @@ public class PythonStrategyClient {
                     .timeout(Duration.ofSeconds(10))
                     .block();
                     
-            log.info("获取策略列表响应：{}", response);
-            // 这里可以解析JSON返回策略数组，暂时返回默认策略
+            log.info("Strategy list response: {}", response);
+
             return new String[]{"ElderSwingStrategy", "ElderIntradayStrategy"};
             
         } catch (Exception e) {
-            log.warn("获取策略列表失败", e);
+            log.warn("Failed to get strategy list", e);
             return new String[0];
         }
     }

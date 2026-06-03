@@ -12,9 +12,7 @@ public class TradingPairService {
     @Autowired
     private TradingPairRepository repository;
 
-    /**
-     * 获取所有交易对
-     */
+
     public List<TradingPair> getAllTradingPairs() {
         return repository.findAll();
     }

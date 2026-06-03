@@ -1,43 +1,51 @@
 ## 📖 项目简介
 
-**Crypto Kline Crawler & Signal Generator** 是一个开源项目，专注于从各大加密货币交易所的公开API中爬取历史K线数据，并结合用户自定义的交易策略生成交易信号。项目内置了一个简单但实用的交易策略示例，同时提供灵活的扩展性，支持多线程数据拉取和代理配置。
+**Crypto Trading** 是一个开源的加密货币交易信号平台，专注于从各大加密货币交易所的公开API中爬取历史K线数据，并结合用户自定义的交易策略生成交易信号。项目支持Java后端 + Python策略引擎双架构，内置Elder三重过滤策略，同时提供灵活的扩展性，支持多线程数据拉取和代理配置。
 
 ### ✨ 核心功能
-- **数据爬取**：从交易所（如默认Gate.io）获取历史K线数据。
+- **数据爬取**：支持Binance、OKX、Gate.io、Bybit等交易所获取历史K线数据。
 - **信号生成**：基于自定义策略生成买入/卖出信号。
+- **Python策略引擎**：用Python编写交易策略，支持热更新。
 - **高性能**：支持多代理、多线程加速数据拉取。
-- **Web控制台**：内置管理界面，实时监控爬取和信号状态。
+- **Web控制台**：内置管理界面，实时监控爬取和信号状态，支持策略回测。
 
 ---
 
-## 🚀 快速开始
+## 🚀 快速开始（生产版）
+
+### 环境要求
+- **Java**: JRE 17 或以上
+- **Python**: 3.9 或以上
 
 ### Windows
-1. 下载并解压项目。
-2. 双击 `start.bat` 启动。
-3. 双击 `stop.bat` 停止。
+1. 下载并解压 `crypto-trading-release.zip`。
+2. **先**双击 `start-python.bat` 启动Python策略服务（首次运行会自动安装依赖）。
+3. **再**双击 `start-java.bat` 启动Java后端。
+4. 浏览器访问 http://localhost:5567
 
-### macOS
-1. 下载并解压项目。
-2. 打开终端，进入项目目录：
+### Linux / macOS
+1. 下载并解压 `crypto-trading-release.zip`。
+2. 给脚本添加执行权限：
    ```bash
-   cd /path/to/project
+   chmod +x start-python.sh start-java.sh
    ```
-###   启动：
+3. 先启动Python策略服务：
    ```bash
-sh start.sh
-```
-###   停止：
+   ./start-python.sh
+   ```
+4. 再启动Java后端（新开一个终端窗口）：
    ```bash
-sh stop.sh
-```
-> 启动成功后，浏览器会自动打开控制页面。若未自动打开，请手动访问：
-🔗 [http://localhost:5567/api/index](http://localhost:5567/api/index)
+   ./start-java.sh
+   ```
+5. 浏览器访问 http://localhost:5567
 
-> ⚠️ **注意**：项目打开后需等待10分钟左右拉取数据，刷新页面即可查看最新交易信号数据。若无法启动，请检查 `5567` 端口是否被占用。可使用以下命令检查并释放：
+> ⚠️ **注意**：
+> - 必须**先启动Python服务，再启动Java后端**。关闭对应的命令行窗口即可停止服务。
+> - 启动后需等待几分钟拉取数据，刷新页面即可查看最新交易信号数据。
+> - 若无法启动，请检查 `5567`（Java）和 `8001`（Python）端口是否被占用：
 > ```bash
 > netstat -aon | findstr :5567  # Windows
-> lsof -i :5567                 # macOS
+> lsof -i :5567                 # Linux/macOS
 > ```
 
 ---
@@ -45,7 +53,7 @@ sh stop.sh
 ## 🛠 使用指南
 
 ### 数据拉取配置
-- **默认交易所**：Gate.io（可在配置文件中切换其他交易所）。
+- **默认交易所**：Gate.io（可在设置页面切换其他交易所）。
 - **代理支持**：
   - 数据拉取较慢时，可添加代理。
   - 支持多个代理，多代理启用多线程爬取，提升效率。
@@ -55,11 +63,16 @@ sh stop.sh
   - 或选择 `all` 模式，爬取交易所全部数据。
   - ⚠️ **警告**：`all` 模式数据量大，代理不足时请谨慎使用。
 
-### 自定义交易策略
+### 自定义交易策略（Java）
 1. **实现步骤**：
    - 继承 `AbstractTradeStrategy` 类。
    - 重写 `doHandle` 方法，返回 `TradeStrategyDTO`。
 2. **代码示例**：见下方 [RSI+ATR突破策略示例](#rsi+atr突破策略示例)。
+
+### 自定义交易策略（Python）
+1. 在 `python-strategy-service/src/strategies/` 下新建 `.py` 文件。
+2. 继承 `BaseTradeStrategy`，实现 `execute()` 和 `get_strategy_name()` 方法。
+3. 将文件上传到Web界面的策略管理页面，或直接放入目录后热更新。
 
 ---
 
@@ -226,25 +239,41 @@ public class RsiAtrBreakoutStrategy extends AbstractTradeStrategy {
    - 利用人工智能动态生成交易策略。
    - 通过机器学习分析历史数据，优化参数并集成到系统中，提升信号准确性。
 
-2. **嵌入Python支持**  
-   - 增加Python策略编写支持，用户可用Python开发交易逻辑。
+2. **增强Python策略生态**  
+   - 丰富内置Python策略库，降低用户使用门槛。
+   - 支持策略在线编辑和调试。
    - 借助Python生态（如Pandas、TA-Lib），增强项目的扩展性和灵活性。
+
+3. **Docker容器化部署**
+   - 提供Docker一键部署方案，免去环境配置烦恼。
 
 ---
 
 ## 📂 项目结构
 ```text
-├── src
-│   └── druid.elf.tool.service.strategy
-│       ├── AbstractTradeStrategy.java  # 交易策略抽象基类
-│       ├── TradeStrategyDTO.java       # 交易信号数据对象
-│       └── impl
-│           └── RsiAtrBreakoutStrategy.java # 示例策略实现
-├── start.bat                           # Windows启动脚本
-├── stop.bat                            # Windows停止脚本
-├── start.sh                            # macOS启动脚本
-├── stop.sh                             # macOS停止脚本
+├── src/                                # Java后端源码
+│   └── main/java/druid/elf/tool/
+│       ├── controller/                 # REST API控制器
+│       ├── service/                    # 业务逻辑层
+│       │   ├── exchangedata/           # 交易所数据爬取
+│       │   ├── strategy/               # 交易策略
+│       │   │   └── impl/
+│       │   │       ├── ElderIntradayStrategyAdapter.java
+│       │   │       └── ElderSwingStrategyAdapter.java
+│       │   └── task/                   # 定时任务
+│       ├── entity/                     # 数据库实体
+│       ├── dto/                        # 数据传输对象
+│       └── enums/                      # 枚举定义
+├── python-strategy-service/            # Python策略服务
+│   ├── main.py                         # FastAPI入口
+│   ├── src/strategies/                 # Python策略实现
+│   ├── src/utils/                      # 技术指标 & 回测引擎
+│   └── requirements.txt
+├── pack-release.bat                    # 一键打包脚本
+├── release-template/                   # 生产版启动脚本模板
+└── pom.xml
 ```
+
 ---
 
 ## 🤝 如何贡献

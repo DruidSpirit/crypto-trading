@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Comment("交易信号表")
+@Comment("Trading signal table")
 @Accessors(chain = true)
 public class TradeSignal implements Serializable {
 
@@ -24,56 +24,56 @@ public class TradeSignal implements Serializable {
     private static final long serialVersionUID = -4023589405965629556L;
 
     @Id
-    @Comment("主键ID")
+    @Comment("Primary key ID")
     @GeneratedValue(generator = "snowFlake")
     @GenericGenerator(name = "snowFlake", strategy = "druid.elf.tool.util.SnowIdGenerator")
     private String id;
 
-    @Comment("交易对")
+    @Comment("Trading pair")
     @Column(nullable = false, length = 20)
-    private String symbol; // 例如：BTCUSDT, ETHUSDT
+    private String symbol;
 
-    @Comment("交易信号")
+    @Comment("Trading signal")
     @Column(nullable = false, length = 10)
     private String signal; // BUY/SELL
 
-    @Comment("策略")
+    @Comment("Strategy")
     @Column(length = 50)
     private String strategy;
 
-    @Comment("交易所名称")
+    @Comment("Exchange name")
     @Column(nullable = false, length = 30)
-    private String exchange; // 字符串，例如：OKX, BINANCE
+    private String exchange;
 
-    @Comment("当前价格")
+    @Comment("Current price")
     @Column(nullable = false, precision = 38, scale = 8)
-    private BigDecimal price; // 当前价格，支持 8 位小数
+    private BigDecimal price;
 
-    @Comment("买入价格")
+    @Comment("Buy price")
     @Column(precision = 38, scale = 8)
-    private BigDecimal buyPrice; // 建议买入价格，支持 8 位小数
+    private BigDecimal buyPrice;
 
-    @Comment("止盈价格")
+    @Comment("Take profit price")
     @Column(precision = 38, scale = 8)
-    private BigDecimal takeProfit; // 止盈价格，支持 8 位小数
+    private BigDecimal takeProfit;
 
-    @Comment("止损价格")
+    @Comment("Stop loss price")
     @Column(precision = 38, scale = 8)
-    private BigDecimal stopLoss; // 止损价格，支持 8 位小数
+    private BigDecimal stopLoss;
 
-    @Comment("盈亏比")
+    @Comment("Profit/loss ratio")
     @Column(precision = 38, scale = 2)
-    private BigDecimal profitLossRatio; // 盈亏比，支持 1 位小数，例如 2.5 表示 2.5:1
+    private BigDecimal profitLossRatio;
 
-    @Comment("信号生成时间")
+    @Comment("Signal generation time")
     @Column(nullable = false)
     private LocalDateTime signalTime;
 
-    @Comment("计划有效期")
+    @Comment("Expiration time")
     @Column(length = 20)
-    private String expiration; // 例如 "2026-02-21"
+    private String expiration;
 
-    @Comment("备注")
+    @Comment("Remark")
     @Column(length = 200)
     private String remark;
 

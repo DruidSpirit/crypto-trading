@@ -34,7 +34,7 @@ public class TradingPairTask {
     @Scheduled(cron = "0 0 0 */3 * ?")
     public void syncTradingPairs() {
         syncExecutor.executeSyncAsync();
-        log.info("已触发定时交易对异步同步");
+        log.info("Triggered scheduled trading pair async sync");
     }
 
     @Component
@@ -45,13 +45,13 @@ public class TradingPairTask {
 
         @Async
         public CompletableFuture<Void> executeSyncAsync() {
-            log.info("开始异步同步所有交易所的交易对数据");
+            log.info("Starting async sync of trading pair data for all exchanges");
             return CompletableFuture.runAsync(() -> syncService.executeSync())
                     .whenComplete((result, exception) -> {
                         if (exception != null) {
-                            log.error("交易对异步同步任务失败", exception);
+                            log.error("Trading pair async sync task failed", exception);
                         } else {
-                            log.info("交易对异步同步任务完成");
+                            log.info("Trading pair async sync task completed");
                         }
                     });
         }
@@ -89,7 +89,7 @@ public class TradingPairTask {
 
             for (ExchangeType exchangeType : ExchangeType.values()) {
                 try {
-                    // 如果不是设置里面配置好的交易所则不执行数据拉取
+
                     if (!settings.getExchangeTypes().contains(exchangeType.name())) continue;
 
                     SettingsProxy settingsProxy = CollectionUtil.isNotEmpty(settings.getProxies()) ? settings.getProxies().get(0) : null;
@@ -104,16 +104,16 @@ public class TradingPairTask {
                                     ),
                                     map -> List.copyOf(map.values())
                             ));
-                    log.info("从 {} 获取到 {} 个交易对", exchangeType, tradingPairs.size());
+                    log.info("From {} fetched {} trading pairs", exchangeType, tradingPairs.size());
 
                     List<TradingPair> processedTradingPairs;
-                    // 根据cryptoMode决定是否应用过滤
+
                     if ("custom".equals(settings.getCryptoMode())) {
                         processedTradingPairs = uniqueTradingPairs.stream()
                                 .filter(tp -> {
                                     String symbolUpper = tp.getSymbol().toUpperCase();
 
-                                    // 找到匹配的前缀币种
+
                                     Optional<TopCryptoCoin> matchedCoin = Arrays.stream(TopCryptoCoin.values())
                                             .filter(coin -> symbolUpper.startsWith(coin.getSymbol().toUpperCase()))
                                             .findFirst();
@@ -121,44 +121,44 @@ public class TradingPairTask {
                                     if (matchedCoin.isEmpty()) return false;
                                     TopCryptoCoin coin = matchedCoin.get();
 
-                                    // 检查前缀是否在topSymbols中
+
                                     boolean symbolMatches = topSymbols.stream().anyMatch(symbolUpper::startsWith);
                                     if (!symbolMatches) return false;
 
-                                    // 获取前缀后面的剩余部分
+
                                     String remaining = symbolUpper.substring(coin.getSymbol().length());
 
-                                    // 如果剩余部分为空，直接检查后缀
+
                                     if (remaining.isEmpty()) {
                                         return coin.getTradedAgainst().stream()
                                                 .map(String::toUpperCase)
                                                 .anyMatch(symbolUpper::endsWith);
                                     }
 
-                                    // 检查连接符（只允许_或-）
+
                                     if (!remaining.startsWith("_") && !remaining.startsWith("-")) {
                                         return false;
                                     }
 
-                                    // 获取连接符后面的部分
+
                                     String suffix = remaining.substring(1);
 
-                                    // 检查后缀是否精确匹配tradedAgainst中的币种
+
                                     return coin.getTradedAgainst().stream()
                                             .map(String::toUpperCase)
                                             .anyMatch(suffix::equals);
                                 })
                                 .toList();
                     } else {
-                        // "all"模式，直接使用所有uniqueTradingPairs
+
                         processedTradingPairs = uniqueTradingPairs;
                     }
 
                     allTradingPairs.addAll(processedTradingPairs);
                 } catch (IOException e) {
-                    log.error("获取 {} 交易对失败", exchangeType, e);
+                    log.error("Failed to get trading pairs for {}", exchangeType, e);
                 } catch (Exception e) {
-                    log.error("处理 {} 时发生未知错误", exchangeType, e);
+                    log.error("Unknown error processing {}", exchangeType, e);
                 }
             }
             return saveTradingPairs(allTradingPairs);
@@ -168,13 +168,13 @@ public class TradingPairTask {
             try {
                 if (!tradingPairs.isEmpty()) {
                     tradingPairRepository.saveAll(tradingPairs);
-                    log.info("成功保存 {} 个交易对到数据库", tradingPairs.size());
+                    log.info("Successfully saved {} trading pairs to database", tradingPairs.size());
                     return tradingPairs;
                 } else {
-                    log.warn("没有获取到任何交易对数据");
+                    log.warn("No trading pair data retrieved");
                 }
             } catch (Exception e) {
-                log.error("批量保存交易对到数据库失败", e);
+                log.error("Failed to batch save trading pairs to database", e);
                 throw e;
             }
             return null;

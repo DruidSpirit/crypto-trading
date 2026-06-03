@@ -14,7 +14,7 @@ import druid.elf.tool.enums.ExchangeType;
 @Data
 @Entity
 @Table(name = "trading_pairs")
-@Comment("交易对信息表")
+@Comment("Trading pair information table")
 @Accessors(chain = true)
 public class TradingPair implements Serializable {
 
@@ -22,53 +22,53 @@ public class TradingPair implements Serializable {
     private static final long serialVersionUID = -1234567890123456789L;
 
     @Id
-    @Comment("主键ID")
+    @Comment("Primary key ID")
     @GeneratedValue(generator = "snowFlake")
     @GenericGenerator(name = "snowFlake", strategy = "druid.elf.tool.util.SnowIdGenerator")
     private String id;
 
-    @Comment("交易对名称")
+    @Comment("Trading pair name")
     @Column(nullable = false, length = 50)
-    private String symbol; // 例如：BTC-USDT, ETH-BTC
+    private String symbol;
 
-    @Comment("基础货币")
+    @Comment("Base currency")
     @Column(nullable = false, length = 20)
-    private String baseCurrency; // 例如：BTC, ETH
+    private String baseCurrency;
 
-    @Comment("报价货币")
+    @Comment("Quote currency")
     @Column(nullable = false, length = 20)
-    private String quoteCurrency; // 例如：USDT, BTC
+    private String quoteCurrency;
 
-    @Comment("交易所名称")
+    @Comment("Exchange name")
     @Column(nullable = false, length = 20)
-    private String exchange; // 字符串，例如：OKX, BINANCE, GATE_IO, BYBIT
+    private String exchange;
 
-    @Comment("交易对状态")
+    @Comment("Trading pair status")
     @Column(nullable = false, length = 10)
-    private String status = "ACTIVE"; // 字符串：ACTIVE, INACTIVE
+    private String status = "ACTIVE";
 
-    @Comment("交易类型")
+    @Comment("Instrument type")
     @Column(length = 20)
-    private String instrumentType = "SPOT"; // SPOT, FUTURES 等
+    private String instrumentType = "SPOT";
 
-    @Comment("上线时间")
+    @Comment("Listing time")
     @Column
-    private LocalDateTime listingDate; // 上线时间
+    private LocalDateTime listingDate;
 
-    @Comment("创建时间")
+    @Comment("Created time")
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Comment("更新时间")
+    @Comment("Updated time")
     @Column(nullable = false)
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-    // 辅助方法：将 status 转换为 TradingPairStatus 枚举
+
     public TradingPairStatus getStatusEnum() {
         return TradingPairStatus.valueOf(this.status);
     }
 
-    // 辅助方法：将 exchange 转换为 ExchangeType 枚举
+
     public ExchangeType getExchangeType() {
         return ExchangeType.valueOf(this.exchange);
     }

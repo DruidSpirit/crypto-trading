@@ -1,11 +1,11 @@
-console.log('=== main.js开始加载 ===');
+console.log('=== main.js loading ===');
 console.log('Vue:', Vue);
 
 const { createApp } = Vue;
 const ITEMS_PER_PAGE = 10;
 const MAX_VISIBLE_PAGES = 5;
 
-console.log('=== 开始创建Vue应用 ===');
+console.log('=== Creating Vue app ===');
 
 createApp({
     data() {
@@ -33,7 +33,7 @@ createApp({
                 endDate: ''
             },
             signals: [],
-            dashboardSignals: [], // 首页独立的最新信号数据
+            dashboardSignals: [],
             totalPages: 1,
             currentPage: 1,
             maxVisiblePages: MAX_VISIBLE_PAGES,
@@ -56,8 +56,6 @@ createApp({
             filterTimeout: null,
             filterToggleTimeout: null,
             mobileFilterExpanded: false,
-            
-            // 策略管理相关数据
             strategies: [],
             showUploadStrategyModal: false,
             showDeleteConfirmModal: false,
@@ -66,10 +64,7 @@ createApp({
             uploading: false,
             deleting: false,
             strategyToDelete: null,
-            
-            // 回测相关数据
             backtest: {
-                
                 strategyName: '',
                 symbol: 'BTCUSDT',
                 startDate: '',
@@ -96,11 +91,11 @@ createApp({
             );
         },
         hasActiveFilters() {
-            return this.filter.search || 
-                   this.filter.signalType || 
-                   this.filter.strategy || 
-                   this.filter.exchange || 
-                   this.filter.startDate || 
+            return this.filter.search ||
+                   this.filter.signalType ||
+                   this.filter.strategy ||
+                   this.filter.exchange ||
+                   this.filter.startDate ||
                    this.filter.endDate;
         },
         activeFilterCount() {
@@ -115,9 +110,8 @@ createApp({
         }
     },
     mounted() {
-        console.log('=== Vue应用已挂载 ===');
-        console.log('开始初始化应用组件...');
-        
+        console.log('=== Vue app mounted ===');
+        console.log('Initializing app components...');
         this.loadSelectOptions();
         this.fetchSignals();
         this.loadDashboardStats();
@@ -125,13 +119,9 @@ createApp({
         this.initChart();
         this.initTheme();
         this.loadSettings();
-        
-        console.log('调用loadStrategies...');
+        console.log('Calling loadStrategies...');
         this.loadStrategies();
-        
         this.initBacktestDates();
-
-        // 每分钟检查一次时间并更新主题
         setInterval(() => {
             if (this.themeMode === 'auto') {
                 this.updateThemeByTime();
@@ -140,7 +130,6 @@ createApp({
     },
     methods: {
         toggleTheme() {
-            // 循环切换: auto -> dark -> light -> auto
             if (this.themeMode === 'auto') {
                 this.themeMode = 'dark';
                 this.isDarkTheme = true;
@@ -151,41 +140,30 @@ createApp({
                 this.themeMode = 'auto';
                 this.updateThemeByTime();
             }
-
             this.saveThemePreference();
             this.applyTheme();
         },
-
         initTheme() {
-            // 从localStorage加载主题偏好
             const savedMode = localStorage.getItem('themeMode') || 'auto';
             this.themeMode = savedMode;
-
             if (this.themeMode === 'auto') {
                 this.updateThemeByTime();
             } else {
                 this.isDarkTheme = this.themeMode === 'dark';
             }
-
             this.applyTheme();
         },
-
         updateThemeByTime() {
             const now = new Date();
             const hour = now.getHours();
-
-            // 6点到18点为白天，18点到次日6点为夜晚
             this.isDarkTheme = hour < 6 || hour >= 18;
         },
-
         applyTheme() {
             document.body.classList.toggle('theme-light', !this.isDarkTheme);
         },
-
         saveThemePreference() {
             localStorage.setItem('themeMode', this.themeMode);
         },
-
         getThemeIcon() {
             if (this.themeMode === 'auto') {
                 return 'fas fa-clock';
@@ -195,44 +173,34 @@ createApp({
                 return 'fas fa-moon';
             }
         },
-
         getThemeTooltip() {
             if (this.themeMode === 'auto') {
-                return '自动主题 (根据时间)';
+                return 'Auto Theme (based on time)';
             } else if (this.isDarkTheme) {
-                return '暗色主题';
+                return 'Dark Theme';
             } else {
-                return '亮色主题';
+                return 'Light Theme';
             }
         },
-
         switchTab(tab) {
             this.currentTab = tab;
-
-            // 切换到设置页面时加载设置
             if (tab === 'settings') {
                 this.loadSettings();
             }
-
-            // 切换到信号列表时重置筛选
             if (tab === 'signals') {
                 this.resetFilter();
             }
         },
-
         showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             const toastMessage = document.getElementById('toast-message');
-
             toastMessage.textContent = message;
             toast.className = `toast ${type}`;
             toast.classList.add('show');
-
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
         },
-
         debounceFilter() {
             if (this.filterTimeout) {
                 clearTimeout(this.filterTimeout);
@@ -241,8 +209,6 @@ createApp({
                 this.applyFilter();
             }, 500);
         },
-
-
         loadSettings() {
             ApiService.getSettings()
                 .then(response => {
@@ -258,28 +224,25 @@ createApp({
                     this.originalSettings = JSON.parse(JSON.stringify(this.settings));
                 })
                 .catch(error => {
-                    console.error('加载设置失败:', error);
-                    this.showToast('加载设置失败', 'error');
+                    console.error('Failed to load settings:', error);
+                    this.showToast('Failed to load settings', 'error');
                 });
         },
-
         saveSettings() {
             if (this.settings.fetchFrequency < this.minFetchFrequency) {
                 this.settings.fetchFrequency = this.minFetchFrequency;
-                this.showToast(`频率已调整为最小值 ${this.minFetchFrequency} 分钟`, 'warning');
+                this.showToast(`Frequency adjusted to minimum ${this.minFetchFrequency} minutes`, 'warning');
             }
-
             ApiService.saveSettings(this.settings)
                 .then(() => {
-                    this.showToast('设置保存成功！');
+                    this.showToast('Settings saved successfully!');
                     this.originalSettings = JSON.parse(JSON.stringify(this.settings));
                 })
                 .catch(error => {
-                    console.error('保存设置失败:', error);
-                    this.showToast('保存设置失败', 'error');
+                    console.error('Failed to save settings:', error);
+                    this.showToast('Failed to save settings', 'error');
                 });
         },
-
         addCrypto() {
             if (this.newCrypto && this.newCrypto.trim()) {
                 const crypto = this.newCrypto.trim().toUpperCase();
@@ -290,27 +253,23 @@ createApp({
                 }
             }
         },
-
         removeCrypto(index) {
             this.settings.cryptoSymbols.splice(index, 1);
             this.updateMinFetchFrequency();
         },
-
         addExchange() {
             if (this.newExchange && !this.settings.exchangeTypes.includes(this.newExchange)) {
                 this.settings.exchangeTypes.push(this.newExchange);
                 this.newExchange = '';
             }
         },
-
         removeExchange(index) {
             if (this.settings.exchangeTypes.length > 1) {
                 this.settings.exchangeTypes.splice(index, 1);
             } else {
-                this.showToast('至少需要保留一个交易所', 'warning');
+                this.showToast('At least one exchange is required', 'warning');
             }
         },
-
         updateMinFetchFrequency() {
             const baseTimePerCoin = 20;
             let coinCount = this.settings.cryptoMode === 'custom'
@@ -320,29 +279,25 @@ createApp({
             let totalMinutes = Math.ceil(coinCount * baseTimePerCoin / proxyCount / 60);
             this.minFetchFrequency = Math.max(totalMinutes, 5);
         },
-
         validateFetchFrequency() {
             if (this.settings.fetchFrequency < this.minFetchFrequency) {
                 this.settings.fetchFrequency = this.minFetchFrequency;
             }
         },
-
         loadSelectOptions() {
             ApiService.getSelectOptions()
                 .then(response => {
                     this.selectOptions = response.data;
                 })
-                .catch(error => console.error('加载选项失败:', error));
+                .catch(error => console.error('Failed to load options:', error));
         },
-
         loadDashboardStats() {
             ApiService.getDashboardStats()
                 .then(response => {
                     this.dashboardStats = response.data;
                 })
                 .catch(error => {
-                    console.error('获取统计数据失败:', error);
-                    // 使用默认数据
+                    console.error('Failed to get stats:', error);
                     this.dashboardStats = {
                         totalSignals: this.signals.length || 156,
                         buySignals: Math.floor((this.signals.length || 156) * 0.6),
@@ -351,19 +306,16 @@ createApp({
                     };
                 });
         },
-
         loadDashboardSignals() {
             ApiService.getDashboardLatestSignals(5)
                 .then(response => {
                     this.dashboardSignals = response.data;
                 })
                 .catch(error => {
-                    console.error('获取首页信号失败:', error);
-                    // 降级使用信号列表数据
+                    console.error('Failed to get dashboard signals:', error);
                     this.dashboardSignals = this.signals.slice(0, 5);
                 });
         },
-
         initChart() {
             ApiService.getDashboardChart()
                 .then(response => {
@@ -371,17 +323,15 @@ createApp({
                     this.createChart(chartData);
                 })
                 .catch(error => {
-                    console.error('获取图表数据失败:', error);
-                    // 显示空数据
+                    console.error('Failed to get chart data:', error);
                     const emptyData = {
-                        labels: ['9月', '10月', '11月', '12月', '1月', '2月'],
+                        labels: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
                         buyData: [0, 0, 0, 0, 0, 0],
                         sellData: [0, 0, 0, 0, 0, 0]
                     };
                     this.createChart(emptyData);
                 });
         },
-
         createChart(chartData) {
             const ctx = document.getElementById('signalChart').getContext('2d');
             this.signalChart = new Chart(ctx, {
@@ -389,14 +339,14 @@ createApp({
                 data: {
                     labels: chartData.labels,
                     datasets: [{
-                        label: '买入信号',
+                        label: 'Buy Signals',
                         data: chartData.buyData,
                         borderColor: 'rgb(16, 185, 129)',
                         backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         tension: 0.4,
                         fill: true
                     }, {
-                        label: '卖出信号',
+                        label: 'Sell Signals',
                         data: chartData.sellData,
                         borderColor: 'rgb(239, 68, 68)',
                         backgroundColor: 'rgba(239, 68, 68, 0.1)',
@@ -450,7 +400,6 @@ createApp({
                 }
             });
         },
-
         fetchSignals() {
             this.loading = true;
             const payload = {
@@ -463,38 +412,34 @@ createApp({
                 page: this.currentPage,
                 size: ITEMS_PER_PAGE
             };
-
             ApiService.getSignalsList(payload)
                 .then(response => {
                     this.signals = response.data.content;
                     this.totalPages = response.data.totalPages;
                 })
                 .catch(error => {
-                    console.error('获取信号失败:', error);
-                    this.showToast('获取信号失败', 'error');
+                    console.error('Failed to get signals:', error);
+                    this.showToast('Failed to get signals', 'error');
                 })
                 .finally(() => {
                     this.loading = false;
                 });
         },
-
         refreshSignals() {
             if (this.currentTab === 'dashboard') {
                 this.loadDashboardSignals();
                 this.loadDashboardStats();
-                this.showToast('首页数据已刷新');
+                this.showToast('Dashboard data refreshed');
             } else {
                 this.fetchSignals();
-                this.showToast('数据已刷新');
+                this.showToast('Data refreshed');
             }
         },
-
         applyFilter() {
             this.currentPage = 1;
             this.selectedSignal = null;
             this.fetchSignals();
         },
-
         resetFilter() {
             this.filter = {
                 search: '',
@@ -508,40 +453,34 @@ createApp({
             this.selectedSignal = null;
             this.fetchSignals();
         },
-
         changePage(page) {
             this.currentPage = page;
             this.selectedSignal = null;
             this.fetchSignals();
         },
-
         prevPage() {
             if (this.currentPage > 1) {
                 this.currentPage--;
                 this.fetchSignals();
             }
         },
-
         nextPage() {
             if (this.currentPage < this.totalPages) {
                 this.currentPage++;
                 this.fetchSignals();
             }
         },
-
         showDetails(signal) {
             this.selectedSignal = signal;
             this.showDetailsModal = true;
         },
-
         closeDetailsModal() {
             this.showDetailsModal = false;
             this.selectedSignal = null;
         },
-
         formattedSignalTime(time) {
             const date = new Date(time);
-            return date.toLocaleString('zh-CN', {
+            return date.toLocaleString('en-US', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
@@ -550,49 +489,41 @@ createApp({
                 second: '2-digit'
             });
         },
-
         formatProfitLossRatio(ratio) {
             if (ratio === null || ratio === undefined) {
-                return '未设置';
+                return 'Not set';
             }
             return `${parseFloat(ratio).toFixed(2)}:1`;
         },
-
-        // 策略管理方法
         async loadStrategies() {
-            console.log('loadStrategies开始执行...');
+            console.log('loadStrategies executing...');
             this.loading = true;
             try {
-                console.log('发送API请求到: /api/strategies');
+                console.log('Sending API request to: /api/strategies');
                 const response = await fetch('/api/strategies');
-                console.log('API响应状态:', response.status);
-                
+                console.log('API response status:', response.status);
                 const data = await response.json();
-                console.log('API响应数据:', data);
-                
-                // 后端直接返回策略数组，不是包装的格式
+                console.log('API response data:', data);
                 if (Array.isArray(data)) {
                     this.strategies = data;
-                    console.log('成功加载策略:', this.strategies.length, '个');
+                    console.log('Strategies loaded:', this.strategies.length, 'items');
                 } else {
-                    console.error('响应格式不正确:', data);
-                    this.showToast('加载策略失败: 响应格式不正确', 'error');
+                    console.error('Invalid response format:', data);
+                    this.showToast('Failed to load strategies: Invalid response format', 'error');
                 }
             } catch (error) {
-                console.error('加载策略失败:', error);
-                this.showToast('加载策略失败: ' + error.message, 'error');
+                console.error('Failed to load strategies:', error);
+                this.showToast('Failed to load strategies: ' + error.message, 'error');
             } finally {
                 this.loading = false;
-                console.log('loadStrategies执行完毕');
+                console.log('loadStrategies completed');
             }
         },
-
         showUploadModal() {
             this.showUploadStrategyModal = true;
             this.selectedFile = null;
             this.strategyDescription = '';
         },
-
         closeUploadModal() {
             this.showUploadStrategyModal = false;
             this.selectedFile = null;
@@ -601,60 +532,53 @@ createApp({
                 this.$refs.strategyFileInput.value = '';
             }
         },
-
         onFileSelected(event) {
             const file = event.target.files[0];
             if (file) {
                 if (file.size > 10 * 1024 * 1024) { // 10MB
-                    this.showToast('文件大小不能超过10MB', 'error');
+                    this.showToast('File size cannot exceed 10MB', 'error');
                     event.target.value = '';
                     return;
                 }
                 if (!file.name.endsWith('.py')) {
-                    this.showToast('只支持.py格式的文件', 'error');
+                    this.showToast('Only .py format files are supported', 'error');
                     event.target.value = '';
                     return;
                 }
                 this.selectedFile = file;
             }
         },
-
         async uploadStrategy() {
             if (!this.selectedFile) {
-                this.showToast('请选择文件', 'error');
+                this.showToast('Please select a file', 'error');
                 return;
             }
-
             this.uploading = true;
             const formData = new FormData();
             formData.append('file', this.selectedFile);
             if (this.strategyDescription) {
                 formData.append('description', this.strategyDescription);
             }
-
             try {
                 const response = await fetch('/api/strategies/upload', {
                     method: 'POST',
                     body: formData
                 });
-                
                 const result = await response.json();
-                
                 if (result.success) {
-                    this.showToast('策略上传成功', 'success');
+                    this.showToast('Strategy uploaded successfully', 'success');
                     this.closeUploadModal();
                     this.loadStrategies();
                 } else {
-                    this.showToast(result.message || '上传失败', 'error');
+                    this.showToast(result.message || 'Upload failed', 'error');
                 }
             } catch (error) {
-                console.error('上传策略失败:', error);
-                this.showToast('上传策略失败: ' + error.message, 'error');
+                console.error('Failed to upload strategy:', error);
+                this.showToast('Failed to upload strategy: ' + error.message, 'error');
             } finally {
                 this.uploading = false;
             }
         },
-
         async downloadStrategy(strategy) {
             try {
                 const response = await fetch(`/api/strategies/${strategy.id}/download`);
@@ -668,73 +592,65 @@ createApp({
                     a.click();
                     window.URL.revokeObjectURL(url);
                     document.body.removeChild(a);
-                    this.showToast('下载成功', 'success');
+                    this.showToast('Download successful', 'success');
                 } else {
-                    this.showToast('下载失败', 'error');
+                    this.showToast('Download failed', 'error');
                 }
             } catch (error) {
-                console.error('下载策略失败:', error);
-                this.showToast('下载策略失败: ' + error.message, 'error');
+                console.error('Failed to download strategy:', error);
+                this.showToast('Failed to download strategy: ' + error.message, 'error');
             }
         },
-
         async hotReloadStrategy(strategy) {
             try {
                 const response = await fetch(`/api/strategies/${strategy.id}/reload`, {
                     method: 'POST'
                 });
                 const result = await response.json();
-                
                 if (result.success) {
-                    this.showToast('热更新成功', 'success');
+                    this.showToast('Hot reload successful', 'success');
                     this.loadStrategies();
                 } else {
-                    this.showToast(result.message || '热更新失败', 'error');
+                    this.showToast(result.message || 'Hot reload failed', 'error');
                 }
             } catch (error) {
-                console.error('热更新失败:', error);
-                this.showToast('热更新失败: ' + error.message, 'error');
+                console.error('Hot reload failed:', error);
+                this.showToast('Hot reload failed: ' + error.message, 'error');
             }
         },
-
         deleteStrategy(strategy) {
             this.strategyToDelete = strategy;
             this.showDeleteConfirmModal = true;
         },
-
         closeDeleteConfirmModal() {
             this.showDeleteConfirmModal = false;
             this.strategyToDelete = null;
         },
-
         async confirmDeleteStrategy() {
             if (!this.strategyToDelete) return;
-            
             this.deleting = true;
             try {
                 const response = await fetch(`/api/strategies/${this.strategyToDelete.id}`, {
                     method: 'DELETE'
                 });
                 const result = await response.json();
-                
                 if (result.success) {
-                    this.showToast('策略删除成功', 'success');
+                    this.showToast('Strategy deleted successfully', 'success');
                     this.closeDeleteConfirmModal();
                     this.loadStrategies();
                 } else {
-                    this.showToast(result.message || '删除失败', 'error');
+                    this.showToast(result.message || 'Deletion failed', 'error');
                 }
             } catch (error) {
-                console.error('删除策略失败:', error);
-                this.showToast('删除策略失败: ' + error.message, 'error');
+                console.error('Failed to delete strategy:', error);
+                this.showToast('Failed to delete strategy: ' + error.message, 'error');
             } finally {
                 this.deleting = false;
             }
         },
-
         formattedTime(time) {
             const date = new Date(time);
-            return date.toLocaleString('zh-CN', {
+            return date.toLocaleString('en-US', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
@@ -743,7 +659,6 @@ createApp({
                 second: '2-digit'
             });
         },
-
         formatFileSize(bytes) {
             if (bytes === 0) return '0 B';
             const k = 1024;
@@ -751,7 +666,6 @@ createApp({
             const i = Math.floor(Math.log(bytes) / Math.log(k));
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         },
-
         getStatusIcon(status) {
             const icons = {
                 'ACTIVE': 'fas fa-check-circle',
@@ -761,38 +675,29 @@ createApp({
             };
             return icons[status] || 'fas fa-question-circle';
         },
-
         getStatusText(status) {
             const texts = {
-                'ACTIVE': '已激活',
-                'INACTIVE': '未激活',
-                'UPDATING': '更新中',
-                'ERROR': '错误'
+                'ACTIVE': 'Active',
+                'INACTIVE': 'Inactive',
+                'UPDATING': 'Updating',
+                'ERROR': 'Error'
             };
-            return texts[status] || '未知';
+            return texts[status] || 'Unknown';
         },
-
-        // 回测相关方法
         initBacktestDates() {
             const today = new Date();
             const oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
-            
             this.backtest.startDate = oneYearAgo.toISOString().split('T')[0];
             this.backtest.endDate = today.toISOString().split('T')[0];
         },
-
-
-
         async runBacktest() {
-            if (!this.backtest.strategyName || !this.backtest.symbol || 
+            if (!this.backtest.strategyName || !this.backtest.symbol ||
                 !this.backtest.startDate || !this.backtest.endDate) {
-                this.showToast('请填写所有必填字段', 'warning');
+                this.showToast('Please fill in all required fields', 'warning');
                 return;
             }
-
             this.backtest.running = true;
             this.backtest.results = null;
-            
             try {
                 const request = {
                     strategy_name: this.backtest.strategyName,
@@ -801,31 +706,25 @@ createApp({
                     end_date: this.backtest.endDate,
                     initial_balance: this.backtest.initialBalance
                 };
-
                 const response = await fetch('/api/backtest/run', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(request)
                 });
-
                 const result = await response.json();
-                
                 if (result.success && result.data) {
                     this.backtest.results = result.data;
-                    this.showToast('回测完成', 'success');
+                    this.showToast('Backtest complete', 'success');
                 } else {
-                    this.showToast(result.message || '回测失败', 'error');
+                    this.showToast(result.message || 'Backtest failed', 'error');
                 }
             } catch (error) {
-                console.error('回测请求失败:', error);
-                this.showToast('回测请求失败: ' + error.message, 'error');
+                console.error('Backtest request failed:', error);
+                this.showToast('Backtest request failed: ' + error.message, 'error');
             } finally {
                 this.backtest.running = false;
             }
         },
-
         resetBacktestForm() {
             this.backtest.strategyName = '';
             this.backtest.symbol = 'BTCUSDT';
@@ -833,26 +732,20 @@ createApp({
             this.backtest.results = null;
             this.initBacktestDates();
         },
-
         toggleMobileFilter(event) {
-            // 防止事件冒泡和重复触发
             if (event) {
                 event.preventDefault();
                 event.stopPropagation();
             }
-            
-            // 添加节流防止快速点击
             if (this.filterToggleTimeout) {
                 return;
             }
-            
             this.filterToggleTimeout = setTimeout(() => {
                 this.filterToggleTimeout = null;
             }, 100);
-            
             this.mobileFilterExpanded = !this.mobileFilterExpanded;
         }
     }
 }).mount('#app');
 
-console.log('=== Vue应用挂载完成 ===');
+console.log('=== Vue app mounted complete ===');

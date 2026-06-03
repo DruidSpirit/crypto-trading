@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "settings")
-@Comment("设置表")
+@Comment("Settings table")
 @Accessors(chain = true)
 public class Settings implements Serializable {
 
@@ -22,33 +22,33 @@ public class Settings implements Serializable {
     private static final long serialVersionUID = -1234567890123456789L;
 
     @Id
-    @Comment("主键ID")
+    @Comment("Primary key ID")
     @GeneratedValue(generator = "snowFlake")
     @GenericGenerator(name = "snowFlake", strategy = "druid.elf.tool.util.SnowIdGenerator")
     @Column(name = "id")
     private String id;
 
-    @Comment("加密货币抓取模式")
+    @Comment("Crypto fetch mode")
     @Column(name = "crypto_mode", length = 10, nullable = false)
-    private String cryptoMode = "custom"; // 默认值为"custom"，可选"all"
+    private String cryptoMode = "custom";
 
-    @Comment("数据抓取频率（分钟）")
+    @Comment("Data fetch frequency (minutes)")
     @Column(name = "fetch_frequency")
     private Integer fetchFrequency;
 
-    @Comment("加密货币代号列表")
+    @Comment("Crypto symbol list")
     @ElementCollection
     @CollectionTable(name = "settings_crypto_symbols", joinColumns = @JoinColumn(name = "settings_id"))
     @Column(name = "crypto_symbol")
     private List<String> cryptoSymbols = new ArrayList<>();
 
-    @Comment("交易所类型设置")
+    @Comment("Exchange type settings")
     @ElementCollection
     @CollectionTable(name = "settings_exchange_types", joinColumns = @JoinColumn(name = "settings_id"))
     @Column(name = "exchange_type")
     private List<String> exchangeTypes = new ArrayList<>();
 
-    @Comment("关联的代理列表")
+    @Comment("Associated proxy list")
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "settings_id")
     private List<SettingsProxy> proxies = new ArrayList<>();

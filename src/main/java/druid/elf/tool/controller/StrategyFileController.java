@@ -38,20 +38,20 @@ public class StrategyFileController {
         
         try {
             StrategyFile strategyFile = strategyFileService.uploadStrategy(file, description);
-            log.info("策略文件上传成功: {}", strategyFile.getFilename());
-            return ResponseEntity.ok(Map.of("success", true, "data", strategyFile, "message", "策略上传成功"));
+            log.info("Strategy file uploaded successfully: {}", strategyFile.getFilename());
+            return ResponseEntity.ok(Map.of("success", true, "data", strategyFile, "message", "Strategy uploaded successfully"));
         } catch (IllegalArgumentException e) {
-            log.warn("策略文件上传参数错误: {}", e.getMessage());
+            log.warn("Strategy file upload parameter error: {}", e.getMessage());
             return ResponseEntity.badRequest()
-                    .body(Map.of("success", false, "error", "参数错误", "message", e.getMessage()));
+                    .body(Map.of("success", false, "error", "Parameter error", "message", e.getMessage()));
         } catch (IOException e) {
-            log.error("策略文件上传IO错误", e);
+            log.error("Strategy file upload IO error", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("success", false, "error", "文件上传失败", "message", e.getMessage()));
+                    .body(Map.of("success", false, "error", "File upload failed", "message", e.getMessage()));
         } catch (Exception e) {
-            log.error("策略文件上传未知错误", e);
+            log.error("Strategy file upload unknown error", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("success", false, "error", "上传失败", "message", "系统错误，请稍后重试"));
+                    .body(Map.of("success", false, "error", "Upload failed", "message", "System error, please try again later"));
         }
     }
     
@@ -75,13 +75,13 @@ public class StrategyFileController {
                     .contentLength(fileContent.length)
                     .body(resource);
         } catch (IllegalArgumentException e) {
-            log.warn("下载策略文件参数错误: {}", e.getMessage());
+            log.warn("Strategy download parameter error: {}", e.getMessage());
             return ResponseEntity.notFound().build();
         } catch (IOException e) {
-            log.error("下载策略文件IO错误", e);
+            log.error("Strategy download IO error", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         } catch (Exception e) {
-            log.error("下载策略文件未知错误", e);
+            log.error("Strategy download unknown error", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -90,20 +90,20 @@ public class StrategyFileController {
     public ResponseEntity<?> hotReloadStrategy(@PathVariable Long id) {
         try {
             strategyFileService.hotReloadStrategy(id);
-            log.info("策略文件热更新成功: {}", id);
-            return ResponseEntity.ok(Map.of("success", true, "message", "策略热更新成功"));
+            log.info("Strategy file hot-reload successful: {}", id);
+            return ResponseEntity.ok(Map.of("success", true, "message", "Strategy hot-reload successful"));
         } catch (IllegalArgumentException e) {
-            log.warn("热更新策略文件参数错误: {}", e.getMessage());
+            log.warn("Hot-reload parameter error: {}", e.getMessage());
             return ResponseEntity.badRequest()
-                    .body(Map.of("success", false, "error", "参数错误", "message", e.getMessage()));
+                    .body(Map.of("success", false, "error", "Parameter error", "message", e.getMessage()));
         } catch (RuntimeException e) {
-            log.error("热更新策略文件失败", e);
+            log.error("Hot-reload failed", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("success", false, "error", "热更新失败", "message", e.getMessage()));
+                    .body(Map.of("success", false, "error", "Hot-reload failed", "message", e.getMessage()));
         } catch (Exception e) {
-            log.error("热更新策略文件未知错误", e);
+            log.error("Hot-reload unknown error", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("success", false, "error", "热更新失败", "message", "系统错误，请稍后重试"));
+                    .body(Map.of("success", false, "error", "Hot-reload failed", "message", "System error, please try again later"));
         }
     }
     
@@ -113,20 +113,20 @@ public class StrategyFileController {
             String status = statusRequest.get("status");
             if (status == null || status.trim().isEmpty()) {
                 return ResponseEntity.badRequest()
-                        .body(Map.of("error", "参数错误", "message", "status参数不能为空"));
+                        .body(Map.of("error", "Parameter error", "message", "status parameter cannot be empty"));
             }
             
             StrategyFile updatedStrategy = strategyFileService.updateStrategyStatus(id, status.trim().toUpperCase());
-            log.info("策略文件状态更新成功: {} -> {}", id, status);
+            log.info("Strategy file status updated: {} -> {}", id, status);
             return ResponseEntity.ok(updatedStrategy);
         } catch (IllegalArgumentException e) {
-            log.warn("更新策略状态参数错误: {}", e.getMessage());
+            log.warn("Update strategy status parameter error: {}", e.getMessage());
             return ResponseEntity.badRequest()
-                    .body(Map.of("error", "参数错误", "message", e.getMessage()));
+                    .body(Map.of("error", "Parameter error", "message", e.getMessage()));
         } catch (Exception e) {
-            log.error("更新策略状态未知错误", e);
+            log.error("Update strategy status unknown error", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "状态更新失败", "message", "系统错误，请稍后重试"));
+                    .body(Map.of("error", "Status update failed", "message", "System error, please try again later"));
         }
     }
     
@@ -134,20 +134,20 @@ public class StrategyFileController {
     public ResponseEntity<?> deleteStrategy(@PathVariable Long id) {
         try {
             strategyFileService.deleteStrategy(id);
-            log.info("策略文件删除成功: {}", id);
-            return ResponseEntity.ok(Map.of("success", true, "message", "策略删除成功"));
+            log.info("Strategy file deleted successfully: {}", id);
+            return ResponseEntity.ok(Map.of("success", true, "message", "Strategy deleted successfully"));
         } catch (IllegalArgumentException e) {
-            log.warn("删除策略文件参数错误: {}", e.getMessage());
+            log.warn("Delete strategy file parameter error: {}", e.getMessage());
             return ResponseEntity.badRequest()
-                    .body(Map.of("success", false, "error", "参数错误", "message", e.getMessage()));
+                    .body(Map.of("success", false, "error", "Parameter error", "message", e.getMessage()));
         } catch (IOException e) {
-            log.error("删除策略文件IO错误", e);
+            log.error("Delete strategy file IO error", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("success", false, "error", "删除失败", "message", e.getMessage()));
+                    .body(Map.of("success", false, "error", "Delete failed", "message", e.getMessage()));
         } catch (Exception e) {
-            log.error("删除策略文件未知错误", e);
+            log.error("Delete strategy file unknown error", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("success", false, "error", "删除失败", "message", "系统错误，请稍后重试"));
+                    .body(Map.of("success", false, "error", "Delete failed", "message", "System error, please try again later"));
         }
     }
     
@@ -155,16 +155,16 @@ public class StrategyFileController {
     public ResponseEntity<?> importBuiltinStrategies() {
         try {
             List<StrategyFile> importedStrategies = strategyFileService.importBuiltinStrategies();
-            log.info("内置策略文件导入成功，共导入 {} 个策略", importedStrategies.size());
+            log.info("Built-in strategy files imported successfully, total {} strategies", importedStrategies.size());
             return ResponseEntity.ok(Map.of(
-                "message", "内置策略导入成功", 
+                "message", "Built-in strategies imported successfully",
                 "count", importedStrategies.size(),
                 "strategies", importedStrategies
             ));
         } catch (Exception e) {
-            log.error("导入内置策略文件失败", e);
+            log.error("Failed to import built-in strategy files", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "导入失败", "message", e.getMessage()));
+                    .body(Map.of("error", "Import failed", "message", e.getMessage()));
         }
     }
     
@@ -178,23 +178,23 @@ public class StrategyFileController {
             
             StrategyFile strategy = strategyOpt.get();
             
-            // 更新描述
+
             if (updateRequest.containsKey("description")) {
                 strategy.setDescription(updateRequest.get("description"));
             }
             
-            // 更新显示名称
+
             if (updateRequest.containsKey("displayName")) {
                 strategy.setDisplayName(updateRequest.get("displayName"));
             }
             
             StrategyFile updatedStrategy = strategyFileService.saveStrategy(strategy);
-            log.info("策略信息更新成功: {} ", id);
+            log.info("Strategy info updated successfully: {} ", id);
             return ResponseEntity.ok(updatedStrategy);
         } catch (Exception e) {
-            log.error("更新策略信息失败", e);
+            log.error("Failed to update strategy info", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "更新失败", "message", e.getMessage()));
+                    .body(Map.of("error", "Update failed", "message", e.getMessage()));
         }
     }
 }

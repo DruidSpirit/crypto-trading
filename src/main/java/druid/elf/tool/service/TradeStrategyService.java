@@ -21,9 +21,7 @@ public class TradeStrategyService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    /**
-     * 生成交易信号
-     */
+
     public List<TradeSignal> generateSignal(Map<String,BarSeries> seriesMap, String symbol) {
         Map<String, AbstractTradeStrategy> strategyBeans = applicationContext.getBeansOfType(AbstractTradeStrategy.class);
 
@@ -32,7 +30,7 @@ public class TradeStrategyService {
                     try {
                         return strategy.execute(seriesMap,symbol);
                     } catch (Exception e) {
-                        log.error("策略执行异常",e);
+                        log.error("Strategy execution exception", e);
                         return null;
                     }
                 })

@@ -3,9 +3,7 @@ package druid.elf.tool.enums.exchange;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/**
- * Binance交易所的时间周期实现
- */
+
 @Getter
 @AllArgsConstructor
 public enum BinanceKlineInterval {

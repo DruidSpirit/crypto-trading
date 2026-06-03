@@ -31,7 +31,7 @@ createApp({
     },
     computed: {
         hasActiveFilters() {
-            return !!(this.filter.search || this.filter.signalType || this.filter.strategy || 
+            return !!(this.filter.search || this.filter.signalType || this.filter.strategy ||
                      this.filter.exchange || this.filter.startDate || this.filter.endDate);
         },
         activeFilterCount() {
@@ -54,14 +54,14 @@ createApp({
             const total = this.totalPages;
             const current = this.currentPage;
             const visible = [];
-            
+
             const start = Math.max(1, current - 2);
             const end = Math.min(total, current + 2);
-            
+
             for (let i = start; i <= end; i++) {
                 visible.push(i);
             }
-            
+
             return visible;
         }
     },
@@ -70,7 +70,7 @@ createApp({
         this.loadSelectOptions();
         this.loadSignals();
 
-        // 每分钟检查一次时间并更新主题
+
         setInterval(() => {
             if (this.themeMode === 'auto') {
                 this.updateThemeByTime();
@@ -78,7 +78,7 @@ createApp({
         }, 60000);
     },
     methods: {
-        // 主题相关方法
+
         initTheme() {
             const savedTheme = localStorage.getItem('theme-mode');
             if (savedTheme && ['light', 'dark', 'auto'].includes(savedTheme)) {
@@ -86,10 +86,10 @@ createApp({
             } else {
                 this.themeMode = 'auto';
             }
-            
+
             this.applyTheme();
-            
-            // 监听系统主题变化
+
+
             window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
                 if (this.themeMode === 'auto') {
                     this.applyTheme();
@@ -107,7 +107,7 @@ createApp({
 
         applyTheme() {
             const root = document.documentElement;
-            
+
             if (this.themeMode === 'auto') {
                 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                 root.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
@@ -134,11 +134,11 @@ createApp({
 
         getThemeTooltip() {
             const titles = {
-                'light': '浅色主题',
-                'dark': '深色主题',
-                'auto': '自动主题'
+                'light': 'Light Theme',
+                'dark': 'Dark Theme',
+                'auto': 'Auto Theme'
             };
-            return titles[this.themeMode] || '主题切换';
+            return titles[this.themeMode] || 'Toggle Theme';
         },
 
         showToast(message, type = 'success') {
@@ -154,12 +154,12 @@ createApp({
             }, 3000);
         },
 
-        // 信号相关方法
+
         async loadSelectOptions() {
             try {
                 const response = await fetch('/api/select-options');
                 const data = await response.json();
-                
+
                 if (data.strategyNames) {
                     this.selectOptions.strategyNames = data.strategyNames;
                 }
@@ -167,7 +167,7 @@ createApp({
                     this.selectOptions.exchangeTypes = data.exchangeTypes;
                 }
             } catch (error) {
-                console.error('加载选项失败:', error);
+                console.error('Failed to load options:', error);
             }
         },
 
@@ -182,7 +182,7 @@ createApp({
 
                 const response = await fetch(`/api/signals?${params}`);
                 const data = await response.json();
-                
+
                 if (data && data.content) {
                     this.signals = data.content;
                     this.pagination.totalElements = data.totalElements || 0;
@@ -191,8 +191,8 @@ createApp({
                     this.pagination.totalElements = 0;
                 }
             } catch (error) {
-                console.error('加载信号失败:', error);
-                this.showToast('加载信号失败: ' + error.message, 'error');
+                console.error('Failed to load signals:', error);
+                this.showToast('Failed to load signals: ' + error.message, 'error');
             } finally {
                 this.loading = false;
             }
@@ -234,7 +234,7 @@ createApp({
             }
         },
 
-        // 分页相关方法
+
         changePage(page) {
             if (page !== this.pagination.currentPage && page >= 1 && page <= this.totalPages) {
                 this.pagination.currentPage = page;
@@ -256,7 +256,7 @@ createApp({
             }
         },
 
-        // 信号详情相关方法
+
         showDetails(signal) {
             this.selectedSignal = signal;
             this.showDetailsModal = true;
@@ -267,10 +267,10 @@ createApp({
             this.selectedSignal = null;
         },
 
-        // 格式化方法
+
         formattedSignalTime(time) {
             const date = new Date(time);
-            return date.toLocaleString('zh-CN', {
+            return date.toLocaleString('en-US', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
@@ -281,7 +281,7 @@ createApp({
         },
 
         formatProfitLossRatio(ratio) {
-            if (!ratio) return '无';
+            if (!ratio) return 'N/A';
             return `${ratio.toFixed(2)}:1`;
         }
     }

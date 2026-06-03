@@ -36,7 +36,7 @@ createApp({
         this.loadSettings();
         this.loadSystemInfo();
 
-        // 每分钟检查一次时间并更新主题
+
         setInterval(() => {
             if (this.themeMode === 'auto') {
                 this.updateThemeByTime();
@@ -44,7 +44,7 @@ createApp({
         }, 60000);
     },
     methods: {
-        // 主题相关方法
+
         initTheme() {
             const savedTheme = localStorage.getItem('theme-mode');
             if (savedTheme && ['light', 'dark', 'auto'].includes(savedTheme)) {
@@ -54,10 +54,10 @@ createApp({
                 this.themeMode = 'auto';
                 this.settings.themeMode = 'auto';
             }
-            
+
             this.applyTheme();
-            
-            // 监听系统主题变化
+
+
             window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
                 if (this.themeMode === 'auto') {
                     this.applyTheme();
@@ -76,7 +76,7 @@ createApp({
 
         applyTheme() {
             const root = document.documentElement;
-            
+
             if (this.themeMode === 'auto') {
                 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                 root.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
@@ -109,11 +109,11 @@ createApp({
 
         getThemeTooltip() {
             const titles = {
-                'light': '浅色主题',
-                'dark': '深色主题',
-                'auto': '自动主题'
+                'light': 'Light Theme',
+                'dark': 'Dark Theme',
+                'auto': 'Auto Theme'
             };
-            return titles[this.themeMode] || '主题切换';
+            return titles[this.themeMode] || 'Toggle Theme';
         },
 
         showToast(message, type = 'success') {
@@ -129,7 +129,7 @@ createApp({
             }, 3000);
         },
 
-        // 设置相关方法
+
         async loadSettings() {
             try {
                 const response = await fetch('/api/settings');
@@ -137,7 +137,7 @@ createApp({
                     const data = await response.json();
                     if (data.success && data.data) {
                         Object.assign(this.settings, data.data);
-                        // 同步主题设置
+
                         if (data.data.themeMode) {
                             this.themeMode = data.data.themeMode;
                             this.applyTheme();
@@ -145,8 +145,8 @@ createApp({
                     }
                 }
             } catch (error) {
-                console.error('加载设置失败:', error);
-                this.showToast('加载设置失败: ' + error.message, 'error');
+                console.error('Failed to load settings:', error);
+                this.showToast('Failed to load settings: ' + error.message, 'error');
             }
         },
 
@@ -162,15 +162,15 @@ createApp({
                 });
 
                 const result = await response.json();
-                
+
                 if (result.success) {
-                    this.showToast('设置保存成功', 'success');
+                    this.showToast('Settings saved successfully', 'success');
                 } else {
-                    this.showToast(result.message || '保存设置失败', 'error');
+                    this.showToast(result.message || 'Failed to save settings', 'error');
                 }
             } catch (error) {
-                console.error('保存设置失败:', error);
-                this.showToast('保存设置失败: ' + error.message, 'error');
+                console.error('Failed to save settings:', error);
+                this.showToast('Failed to save settings: ' + error.message, 'error');
             } finally {
                 this.saving = false;
             }
@@ -190,10 +190,10 @@ createApp({
             };
             this.themeMode = 'auto';
             this.applyTheme();
-            this.showToast('设置已恢复默认', 'info');
+            this.showToast('Settings reset to defaults', 'info');
         },
 
-        // 系统信息相关方法
+
         async loadSystemInfo() {
             try {
                 const response = await fetch('/api/system/info');
@@ -204,18 +204,18 @@ createApp({
                     }
                 }
             } catch (error) {
-                console.error('加载系统信息失败:', error);
+                console.error('Failed to load system info:', error);
             }
         },
 
-        // 加密货币管理
+
         addCrypto() {
             const crypto = this.newCrypto.trim().toUpperCase();
             if (crypto && !this.settings.cryptoSymbols.includes(crypto)) {
                 this.settings.cryptoSymbols.push(crypto);
                 this.newCrypto = '';
             } else if (this.settings.cryptoSymbols.includes(crypto)) {
-                this.showToast('该加密货币代号已存在', 'warning');
+                this.showToast('This crypto symbol already exists', 'warning');
             }
         },
 
@@ -223,17 +223,17 @@ createApp({
             if (this.settings.cryptoSymbols.length > 1) {
                 this.settings.cryptoSymbols.splice(index, 1);
             } else {
-                this.showToast('至少需要保留一个加密货币', 'warning');
+                this.showToast('At least one crypto symbol is required', 'warning');
             }
         },
 
-        // 交易所管理
+
         addExchange() {
             if (this.newExchange && !this.settings.exchangeTypes.includes(this.newExchange)) {
                 this.settings.exchangeTypes.push(this.newExchange);
                 this.newExchange = '';
             } else if (this.settings.exchangeTypes.includes(this.newExchange)) {
-                this.showToast('该交易所已存在', 'warning');
+                this.showToast('This exchange already exists', 'warning');
             }
         },
 
@@ -241,11 +241,11 @@ createApp({
             if (this.settings.exchangeTypes.length > 1) {
                 this.settings.exchangeTypes.splice(index, 1);
             } else {
-                this.showToast('至少需要保留一个交易所', 'warning');
+                this.showToast('At least one exchange is required', 'warning');
             }
         },
 
-        // 频率验证
+
         updateMinFetchFrequency() {
             this.minFetchFrequency = this.settings.cryptoMode === 'all' ? 30 : 5;
             if (this.settings.fetchFrequency < this.minFetchFrequency) {
@@ -256,23 +256,23 @@ createApp({
         validateFetchFrequency() {
             if (this.settings.fetchFrequency < this.minFetchFrequency) {
                 this.settings.fetchFrequency = this.minFetchFrequency;
-                this.showToast(`抓取频率不能低于 ${this.minFetchFrequency} 分钟`, 'warning');
+                this.showToast(`Fetch frequency cannot be lower than ${this.minFetchFrequency} minutes`, 'warning');
             }
         },
 
-        // 配置导入导出
+
         exportSettings() {
             const dataStr = JSON.stringify(this.settings, null, 2);
             const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
+
             const exportFileDefaultName = `crypto-signal-settings-${new Date().toISOString().split('T')[0]}.json`;
-            
+
             const linkElement = document.createElement('a');
             linkElement.setAttribute('href', dataUri);
             linkElement.setAttribute('download', exportFileDefaultName);
             linkElement.click();
-            
-            this.showToast('配置导出成功', 'success');
+
+            this.showToast('Settings exported successfully', 'success');
         },
 
         importSettings() {
@@ -282,45 +282,45 @@ createApp({
         handleFileImport(event) {
             const file = event.target.files[0];
             if (!file) return;
-            
+
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
                     const importedSettings = JSON.parse(e.target.result);
                     Object.assign(this.settings, importedSettings);
-                    
-                    // 同步主题设置
+
+
                     if (importedSettings.themeMode) {
                         this.themeMode = importedSettings.themeMode;
                         this.applyTheme();
                     }
-                    
-                    this.showToast('配置导入成功', 'success');
+
+                    this.showToast('Settings imported successfully', 'success');
                 } catch (error) {
-                    this.showToast('配置文件格式错误', 'error');
+                    this.showToast('Invalid settings file format', 'error');
                 }
-                // 清空文件输入
+
                 event.target.value = '';
             };
             reader.readAsText(file);
         },
 
-        // 系统操作
+
         async clearCache() {
             try {
                 const response = await fetch('/api/system/clear-cache', {
                     method: 'POST'
                 });
-                
+
                 const result = await response.json();
                 if (result.success) {
-                    this.showToast('缓存清除成功', 'success');
+                    this.showToast('Cache cleared successfully', 'success');
                 } else {
-                    this.showToast(result.message || '缓存清除失败', 'error');
+                    this.showToast(result.message || 'Failed to clear cache', 'error');
                 }
             } catch (error) {
-                console.error('清除缓存失败:', error);
-                this.showToast('清除缓存失败: ' + error.message, 'error');
+                console.error('Failed to clear cache:', error);
+                this.showToast('Failed to clear cache: ' + error.message, 'error');
             }
         },
 
@@ -336,28 +336,28 @@ createApp({
 
         async resetSystem() {
             if (this.resetConfirmText !== 'RESET') {
-                this.showToast('请正确输入确认文本', 'warning');
+                this.showToast('Please enter the confirmation text correctly', 'warning');
                 return;
             }
-            
+
             this.resetting = true;
             try {
                 const response = await fetch('/api/system/reset', {
                     method: 'POST'
                 });
-                
+
                 const result = await response.json();
                 if (result.success) {
-                    this.showToast('系统重置成功，页面即将刷新', 'success');
+                    this.showToast('System reset successful, page will refresh shortly', 'success');
                     setTimeout(() => {
                         window.location.href = '/';
                     }, 2000);
                 } else {
-                    this.showToast(result.message || '系统重置失败', 'error');
+                    this.showToast(result.message || 'System reset failed', 'error');
                 }
             } catch (error) {
-                console.error('系统重置失败:', error);
-                this.showToast('系统重置失败: ' + error.message, 'error');
+                console.error('System reset failed:', error);
+                this.showToast('System reset failed: ' + error.message, 'error');
             } finally {
                 this.resetting = false;
                 this.closeResetModal();

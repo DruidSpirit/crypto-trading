@@ -17,17 +17,13 @@ public class BacktestController {
     @Autowired
     private BacktestService backtestService;
 
-    /**
-     * 回测页面
-     */
+
     @GetMapping("/page")
     public String backtestPage() {
         return "backtest";
     }
 
-    /**
-     * 运行回测
-     */
+
     @ResponseBody
     @PostMapping("/run")
     public ResponseEntity<BacktestResponseDTO> runBacktest(@RequestBody BacktestRequestDTO request) {
@@ -35,9 +31,7 @@ public class BacktestController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * 下载单个交易对的历史数据
-     */
+
     @ResponseBody
     @PostMapping("/download-data")
     public ResponseEntity<Map<String, Object>> downloadData(@RequestBody Map<String, String> request) {
@@ -50,9 +44,7 @@ public class BacktestController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * 批量下载历史数据
-     */
+
     @ResponseBody
     @PostMapping("/batch-download")
     public ResponseEntity<Map<String, Object>> batchDownloadData(@RequestBody Map<String, Object> request) {
@@ -67,9 +59,7 @@ public class BacktestController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * 获取本地数据信息
-     */
+
     @ResponseBody
     @GetMapping("/data-info")
     public ResponseEntity<Map<String, Object>> getDataInfo() {

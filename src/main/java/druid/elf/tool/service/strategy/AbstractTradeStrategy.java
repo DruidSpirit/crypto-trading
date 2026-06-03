@@ -6,9 +6,7 @@ import org.ta4j.core.BarSeries;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-/**
- * 交易策略公共抽象类
- */
+
 public abstract class AbstractTradeStrategy implements TradeStrategy{
 
     protected abstract TradeStrategyDTO doHandle(Map<String,BarSeries> seriesMap);

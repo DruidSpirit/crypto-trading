@@ -99,10 +99,10 @@ public class CommentIntegrator implements Integrator {
             if (field.isAnnotationPresent(Comment.class)) {
                 String comment = field.getAnnotation(Comment.class).value();
 
-                // 使用getColumns()替代原来的getColumnIterator()
+
                 String sqlColumnName = persistentClass.getProperty(columnName).getValue().getColumns().get(0).getText();
 
-                // 获取数据库表的列列表，这里改成通过getColumns()来获取
+
                 Collection<Column> columns = persistentClass.getTable().getColumns();
                 for (org.hibernate.mapping.Column column : columns) {
                     if (sqlColumnName.equalsIgnoreCase(column.getName())) {

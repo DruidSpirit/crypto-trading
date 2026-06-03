@@ -19,8 +19,8 @@ public class CryptoTradingApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // 在Spring Boot项目启动成功后打开浏览器并跳转到指定的URL
-        String url = "http://localhost:5567/api/index"; // 替换为你需要的URL
+        // Open the dashboard after the Spring Boot application starts.
+        String url = "http://localhost:5567/api/index";
         openBrowser(url);
     }
 

@@ -20,21 +20,15 @@ public interface TradeSignalRepository extends JpaRepository<TradeSignal, String
     @Query("DELETE FROM TradeSignal ts WHERE ts.signalTime < :dateTime")
     long deleteBySignalTimeBefore(LocalDateTime dateTime);
 
-    /**
-     * 根据信号类型统计数量
-     */
+
     @Query("SELECT COUNT(ts) FROM TradeSignal ts WHERE ts.signal = :signal")
     long countBySignal(String signal);
 
-    /**
-     * 统计不同交易对的数量
-     */
+
     @Query("SELECT COUNT(DISTINCT ts.symbol) FROM TradeSignal ts")
     long countDistinctSymbols();
 
-    /**
-     * 获取按月统计的信号数据
-     */
+
     @Query("SELECT " +
            "YEAR(ts.signalTime) as year, " +
            "MONTH(ts.signalTime) as month, " +
@@ -46,8 +40,6 @@ public interface TradeSignalRepository extends JpaRepository<TradeSignal, String
            "ORDER BY YEAR(ts.signalTime), MONTH(ts.signalTime)")
     List<Map<String, Object>> getMonthlySignalStats(LocalDateTime startDate);
 
-    /**
-     * 按信号时间倒序获取数据
-     */
+
     Page<TradeSignal> findByOrderBySignalTimeDesc(Pageable pageable);
 }

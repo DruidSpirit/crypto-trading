@@ -13,10 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Collections;
 import java.util.Map;
 
-/**
- * 使用RestTemplate实现的Python策略客户端
- * 替代WebClient的实现方案
- */
+
 @Service
 @Slf4j
 public class PythonStrategyClientRestTemplate {
@@ -32,17 +29,17 @@ public class PythonStrategyClientRestTemplate {
 
     public PythonTradeSignalDTO executeStrategy(StrategyRequestDTO request) {
         try {
-            log.info("调用Python策略服务，请求参数：{}", request);
+            log.info("Calling Python strategy service, request params: {}", request);
             
-            // 设置请求头
+
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
             
-            // 创建请求实体
+
             HttpEntity<StrategyRequestDTO> requestEntity = new HttpEntity<>(request, headers);
             
-            // 发送请求
+
             String url = pythonServiceUrl + "/api/strategy/execute";
             ResponseEntity<StrategyResponseDTO> response = restTemplate.exchange(
                 url, 
@@ -51,24 +48,24 @@ public class PythonStrategyClientRestTemplate {
                 StrategyResponseDTO.class
             );
             
-            log.info("Python策略服务响应状态：{}", response.getStatusCode());
-            log.info("Python策略服务响应：{}", response.getBody());
+            log.info("Python strategy service response status: {}", response.getStatusCode());
+            log.info("Python strategy service response: {}", response.getBody());
             
             StrategyResponseDTO responseBody = response.getBody();
             if (responseBody != null && responseBody.isSuccess()) {
                 return responseBody.getData();
             } else {
-                log.info("Python策略服务未生成交易信号或执行失败: {}", 
-                    responseBody != null ? responseBody.getMessage() : "响应为空");
+                log.info("Python strategy service did not generate signal or execution failed: {}",
+                    responseBody != null ? responseBody.getMessage() : "Response is null");
                 return null;
             }
             
         } catch (RestClientException e) {
-            log.error("调用Python策略服务失败", e);
+            log.error("Failed to call Python strategy service", e);
             return null;
         } catch (Exception e) {
-            log.error("调用Python策略服务失败", e);
-            throw new RuntimeException("调用Python策略服务失败: " + e.getMessage(), e);
+            log.error("Failed to call Python strategy service", e);
+            throw new RuntimeException("Failed to call Python strategy service: " + e.getMessage(), e);
         }
     }
 
@@ -82,7 +79,7 @@ public class PythonStrategyClientRestTemplate {
                    responseBody != null && responseBody.contains("healthy");
                    
         } catch (Exception e) {
-            log.warn("Python策略服务健康检查失败", e);
+            log.warn("Python strategy service health check failed", e);
             return false;
         }
     }
@@ -90,16 +87,16 @@ public class PythonStrategyClientRestTemplate {
     @SuppressWarnings("unchecked")
     public String[] getAvailableStrategies() {
         try {
-            log.info("获取可用策略列表");
+            log.info("Getting available strategy list");
             
             String url = pythonServiceUrl + "/api/strategy/strategies";
             ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
             
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 Map<String, Object> responseBody = response.getBody();
-                log.info("获取策略列表响应：{}", responseBody);
+                log.info("Strategy list response: {}", responseBody);
                 
-                // 从响应中提取策略列表
+
                 if (responseBody.containsKey("data") && responseBody.get("data") instanceof java.util.List) {
                     java.util.List<?> strategies = (java.util.List<?>) responseBody.get("data");
                     return strategies.stream()
@@ -108,11 +105,11 @@ public class PythonStrategyClientRestTemplate {
                 }
             }
             
-            // 返回默认策略
+
             return new String[]{"ElderSwingStrategy", "ElderIntradayStrategy"};
             
         } catch (Exception e) {
-            log.warn("获取策略列表失败", e);
+            log.warn("Failed to get strategy list", e);
             return new String[0];
         }
     }

@@ -19,7 +19,7 @@ createApp({
         this.initTheme();
         this.loadStrategies();
 
-        // 每分钟检查一次时间并更新主题
+
         setInterval(() => {
             if (this.themeMode === 'auto') {
                 this.updateThemeByTime();
@@ -27,7 +27,7 @@ createApp({
         }, 60000);
     },
     methods: {
-        // 主题相关方法
+
         initTheme() {
             const savedTheme = localStorage.getItem('theme-mode');
             if (savedTheme && ['light', 'dark', 'auto'].includes(savedTheme)) {
@@ -35,10 +35,10 @@ createApp({
             } else {
                 this.themeMode = 'auto';
             }
-            
+
             this.applyTheme();
-            
-            // 监听系统主题变化
+
+
             window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
                 if (this.themeMode === 'auto') {
                     this.applyTheme();
@@ -56,7 +56,7 @@ createApp({
 
         applyTheme() {
             const root = document.documentElement;
-            
+
             if (this.themeMode === 'auto') {
                 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                 root.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
@@ -83,11 +83,11 @@ createApp({
 
         getThemeTooltip() {
             const titles = {
-                'light': '浅色主题',
-                'dark': '深色主题',
-                'auto': '自动主题'
+                'light': 'Light Theme',
+                'dark': 'Dark Theme',
+                'auto': 'Auto Theme'
             };
-            return titles[this.themeMode] || '主题切换';
+            return titles[this.themeMode] || 'Toggle Theme';
         },
 
         showToast(message, type = 'success') {
@@ -103,22 +103,22 @@ createApp({
             }, 3000);
         },
 
-        // 策略管理方法
+
         async loadStrategies() {
             console.log(11)
             this.loading = true;
             try {
                 const response = await fetch('/api/strategy/files');
                 const data = await response.json();
-                
+
                 if (data.success) {
                     this.strategies = data.data || [];
                 } else {
-                    this.showToast(data.message || '加载策略失败', 'error');
+                    this.showToast(data.message || 'Failed to load strategies', 'error');
                 }
             } catch (error) {
-                console.error('加载策略失败:', error);
-                this.showToast('加载策略失败: ' + error.message, 'error');
+                console.error('Failed to load strategies:', error);
+                this.showToast('Failed to load strategies: ' + error.message, 'error');
             } finally {
                 this.loading = false;
             }
@@ -143,12 +143,12 @@ createApp({
             const file = event.target.files[0];
             if (file) {
                 if (file.size > 10 * 1024 * 1024) { // 10MB
-                    this.showToast('文件大小不能超过10MB', 'error');
+                    this.showToast('File size cannot exceed 10MB', 'error');
                     event.target.value = '';
                     return;
                 }
                 if (!file.name.endsWith('.py')) {
-                    this.showToast('只支持.py格式的文件', 'error');
+                    this.showToast('Only .py format files are supported', 'error');
                     event.target.value = '';
                     return;
                 }
@@ -158,7 +158,7 @@ createApp({
 
         async uploadStrategy() {
             if (!this.selectedFile) {
-                this.showToast('请选择文件', 'error');
+                this.showToast('Please select a file', 'error');
                 return;
             }
 
@@ -174,19 +174,19 @@ createApp({
                     method: 'POST',
                     body: formData
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (result.success) {
-                    this.showToast('策略上传成功', 'success');
+                    this.showToast('Strategy uploaded successfully', 'success');
                     this.closeUploadModal();
                     this.loadStrategies();
                 } else {
-                    this.showToast(result.message || '上传失败', 'error');
+                    this.showToast(result.message || 'Upload failed', 'error');
                 }
             } catch (error) {
-                console.error('上传策略失败:', error);
-                this.showToast('上传策略失败: ' + error.message, 'error');
+                console.error('Failed to upload strategy:', error);
+                this.showToast('Failed to upload strategy: ' + error.message, 'error');
             } finally {
                 this.uploading = false;
             }
@@ -205,13 +205,13 @@ createApp({
                     a.click();
                     window.URL.revokeObjectURL(url);
                     document.body.removeChild(a);
-                    this.showToast('下载成功', 'success');
+                    this.showToast('Download successful', 'success');
                 } else {
-                    this.showToast('下载失败', 'error');
+                    this.showToast('Download failed', 'error');
                 }
             } catch (error) {
-                console.error('下载策略失败:', error);
-                this.showToast('下载策略失败: ' + error.message, 'error');
+                console.error('Failed to download strategy:', error);
+                this.showToast('Failed to download strategy: ' + error.message, 'error');
             }
         },
 
@@ -221,16 +221,16 @@ createApp({
                     method: 'POST'
                 });
                 const result = await response.json();
-                
+
                 if (result.success) {
-                    this.showToast('热更新成功', 'success');
+                    this.showToast('Hot reload successful', 'success');
                     this.loadStrategies();
                 } else {
-                    this.showToast(result.message || '热更新失败', 'error');
+                    this.showToast(result.message || 'Hot reload failed', 'error');
                 }
             } catch (error) {
-                console.error('热更新失败:', error);
-                this.showToast('热更新失败: ' + error.message, 'error');
+                console.error('Hot reload failed:', error);
+                this.showToast('Hot reload failed: ' + error.message, 'error');
             }
         },
 
@@ -246,24 +246,24 @@ createApp({
 
         async confirmDeleteStrategy() {
             if (!this.strategyToDelete) return;
-            
+
             this.deleting = true;
             try {
                 const response = await fetch(`/api/strategy/delete/${this.strategyToDelete.id}`, {
                     method: 'DELETE'
                 });
                 const result = await response.json();
-                
+
                 if (result.success) {
-                    this.showToast('策略删除成功', 'success');
+                    this.showToast('Strategy deleted successfully', 'success');
                     this.closeDeleteConfirmModal();
                     this.loadStrategies();
                 } else {
-                    this.showToast(result.message || '删除失败', 'error');
+                    this.showToast(result.message || 'Deletion failed', 'error');
                 }
             } catch (error) {
-                console.error('删除策略失败:', error);
-                this.showToast('删除策略失败: ' + error.message, 'error');
+                console.error('Failed to delete strategy:', error);
+                this.showToast('Failed to delete strategy: ' + error.message, 'error');
             } finally {
                 this.deleting = false;
             }
@@ -279,7 +279,7 @@ createApp({
 
         formattedTime(time) {
             const date = new Date(time);
-            return date.toLocaleString('zh-CN', {
+            return date.toLocaleString('en-US', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
@@ -301,12 +301,12 @@ createApp({
 
         getStatusText(status) {
             const texts = {
-                'ACTIVE': '已激活',
-                'INACTIVE': '未激活',
-                'UPDATING': '更新中',
-                'ERROR': '错误'
+                'ACTIVE': 'Active',
+                'INACTIVE': 'Inactive',
+                'UPDATING': 'Updating',
+                'ERROR': 'Error'
             };
-            return texts[status] || '未知';
+            return texts[status] || 'Unknown';
         }
     }
 }).mount('#app');

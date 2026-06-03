@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CryptoSignal Pro - 智能加密交易信号平台</title>
+    <title>CryptoSignal Pro - Intelligent Crypto Trading Signal Platform</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="/css/main.css" rel="stylesheet">
@@ -33,31 +33,31 @@
                 :class="['tab-nav-item', { 'active': currentTab === 'dashboard' }]"
                 @click="switchTab('dashboard')">
                 <i class="fas fa-tachometer-alt"></i>
-                <span>首页</span>
+                <span>Dashboard</span>
             </button>
             <button
                 :class="['tab-nav-item', { 'active': currentTab === 'signals' }]"
                 @click="switchTab('signals')">
                 <i class="fas fa-list"></i>
-                <span>信号列表</span>
+                <span>Signal List</span>
             </button>
             <button
                 :class="['tab-nav-item', { 'active': currentTab === 'strategies' }]"
                 @click="switchTab('strategies')">
                 <i class="fas fa-code"></i>
-                <span>策略管理</span>
+                <span>Strategy Mgmt</span>
             </button>
             <button
                 :class="['tab-nav-item', { 'active': currentTab === 'backtest' }]"
                 @click="switchTab('backtest')">
                 <i class="fas fa-chart-bar"></i>
-                <span>策略回测</span>
+                <span>Backtest</span>
             </button>
             <button
                 :class="['tab-nav-item', { 'active': currentTab === 'settings' }]"
                 @click="switchTab('settings')">
                 <i class="fas fa-cog"></i>
-                <span>设置</span>
+                <span>Settings</span>
             </button>
         </div>
     </div>
@@ -76,11 +76,11 @@
                             </div>
                         </div>
                         <div class="stat-value">{{ dashboardStats.totalSignals }}</div>
-                        <div class="stat-label">总信号数</div>
+                        <div class="stat-label">Total Signals</div>
                         <div class="stat-change positive">
                             <i class="fas fa-arrow-up"></i>
                             <span>+12%</span>
-                            <span>较昨日</span>
+                            <span>vs yesterday</span>
                         </div>
                     </div>
 
@@ -91,11 +91,11 @@
                             </div>
                         </div>
                         <div class="stat-value">{{ dashboardStats.buySignals }}</div>
-                        <div class="stat-label">买入信号</div>
+                        <div class="stat-label">Buy Signals</div>
                         <div class="stat-change positive">
                             <i class="fas fa-arrow-up"></i>
                             <span>+8%</span>
-                            <span>较昨日</span>
+                            <span>vs yesterday</span>
                         </div>
                     </div>
 
@@ -106,11 +106,11 @@
                             </div>
                         </div>
                         <div class="stat-value">{{ dashboardStats.sellSignals }}</div>
-                        <div class="stat-label">卖出信号</div>
+                        <div class="stat-label">Sell Signals</div>
                         <div class="stat-change negative">
                             <i class="fas fa-arrow-down"></i>
                             <span>-3%</span>
-                            <span>较昨日</span>
+                            <span>vs yesterday</span>
                         </div>
                     </div>
 
@@ -121,11 +121,11 @@
                             </div>
                         </div>
                         <div class="stat-value">{{ dashboardStats.activePairs }}</div>
-                        <div class="stat-label">活跃交易对</div>
+                        <div class="stat-label">Active Pairs</div>
                         <div class="stat-change positive">
                             <i class="fas fa-arrow-up"></i>
                             <span>+5%</span>
-                            <span>较昨日</span>
+                            <span>vs yesterday</span>
                         </div>
                     </div>
                 </div>
@@ -135,7 +135,7 @@
                     <div class="section-header">
                         <h2 class="section-title">
                             <i class="fas fa-chart-area"></i>
-                            信号趋势分析
+                            Signal Trend Analysis
                         </h2>
                     </div>
                     <div class="chart-container">
@@ -148,31 +148,30 @@
                     <div class="section-header">
                         <h2 class="section-title">
                             <i class="fas fa-clock"></i>
-                            最新信号
+                            Latest Signals
                         </h2>
                         <button class="btn btn-primary" @click="switchTab('signals')">
                             <i class="fas fa-arrow-right"></i>
-                            查看全部
+                            View All
                         </button>
                     </div>
 
                     <div v-if="!dashboardSignals.length && !loading" class="empty-state">
                         <i class="fas fa-inbox"></i>
-                        <h3>暂无信号数据</h3>
-                        <p>请等待新的交易信号</p>
+                        <h3>No signal data yet</h3>
+                        <p>Please wait for new trading signals</p>
                     </div>
 
-                    <!-- PC端最新信号表格 -->
                     <div v-if="dashboardSignals.length" class="data-table-wrapper dashboard-table">
                         <table class="data-table">
                         <thead>
                             <tr>
-                                <th>信号类型</th>
-                                <th>交易对</th>
-                                <th>交易所</th>
-                                <th>信号时间</th>
-                                <th>当前价格</th>
-                                <th>操作</th>
+                                <th>Signal Type</th>
+                                <th>Trading Pair</th>
+                                <th>Exchange</th>
+                                <th>Signal Time</th>
+                                <th>Current Price</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -189,7 +188,7 @@
                                 <td>
                                     <button class="btn btn-secondary btn-sm" @click="showDetails(signal)">
                                         <i class="fas fa-eye"></i>
-                                        详情
+                                        Details
                                     </button>
                                 </td>
                             </tr>
@@ -197,7 +196,6 @@
                         </table>
                     </div>
 
-                    <!-- 移动端最新信号卡片 -->
                     <div v-if="dashboardSignals.length" class="mobile-signal-cards dashboard-cards">
                         <div v-for="signal in dashboardSignals" :key="signal.id" class="signal-card">
                             <div class="signal-card-header">
@@ -208,22 +206,22 @@
                             </div>
                             <div class="signal-card-body">
                                 <div class="signal-field">
-                                    <div class="signal-field-label">交易所</div>
+                                    <div class="signal-field-label">Exchange</div>
                                     <div class="signal-field-value">{{ signal.exchange }}</div>
                                 </div>
                                 <div class="signal-field">
-                                    <div class="signal-field-label">当前价格</div>
+                                    <div class="signal-field-label">Current Price</div>
                                     <div class="signal-field-value font-weight-bold">${{ signal.price }}</div>
                                 </div>
                                 <div class="signal-field" style="grid-column: 1 / -1;">
-                                    <div class="signal-field-label">信号时间</div>
+                                    <div class="signal-field-label">Signal Time</div>
                                     <div class="signal-field-value">{{ formattedSignalTime(signal.signalTime) }}</div>
                                 </div>
                             </div>
                             <div class="signal-card-actions">
                                 <button class="btn btn-secondary btn-sm" @click="showDetails(signal)">
                                     <i class="fas fa-eye"></i>
-                                    详情
+                                    Details
                                 </button>
                             </div>
                         </div>
@@ -238,90 +236,88 @@
                     <div class="section-header" @click="toggleMobileFilter($event)">
                         <h2 class="section-title">
                             <i class="fas fa-filter"></i>
-                            筛选信号
+                            Filter Signals
                             <span v-if="hasActiveFilters" class="filter-count mobile-only">{{ activeFilterCount }}</span>
                         </h2>
                         <i class="fas fa-chevron-down mobile-filter-toggle mobile-only" :class="{ 'rotated': mobileFilterExpanded }"></i>
                     </div>
-                    
+
                     <div class="filter-content" :class="{ 'collapsed': !mobileFilterExpanded }">
-                        <!-- PC端完整筛选 -->
                         <div class="filters desktop-filters">
                             <div class="filter-group">
-                                <label class="filter-label">交易对搜索</label>
-                                <input v-model="filter.search" class="filter-input" placeholder="如：BTCUSDT" @input="debounceFilter">
+                                <label class="filter-label">Trading Pair Search</label>
+                                <input v-model="filter.search" class="filter-input" placeholder="e.g. BTCUSDT" @input="debounceFilter">
                             </div>
                             <div class="filter-group">
-                                <label class="filter-label">信号类型</label>
+                                <label class="filter-label">Signal Type</label>
                                 <select v-model="filter.signalType" class="filter-input" @change="applyFilter">
-                                    <option value="">全部</option>
-                                    <option value="BUY">买入</option>
-                                    <option value="SELL">卖出</option>
+                                    <option value="">All</option>
+                                    <option value="BUY">Buy</option>
+                                    <option value="SELL">Sell</option>
                                 </select>
                             </div>
                             <div class="filter-group">
-                                <label class="filter-label">策略</label>
+                                <label class="filter-label">Strategy</label>
                                 <select v-model="filter.strategy" class="filter-input" @change="applyFilter">
-                                    <option value="">全部</option>
+                                    <option value="">All</option>
                                     <option v-for="strategy in selectOptions.strategyNames" :value="strategy" :key="strategy">{{ strategy }}</option>
                                 </select>
                             </div>
                             <div class="filter-group">
-                                <label class="filter-label">交易所</label>
+                                <label class="filter-label">Exchange</label>
                                 <select v-model="filter.exchange" class="filter-input" @change="applyFilter">
-                                    <option value="">全部</option>
+                                    <option value="">All</option>
                                     <option v-for="exchange in selectOptions.exchangeTypes" :value="exchange" :key="exchange">{{ exchange }}</option>
                                 </select>
                             </div>
                             <div class="filter-group">
-                                <label class="filter-label">开始日期</label>
+                                <label class="filter-label">Start Date</label>
                                 <input type="date" v-model="filter.startDate" class="filter-input" @change="applyFilter">
                             </div>
                             <div class="filter-group">
-                                <label class="filter-label">结束日期</label>
+                                <label class="filter-label">End Date</label>
                                 <input type="date" v-model="filter.endDate" class="filter-input" @change="applyFilter">
                             </div>
                             <div class="filter-actions">
                                 <button class="btn btn-primary" @click="applyFilter">
                                     <i class="fas fa-search"></i>
-                                    应用筛选
+                                    Apply Filter
                                 </button>
                                 <button class="btn btn-secondary" @click="resetFilter">
                                     <i class="fas fa-undo"></i>
-                                    重置筛选
+                                    Reset Filter
                                 </button>
                             </div>
                         </div>
 
-                        <!-- 移动端简化筛选 -->
                         <div class="filters mobile-filters">
                             <div class="filter-group">
-                                <label class="filter-label">搜索交易对</label>
-                                <input v-model="filter.search" class="filter-input" placeholder="如：BTCUSDT" @input="debounceFilter">
+                                <label class="filter-label">Search Pair</label>
+                                <input v-model="filter.search" class="filter-input" placeholder="e.g. BTCUSDT" @input="debounceFilter">
                             </div>
                             <div class="filter-group">
-                                <label class="filter-label">信号类型</label>
+                                <label class="filter-label">Signal Type</label>
                                 <select v-model="filter.signalType" class="filter-input" @change="applyFilter">
-                                    <option value="">全部</option>
-                                    <option value="BUY">买入</option>
-                                    <option value="SELL">卖出</option>
+                                    <option value="">All</option>
+                                    <option value="BUY">Buy</option>
+                                    <option value="SELL">Sell</option>
                                 </select>
                             </div>
                             <div class="filter-group">
-                                <label class="filter-label">交易所</label>
+                                <label class="filter-label">Exchange</label>
                                 <select v-model="filter.exchange" class="filter-input" @change="applyFilter">
-                                    <option value="">全部</option>
+                                    <option value="">All</option>
                                     <option v-for="exchange in selectOptions.exchangeTypes" :value="exchange" :key="exchange">{{ exchange }}</option>
                                 </select>
                             </div>
                             <div class="filter-actions">
                                 <button class="btn btn-primary" @click="applyFilter" style="flex: 1;">
                                     <i class="fas fa-search"></i>
-                                    筛选
+                                    Filter
                                 </button>
                                 <button class="btn btn-secondary" @click="resetFilter" style="flex: 1;">
                                     <i class="fas fa-undo"></i>
-                                    重置
+                                    Reset
                                 </button>
                             </div>
                         </div>
@@ -333,36 +329,35 @@
                     <div class="section-header">
                         <h2 class="section-title">
                             <i class="fas fa-list"></i>
-                            信号列表
+                            Signal List
                             <span v-if="loading" class="loading"></span>
                         </h2>
                         <div class="navbar-actions">
                             <button class="btn btn-secondary" @click="refreshSignals">
                                 <i class="fas fa-sync-alt"></i>
-                                刷新
+                                Refresh
                             </button>
                         </div>
                     </div>
 
                     <div v-if="!signals.length && !loading" class="empty-state">
                         <i class="fas fa-inbox"></i>
-                        <h3>暂无信号数据</h3>
-                        <p>请调整筛选条件或等待新的交易信号</p>
+                        <h3>No signal data yet</h3>
+                        <p>Please adjust your filters or wait for new trading signals</p>
                     </div>
 
-                    <!-- PC端表格视图 -->
                     <div v-if="signals.length" class="data-table-wrapper">
                         <table class="data-table">
                         <thead>
                             <tr>
-                                <th>信号ID</th>
-                                <th>信号类型</th>
-                                <th>交易对</th>
-                                <th>策略</th>
-                                <th>交易所</th>
-                                <th>信号时间</th>
-                                <th>当前价格</th>
-                                <th>操作</th>
+                                <th>Signal ID</th>
+                                <th>Signal Type</th>
+                                <th>Trading Pair</th>
+                                <th>Strategy</th>
+                                <th>Exchange</th>
+                                <th>Signal Time</th>
+                                <th>Current Price</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -374,14 +369,14 @@
                                     </span>
                                 </td>
                                 <td class="font-weight-bold">{{ signal.symbol }}</td>
-                                <td>{{ signal.strategy || '无' }}</td>
+                                <td>{{ signal.strategy || '-' }}</td>
                                 <td>{{ signal.exchange }}</td>
                                 <td>{{ formattedSignalTime(signal.signalTime) }}</td>
                                 <td class="font-weight-bold">${{ signal.price }}</td>
                                 <td>
                                     <button class="btn btn-secondary btn-sm" @click="showDetails(signal)">
                                         <i class="fas fa-eye"></i>
-                                        详情
+                                        Details
                                     </button>
                                 </td>
                             </tr>
@@ -389,7 +384,6 @@
                         </table>
                     </div>
 
-                    <!-- 移动端卡片视图 -->
                     <div v-if="signals.length" class="mobile-signal-cards">
                         <div v-for="signal in signals" :key="signal.id" class="signal-card">
                             <div class="signal-card-header">
@@ -400,26 +394,26 @@
                             </div>
                             <div class="signal-card-body">
                                 <div class="signal-field">
-                                    <div class="signal-field-label">交易所</div>
+                                    <div class="signal-field-label">Exchange</div>
                                     <div class="signal-field-value">{{ signal.exchange }}</div>
                                 </div>
                                 <div class="signal-field">
-                                    <div class="signal-field-label">当前价格</div>
+                                    <div class="signal-field-label">Current Price</div>
                                     <div class="signal-field-value font-weight-bold">${{ signal.price }}</div>
                                 </div>
                                 <div class="signal-field">
-                                    <div class="signal-field-label">策略</div>
-                                    <div class="signal-field-value">{{ signal.strategy || '无' }}</div>
+                                    <div class="signal-field-label">Strategy</div>
+                                    <div class="signal-field-value">{{ signal.strategy || '-' }}</div>
                                 </div>
                                 <div class="signal-field">
-                                    <div class="signal-field-label">信号时间</div>
+                                    <div class="signal-field-label">Signal Time</div>
                                     <div class="signal-field-value">{{ formattedSignalTime(signal.signalTime) }}</div>
                                 </div>
                             </div>
                             <div class="signal-card-actions">
                                 <button class="btn btn-secondary btn-sm" @click="showDetails(signal)">
                                     <i class="fas fa-eye"></i>
-                                    详情
+                                    Details
                                 </button>
                             </div>
                         </div>
@@ -450,31 +444,30 @@
                     <div class="section-header">
                         <h2 class="section-title">
                             <i class="fas fa-code"></i>
-                            Python策略文件管理
+                            Python Strategy File Management
                         </h2>
                         <button class="btn btn-primary" @click="showUploadModal">
                             <i class="fas fa-plus"></i>
-                            上传策略
+                            Upload Strategy
                         </button>
                     </div>
 
                     <div v-if="!strategies.length && !loading" class="empty-state">
                         <i class="fas fa-file-code"></i>
-                        <h3>暂无策略文件</h3>
-                        <p>点击上传策略按钮添加Python策略文件</p>
+                        <h3>No strategy files yet</h3>
+                        <p>Click the upload button to add Python strategy files</p>
                     </div>
 
-                    <!-- 策略文件列表 -->
                     <div v-if="strategies.length" class="data-table-wrapper">
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>文件名</th>
-                                    <th>中文名称</th>
-                                    <th>文件大小</th>
-                                    <th>上传时间</th>
-                                    <th>状态</th>
-                                    <th>操作</th>
+                                    <th>File Name</th>
+                                    <th>Display Name</th>
+                                    <th>File Size</th>
+                                    <th>Upload Time</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -484,7 +477,7 @@
                                         {{ strategy.filename }}
                                     </td>
                                     <td class="strategy-display-name">
-                                        {{ strategy.displayName || strategy.description || '无' }}
+                                        {{ strategy.displayName || strategy.description || '-' }}
                                     </td>
                                     <td>{{ formatFileSize(strategy.fileSize) }}</td>
                                     <td>{{ formattedTime(strategy.uploadTime) }}</td>
@@ -496,13 +489,13 @@
                                     </td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn btn-secondary btn-sm" @click="downloadStrategy(strategy)" :title="'下载 ' + strategy.filename">
+                                            <button class="btn btn-secondary btn-sm" @click="downloadStrategy(strategy)" :title="'Download ' + strategy.filename">
                                                 <i class="fas fa-download"></i>
                                             </button>
-                                            <button class="btn btn-warning btn-sm" @click="hotReloadStrategy(strategy)" :title="'热更新 ' + strategy.filename" :disabled="strategy.status === 'UPDATING'">
+                                            <button class="btn btn-warning btn-sm" @click="hotReloadStrategy(strategy)" :title="'Hot reload ' + strategy.filename" :disabled="strategy.status === 'UPDATING'">
                                                 <i class="fas fa-sync-alt"></i>
                                             </button>
-                                            <button class="btn btn-danger btn-sm" @click="deleteStrategy(strategy)" :title="'删除 ' + strategy.filename">
+                                            <button class="btn btn-danger btn-sm" @click="deleteStrategy(strategy)" :title="'Delete ' + strategy.filename">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </div>
@@ -512,7 +505,6 @@
                         </table>
                     </div>
 
-                    <!-- 移动端策略卡片 -->
                     <div v-if="strategies.length" class="mobile-strategy-cards">
                         <div v-for="strategy in strategies" :key="strategy.id" class="strategy-card">
                             <div class="strategy-card-header">
@@ -527,30 +519,30 @@
                             </div>
                             <div class="strategy-card-body">
                                 <div class="strategy-field">
-                                    <div class="strategy-field-label">中文名称</div>
-                                    <div class="strategy-field-value">{{ strategy.displayName || strategy.description || '无' }}</div>
+                                    <div class="strategy-field-label">Display Name</div>
+                                    <div class="strategy-field-value">{{ strategy.displayName || strategy.description || '-' }}</div>
                                 </div>
                                 <div class="strategy-field">
-                                    <div class="strategy-field-label">文件大小</div>
+                                    <div class="strategy-field-label">File Size</div>
                                     <div class="strategy-field-value">{{ formatFileSize(strategy.fileSize) }}</div>
                                 </div>
                                 <div class="strategy-field">
-                                    <div class="strategy-field-label">上传时间</div>
+                                    <div class="strategy-field-label">Upload Time</div>
                                     <div class="strategy-field-value">{{ formattedTime(strategy.uploadTime) }}</div>
                                 </div>
                             </div>
                             <div class="strategy-card-actions">
                                 <button class="btn btn-secondary btn-sm" @click="downloadStrategy(strategy)">
                                     <i class="fas fa-download"></i>
-                                    下载
+                                    Download
                                 </button>
                                 <button class="btn btn-warning btn-sm" @click="hotReloadStrategy(strategy)" :disabled="strategy.status === 'UPDATING'">
                                     <i class="fas fa-sync-alt"></i>
-                                    热更新
+                                    Hot Reload
                                 </button>
                                 <button class="btn btn-danger btn-sm" @click="deleteStrategy(strategy)">
                                     <i class="fas fa-trash"></i>
-                                    删除
+                                    Delete
                                 </button>
                             </div>
                         </div>
@@ -560,119 +552,117 @@
 
             <!-- Backtest Tab -->
             <div v-show="currentTab === 'backtest'" class="tab-content">
-                <!-- 回测配置 -->
                 <div class="section">
                     <div class="section-header">
                         <h2 class="section-title">
                             <i class="fas fa-cogs"></i>
-                            回测配置
+                            Backtest Configuration
                         </h2>
                     </div>
-                    
+
                     <div class="form-row">
                         <div class="form-group">
-                            <label class="form-label">策略名称</label>
+                            <label class="form-label">Strategy Name</label>
                             <select v-model="backtest.strategyName" class="form-input">
-                                <option value="">请选择策略...</option>
+                                <option value="">Select a strategy...</option>
                                 <option v-for="strategy in selectOptions.strategyNames" :value="strategy" :key="strategy">{{ strategy }}</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">交易对</label>
+                            <label class="form-label">Trading Pair</label>
                             <select v-model="backtest.symbol" class="form-input">
                                 <option value="BTCUSDT">BTCUSDT</option>
                                 <option value="ETHUSDT">ETHUSDT</option>
                             </select>
                         </div>
                     </div>
-                    
+
                     <div class="form-row">
                         <div class="form-group">
-                            <label class="form-label">开始日期</label>
+                            <label class="form-label">Start Date</label>
                             <input type="date" v-model="backtest.startDate" class="form-input">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">结束日期</label>
+                            <label class="form-label">End Date</label>
                             <input type="date" v-model="backtest.endDate" class="form-input">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">初始资金 (USDT)</label>
+                            <label class="form-label">Initial Capital (USDT)</label>
                             <input type="number" v-model="backtest.initialBalance" class="form-input" step="1000" min="1000">
                         </div>
                     </div>
-                    
+
                     <div class="btn-group">
                         <button class="btn btn-primary" @click="runBacktest" :disabled="backtest.running || !backtest.strategyName">
                             <i :class="backtest.running ? 'fas fa-spinner fa-spin' : 'fas fa-play'"></i>
-                            {{ backtest.running ? '回测中...' : '开始回测' }}
+                            {{ backtest.running ? 'Running...' : 'Start Backtest' }}
                         </button>
                         <button class="btn btn-secondary" @click="resetBacktestForm">
                             <i class="fas fa-undo"></i>
-                            重置
+                            Reset
                         </button>
                     </div>
                 </div>
-                
-                <!-- 回测结果 -->
+
                 <div v-if="backtest.results" class="section">
                     <div class="section-header">
                         <h2 class="section-title">
                             <i class="fas fa-chart-bar"></i>
-                            回测结果
+                            Backtest Results
                         </h2>
                     </div>
-                    
+
                     <div class="metrics-grid">
                         <div class="metric-card" :class="{ 'positive': backtest.results.totalReturnPct >= 0, 'negative': backtest.results.totalReturnPct < 0 }">
-                            <h4>总收益</h4>
+                            <h4>Total Return</h4>
                             <div class="value">{{ (backtest.results.totalReturn || 0).toFixed(2) }} USDT</div>
                         </div>
                         <div class="metric-card" :class="{ 'positive': backtest.results.totalReturnPct >= 0, 'negative': backtest.results.totalReturnPct < 0 }">
-                            <h4>收益率</h4>
+                            <h4>Return Rate</h4>
                             <div class="value">{{ (backtest.results.totalReturnPct || 0).toFixed(2) }}%</div>
                         </div>
                         <div class="metric-card">
-                            <h4>最大回撤</h4>
+                            <h4>Max Drawdown</h4>
                             <div class="value">{{ (backtest.results.maxDrawdownPct || 0).toFixed(2) }}%</div>
                         </div>
                         <div class="metric-card">
-                            <h4>夏普比率</h4>
+                            <h4>Sharpe Ratio</h4>
                             <div class="value">{{ (backtest.results.sharpeRatio || 0).toFixed(2) }}</div>
                         </div>
                         <div class="metric-card">
-                            <h4>总交易次数</h4>
+                            <h4>Total Trades</h4>
                             <div class="value">{{ backtest.results.totalTrades || 0 }}</div>
                         </div>
                         <div class="metric-card" :class="{ 'positive': backtest.results.winRate >= 50, 'negative': backtest.results.winRate < 50 }">
-                            <h4>胜率</h4>
+                            <h4>Win Rate</h4>
                             <div class="value">{{ (backtest.results.winRate || 0).toFixed(1) }}%</div>
                         </div>
                         <div class="metric-card">
-                            <h4>最终资产</h4>
+                            <h4>Final Capital</h4>
                             <div class="value">{{ (backtest.results.finalPortfolioValue || 0).toFixed(2) }} USDT</div>
                         </div>
                         <div class="metric-card">
-                            <h4>盈亏比</h4>
+                            <h4>Profit Factor</h4>
                             <div class="value">{{ (backtest.results.profitFactor || 0).toFixed(2) }}</div>
                         </div>
                     </div>
-                    
+
                     <div class="subsection">
-                        <h3>交易记录</h3>
+                        <h3>Trade Records</h3>
                         <div v-if="!backtest.results.tradeRecords || backtest.results.tradeRecords.length === 0" class="empty-state">
-                            <p>无交易记录</p>
+                            <p>No trade records</p>
                         </div>
                         <div v-else style="max-height: 400px; overflow-y: auto;">
                             <table class="data-table">
                                 <thead>
                                     <tr>
-                                        <th>时间</th>
-                                        <th>操作</th>
-                                        <th>价格</th>
-                                        <th>数量</th>
-                                        <th>余额</th>
-                                        <th>组合价值</th>
-                                        <th>原因</th>
+                                        <th>Time</th>
+                                        <th>Action</th>
+                                        <th>Price</th>
+                                        <th>Quantity</th>
+                                        <th>Balance</th>
+                                        <th>Portfolio Value</th>
+                                        <th>Reason</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -702,59 +692,59 @@
                     <div class="section-header">
                         <h2 class="section-title">
                             <i class="fas fa-cog"></i>
-                            系统设置
+                            System Settings
                         </h2>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">加密货币模式</label>
+                        <label class="form-label">Crypto Mode</label>
                         <select v-model="settings.cryptoMode" class="form-input" @change="updateMinFetchFrequency">
-                            <option value="custom">自定义</option>
-                            <option value="all">全部（抓取所有加密货币）</option>
+                            <option value="custom">Custom</option>
+                            <option value="all">All (fetch all crypto)</option>
                         </select>
                     </div>
 
                     <div v-if="settings.cryptoMode === 'custom'" class="form-group">
-                        <label class="form-label">加密货币代号</label>
+                        <label class="form-label">Crypto Symbols</label>
                         <div class="crypto-tags">
                             <span v-for="(crypto, index) in settings.cryptoSymbols" :key="index" class="tag">
                                 {{ crypto }}
-                                <button @click="removeCrypto(index)">×</button>
+                                <button @click="removeCrypto(index)">&times;</button>
                             </span>
                         </div>
                         <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                            <input v-model="newCrypto" class="form-input" placeholder="输入新代号" @keyup.enter="addCrypto">
-                            <button class="btn btn-primary" @click="addCrypto" :disabled="!newCrypto.trim()">添加</button>
+                            <input v-model="newCrypto" class="form-input" placeholder="Enter new symbol" @keyup.enter="addCrypto">
+                            <button class="btn btn-primary" @click="addCrypto" :disabled="!newCrypto.trim()">Add</button>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">抓取频率 (分钟)</label>
+                        <label class="form-label">Fetch Frequency (minutes)</label>
                         <input type="number" v-model="settings.fetchFrequency" class="form-input" min="5" @input="validateFetchFrequency">
-                        <small style="color: var(--text-tertiary);">最小值: {{ minFetchFrequency }} 分钟</small>
+                        <small style="color: var(--text-tertiary);">Minimum: {{ minFetchFrequency }} minutes</small>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">交易所</label>
+                        <label class="form-label">Exchanges</label>
                         <div class="exchange-tags">
                             <span v-for="(exchange, index) in settings.exchangeTypes" :key="index" class="tag">
                                 {{ exchange }}
-                                <button @click="removeExchange(index)" :disabled="settings.exchangeTypes.length <= 1">×</button>
+                                <button @click="removeExchange(index)" :disabled="settings.exchangeTypes.length <= 1">&times;</button>
                             </span>
                         </div>
                         <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
                             <select v-model="newExchange" class="form-input">
-                                <option value="">选择交易所</option>
+                                <option value="">Select exchange</option>
                                 <option v-for="exchange in availableExchanges" :value="exchange" :key="exchange">{{ exchange }}</option>
                             </select>
-                            <button class="btn btn-primary" @click="addExchange" :disabled="!newExchange">添加</button>
+                            <button class="btn btn-primary" @click="addExchange" :disabled="!newExchange">Add</button>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <button class="btn btn-primary" @click="saveSettings" style="width: 100%;">
                             <i class="fas fa-save"></i>
-                            保存设置
+                            Save Settings
                         </button>
                     </div>
                 </div>
@@ -762,12 +752,11 @@
         </div>
     </div>
 
-
     <!-- Signal Details Modal -->
     <div :class="{ 'modal': true, 'active': showDetailsModal }" @click.self="closeDetailsModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">交易信号详情</h3>
+                <h3 class="modal-title">Trading Signal Details</h3>
                 <button class="close-btn" @click="closeDetailsModal">
                     <i class="fas fa-times"></i>
                 </button>
@@ -775,50 +764,50 @@
 
             <div v-if="selectedSignal" style="display: grid; gap: 1rem;">
                 <div class="detail-row">
-                    <strong>信号ID:</strong> {{ selectedSignal.id }}
+                    <strong>Signal ID:</strong> {{ selectedSignal.id }}
                 </div>
                 <div class="detail-row">
-                    <strong>信号类型:</strong>
+                    <strong>Signal Type:</strong>
                     <span :class="['signal-badge', selectedSignal.signal.toLowerCase()]">
                         {{ selectedSignal.signal }}
                     </span>
                 </div>
                 <div class="detail-row">
-                    <strong>交易对:</strong> {{ selectedSignal.symbol }}
+                    <strong>Trading Pair:</strong> {{ selectedSignal.symbol }}
                 </div>
                 <div class="detail-row">
-                    <strong>策略:</strong> {{ selectedSignal.strategy || '无' }}
+                    <strong>Strategy:</strong> {{ selectedSignal.strategy || '-' }}
                 </div>
                 <div class="detail-row">
-                    <strong>交易所:</strong> {{ selectedSignal.exchange }}
+                    <strong>Exchange:</strong> {{ selectedSignal.exchange }}
                 </div>
                 <div class="detail-row">
-                    <strong>信号时间:</strong> {{ formattedSignalTime(selectedSignal.signalTime) }}
+                    <strong>Signal Time:</strong> {{ formattedSignalTime(selectedSignal.signalTime) }}
                 </div>
                 <div class="detail-row">
-                    <strong>当前价格:</strong> ${{ selectedSignal.price }}
+                    <strong>Current Price:</strong> ${{ selectedSignal.price }}
                 </div>
                 <div class="detail-row" v-if="selectedSignal.buyPrice">
-                    <strong>买入价格:</strong> ${{ selectedSignal.buyPrice }}
+                    <strong>Buy Price:</strong> ${{ selectedSignal.buyPrice }}
                 </div>
                 <div class="detail-row" v-if="selectedSignal.takeProfit">
-                    <strong>止盈价格:</strong> ${{ selectedSignal.takeProfit }}
+                    <strong>Take Profit:</strong> ${{ selectedSignal.takeProfit }}
                 </div>
                 <div class="detail-row" v-if="selectedSignal.stopLoss">
-                    <strong>止损价格:</strong> ${{ selectedSignal.stopLoss }}
+                    <strong>Stop Loss:</strong> ${{ selectedSignal.stopLoss }}
                 </div>
                 <div class="detail-row" v-if="selectedSignal.profitLossRatio">
-                    <strong>盈亏比:</strong> {{ formatProfitLossRatio(selectedSignal.profitLossRatio) }}
+                    <strong>Profit/Loss Ratio:</strong> {{ formatProfitLossRatio(selectedSignal.profitLossRatio) }}
                 </div>
                 <div class="detail-row" v-if="selectedSignal.expiration">
-                    <strong>计划有效期:</strong> {{ selectedSignal.expiration }}
+                    <strong>Expiration:</strong> {{ selectedSignal.expiration }}
                 </div>
                 <div class="detail-row" v-if="selectedSignal.remark">
-                    <strong>备注:</strong> {{ selectedSignal.remark }}
+                    <strong>Remark:</strong> {{ selectedSignal.remark }}
                 </div>
 
                 <div class="disclaimer" style="margin-top: 1rem; padding: 1rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; font-size: 0.875rem; color: var(--text-secondary); text-align: center;">
-                    生成的交易信号仅供学习参考，不构成任何投资建议
+                    Generated trading signals are for educational reference only and do not constitute investment advice.
                 </div>
             </div>
         </div>
@@ -828,7 +817,7 @@
     <div :class="{ 'modal': true, 'active': showUploadStrategyModal }" @click.self="closeUploadModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">上传Python策略文件</h3>
+                <h3 class="modal-title">Upload Python Strategy File</h3>
                 <button class="close-btn" @click="closeUploadModal">
                     <i class="fas fa-times"></i>
                 </button>
@@ -836,11 +825,11 @@
 
             <div class="modal-body">
                 <div class="form-group">
-                    <label class="form-label">选择Python文件</label>
+                    <label class="form-label">Select Python File</label>
                     <input type="file" ref="strategyFileInput" @change="onFileSelected" accept=".py" class="form-input">
-                    <small class="form-help">支持.py格式的Python文件，最大10MB</small>
+                    <small class="form-help">Supports .py format Python files, max 10MB</small>
                 </div>
-                
+
                 <div v-if="selectedFile" class="file-preview">
                     <div class="file-info">
                         <i class="fas fa-python text-primary"></i>
@@ -852,16 +841,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">策略描述（可选）</label>
-                    <textarea v-model="strategyDescription" class="form-input" rows="3" placeholder="简单描述该策略的功能..."></textarea>
+                    <label class="form-label">Strategy Description (optional)</label>
+                    <textarea v-model="strategyDescription" class="form-input" rows="3" placeholder="Briefly describe this strategy..."></textarea>
                 </div>
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-secondary" @click="closeUploadModal">取消</button>
+                <button class="btn btn-secondary" @click="closeUploadModal">Cancel</button>
                 <button class="btn btn-primary" @click="uploadStrategy" :disabled="!selectedFile || uploading">
                     <i :class="uploading ? 'fas fa-spinner fa-spin' : 'fas fa-upload'"></i>
-                    {{ uploading ? '上传中...' : '上传文件' }}
+                    {{ uploading ? 'Uploading...' : 'Upload File' }}
                 </button>
             </div>
         </div>
@@ -871,25 +860,25 @@
     <div :class="{ 'modal': true, 'active': showDeleteConfirmModal }" @click.self="closeDeleteConfirmModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">确认删除</h3>
+                <h3 class="modal-title">Confirm Delete</h3>
                 <button class="close-btn" @click="closeDeleteConfirmModal">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
 
             <div class="modal-body" v-if="strategyToDelete">
-                <p>确定要删除策略文件 <strong>{{ strategyToDelete.filename }}</strong> 吗？</p>
+                <p>Are you sure you want to delete strategy file <strong>{{ strategyToDelete.filename }}</strong>?</p>
                 <div class="warning-message">
                     <i class="fas fa-exclamation-triangle"></i>
-                    <span>删除后将无法恢复，并且会通知Python项目移除该策略。</span>
+                    <span>Cannot be recovered after deletion, and the Python project will be notified to remove this strategy.</span>
                 </div>
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-secondary" @click="closeDeleteConfirmModal">取消</button>
+                <button class="btn btn-secondary" @click="closeDeleteConfirmModal">Cancel</button>
                 <button class="btn btn-danger" @click="confirmDeleteStrategy" :disabled="deleting">
                     <i :class="deleting ? 'fas fa-spinner fa-spin' : 'fas fa-trash'"></i>
-                    {{ deleting ? '删除中...' : '确认删除' }}
+                    {{ deleting ? 'Deleting...' : 'Confirm Delete' }}
                 </button>
             </div>
         </div>

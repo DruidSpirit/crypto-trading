@@ -14,7 +14,7 @@ createApp({
                 downloadEndDate: '',
                 downloading: false,
                 dataInfo: null,
-                
+
                 strategyName: '',
                 symbol: 'BTCUSDT',
                 timeframe: '1m',
@@ -31,7 +31,7 @@ createApp({
         this.loadSelectOptions();
         this.initBacktestDates();
 
-        // 每分钟检查一次时间并更新主题
+
         setInterval(() => {
             if (this.themeMode === 'auto') {
                 this.updateThemeByTime();
@@ -39,7 +39,7 @@ createApp({
         }, 60000);
     },
     methods: {
-        // 主题相关方法
+
         initTheme() {
             const savedTheme = localStorage.getItem('theme-mode');
             if (savedTheme && ['light', 'dark', 'auto'].includes(savedTheme)) {
@@ -47,10 +47,10 @@ createApp({
             } else {
                 this.themeMode = 'auto';
             }
-            
+
             this.applyTheme();
-            
-            // 监听系统主题变化
+
+
             window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
                 if (this.themeMode === 'auto') {
                     this.applyTheme();
@@ -68,7 +68,7 @@ createApp({
 
         applyTheme() {
             const root = document.documentElement;
-            
+
             if (this.themeMode === 'auto') {
                 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                 root.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
@@ -95,11 +95,11 @@ createApp({
 
         getThemeTooltip() {
             const titles = {
-                'light': '浅色主题',
-                'dark': '深色主题',
-                'auto': '自动主题'
+                'light': 'Light Theme',
+                'dark': 'Dark Theme',
+                'auto': 'Auto Theme'
             };
-            return titles[this.themeMode] || '主题切换';
+            return titles[this.themeMode] || 'Toggle Theme';
         },
 
         showToast(message, type = 'success') {
@@ -117,7 +117,7 @@ createApp({
 
         formattedTime(time) {
             const date = new Date(time);
-            return date.toLocaleString('zh-CN', {
+            return date.toLocaleString('en-US', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
@@ -127,17 +127,17 @@ createApp({
             });
         },
 
-        // 回测相关方法
+
         async loadSelectOptions() {
             try {
                 const response = await fetch('/api/select-options');
                 const data = await response.json();
-                
+
                 if (data.strategyNames) {
                     this.selectOptions.strategyNames = data.strategyNames;
                 }
             } catch (error) {
-                console.error('加载选项失败:', error);
+                console.error('Failed to load options:', error);
             }
         },
 
@@ -145,7 +145,7 @@ createApp({
             const today = new Date();
             const oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
             const fourYearsAgo = new Date(today.getFullYear() - 4, today.getMonth(), today.getDate());
-            
+
             this.backtest.startDate = oneYearAgo.toISOString().split('T')[0];
             this.backtest.endDate = today.toISOString().split('T')[0];
             this.backtest.downloadStartDate = fourYearsAgo.toISOString().split('T')[0];
@@ -154,16 +154,16 @@ createApp({
 
         async batchDownloadData() {
             if (!this.backtest.downloadSymbols || !this.backtest.downloadStartDate || !this.backtest.downloadEndDate) {
-                this.showToast('请填写所有下载参数', 'warning');
+                this.showToast('Please fill in all download parameters', 'warning');
                 return;
             }
 
             const symbols = this.backtest.downloadSymbols.split(',').map(s => s.trim()).filter(s => s);
-            
+
             this.backtest.downloading = true;
             try {
-                this.showToast('正在下载数据，请稍候...', 'info');
-                
+                this.showToast('Downloading data, please wait...', 'info');
+
                 const response = await fetch('/api/backtest/batch-download', {
                     method: 'POST',
                     headers: {
@@ -178,16 +178,16 @@ createApp({
                 });
 
                 const result = await response.json();
-                
+
                 if (result.success) {
-                    this.showToast(`数据下载完成：${result.data?.success_count || 0}/${result.data?.total_symbols || 0}`, 'success');
-                    this.getDataInfo(); // 自动刷新数据信息
+                    this.showToast(`Data download complete: ${result.data?.success_count || 0}/${result.data?.total_symbols || 0}`, 'success');
+                    this.getDataInfo();
                 } else {
-                    this.showToast(result.message || '数据下载失败', 'error');
+                    this.showToast(result.message || 'Data download failed', 'error');
                 }
             } catch (error) {
-                console.error('数据下载失败:', error);
-                this.showToast('数据下载失败: ' + error.message, 'error');
+                console.error('Data download failed:', error);
+                this.showToast('Data download failed: ' + error.message, 'error');
             } finally {
                 this.backtest.downloading = false;
             }
@@ -197,29 +197,29 @@ createApp({
             try {
                 const response = await fetch('/api/backtest/data-info');
                 const result = await response.json();
-                
+
                 if (result.success && result.data) {
                     this.backtest.dataInfo = result.data;
                 } else {
                     this.backtest.dataInfo = null;
-                    this.showToast(result.message || '获取数据信息失败', 'error');
+                    this.showToast(result.message || 'Failed to get data information', 'error');
                 }
             } catch (error) {
-                console.error('获取数据信息失败:', error);
-                this.showToast('获取数据信息失败: ' + error.message, 'error');
+                console.error('Failed to get data information:', error);
+                this.showToast('Failed to get data information: ' + error.message, 'error');
             }
         },
 
         async runBacktest() {
-            if (!this.backtest.strategyName || !this.backtest.symbol || 
+            if (!this.backtest.strategyName || !this.backtest.symbol ||
                 !this.backtest.startDate || !this.backtest.endDate) {
-                this.showToast('请填写所有必填字段', 'warning');
+                this.showToast('Please fill in all required fields', 'warning');
                 return;
             }
 
             this.backtest.running = true;
             this.backtest.results = null;
-            
+
             try {
                 const request = {
                     strategy_name: this.backtest.strategyName,
@@ -239,16 +239,16 @@ createApp({
                 });
 
                 const result = await response.json();
-                
+
                 if (result.success && result.data) {
                     this.backtest.results = result.data;
-                    this.showToast('回测完成', 'success');
+                    this.showToast('Backtest complete', 'success');
                 } else {
-                    this.showToast(result.message || '回测失败', 'error');
+                    this.showToast(result.message || 'Backtest failed', 'error');
                 }
             } catch (error) {
-                console.error('回测请求失败:', error);
-                this.showToast('回测请求失败: ' + error.message, 'error');
+                console.error('Backtest request failed:', error);
+                this.showToast('Backtest request failed: ' + error.message, 'error');
             } finally {
                 this.backtest.running = false;
             }
