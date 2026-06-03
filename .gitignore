@@ -1,0 +1,84 @@
+# Build output
+target/
+*.class
+
+# Runtime data
+db/
+*.log
+*.pid
+app.log
+app.pid
+tool.log
+tool.log.*
+*.gz
+*.gz.tmp
+*.log.gz
+
+# Database files
+*.db
+*.mv.db
+*.trace.db
+
+# Release package
+crypto-trading-release.zip
+
+# Python strategy service (not included in this repo)
+python-strategy-service/
+
+# Local IDE and tool state
+.idea/
+.omc/
+.claude/settings.local.json
+.claude/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+
+# Old/deleted scripts that were replaced
+start-all-services.bat
+start-all-services.sh
+start-python-service.bat
+start.bat
+start.sh
+stop.bat
+stop.sh
+start_java_simple.py
+start_python_fixed.py
+check-syntax.bat
+compile-check.bat
+compile-test.bat
+quick-start.bat
+run_spring_boot.bat
+verify-fixes.bat
+debug-vue.html
+test-fix-validation.html
+test-toast.html
+test-integration.bat
+test-elder-integration.bat
+test_all_functions.py
+test_python_api.py
+test_strategy_api.py
+test_strategy_frontend.html
+downloaded_rsi_strategy.py
+downloaded_test_strategy.py
+final_test.py
+final_verification.py
+fix_python_api.py
+simple_test.py
+maven.zip
+settings.xml
+app.pid
+integration-test-summary.md
+COMPILATION_SUMMARY.md
+FIXED_ISSUES.md
+PYTHON_FIX_REPORT.md
+README_COMPILATION.md
+REFACTORING_SUMMARY.md
+SYNTAX_FIXES_COMPLETED.md
+TEST_REPORT.md

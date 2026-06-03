@@ -1,0 +1,45 @@
+package druid.elf.tool.repository;
+
+import druid.elf.tool.entity.TradeSignal;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+@Repository
+public interface TradeSignalRepository extends JpaRepository<TradeSignal, String>, JpaSpecificationExecutor<TradeSignal> {
+
+    @Modifying
+    @Query("DELETE FROM TradeSignal ts WHERE ts.signalTime < :dateTime")
+    long deleteBySignalTimeBefore(LocalDateTime dateTime);
+
+
+    @Query("SELECT COUNT(ts) FROM TradeSignal ts WHERE ts.signal = :signal")
+    long countBySignal(String signal);
+
+
+    @Query("SELECT COUNT(DISTINCT ts.symbol) FROM TradeSignal ts")
+    long countDistinctSymbols();
+
+
+    @Query("SELECT " +
+           "YEAR(ts.signalTime) as year, " +
+           "MONTH(ts.signalTime) as month, " +
+           "ts.signal as signal, " +
+           "COUNT(ts) as count " +
+           "FROM TradeSignal ts " +
+           "WHERE ts.signalTime >= :startDate " +
+           "GROUP BY YEAR(ts.signalTime), MONTH(ts.signalTime), ts.signal " +
+           "ORDER BY YEAR(ts.signalTime), MONTH(ts.signalTime)")
+    List<Map<String, Object>> getMonthlySignalStats(LocalDateTime startDate);
+
+
+    Page<TradeSignal> findByOrderBySignalTimeDesc(Pageable pageable);
+}

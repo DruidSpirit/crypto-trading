@@ -1,0 +1,47 @@
+server:
+  port: 5567
+logging:
+  file:
+    path: /tool/log
+    name: tool.log
+spring:
+  main:
+    allow-circular-references: true
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
+  datasource:
+    url: jdbc:h2:file:./db/tool
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+    hikari:
+      maximum-pool-size: 10
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+  sql:
+    init:
+      platform: h2
+
+# Strategy file upload settings.
+strategy:
+  upload:
+    path: python-strategy-service/src/strategies
+
+# Python strategy service settings.
+python:
+  strategy:
+    api:
+      base-url: http://localhost:8001
+    service:
+      url: http://localhost:8001

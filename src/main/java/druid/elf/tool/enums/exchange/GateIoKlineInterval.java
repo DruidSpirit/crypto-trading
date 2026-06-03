@@ -1,0 +1,21 @@
+package druid.elf.tool.enums.exchange;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+
+@Getter
+@AllArgsConstructor
+public enum GateIoKlineInterval {
+    _1M("1m"),
+    _5M("5m"),
+    _15M("15m"),
+    _30M("30m"),
+    _1H("1h"),
+    _4H("4h"),
+    _1D("1d"),
+    _1W("1w");
+
+    private final String symbol;
+
+}
