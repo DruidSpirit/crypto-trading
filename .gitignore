@@ -21,6 +21,7 @@ tool.log.*
 
 # Release package
 crypto-trading-release.zip
+crypto-trading-release/
 python-strategy-service.zip
 
 # Python strategy service runtime data

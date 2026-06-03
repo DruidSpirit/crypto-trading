@@ -7,6 +7,8 @@
 [![Java 17](https://img.shields.io/badge/Java-17-blue.svg)](pom.xml)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-green.svg)](python-strategy-service/README.md)
 
+> **Disclaimer**: Crypto Trading is research software for strategy development and signal analysis. It is not financial advice. Always validate strategies independently before using real funds.
+
 ## 📖 Project Overview
 
 **Crypto Trading** is an open-source crypto trading signal platform that crawls historical K-line data from public APIs of major cryptocurrency exchanges and generates trading signals with user-defined strategies. The project features a dual Java + Python architecture with Elder triple-filter strategies built in, along with flexible extensibility, multi-threaded data fetching, and proxy configuration support.
@@ -18,6 +20,42 @@
 - **Python strategy engine**: Write trading strategies in Python with hot-reload support.
 - **High performance**: Multi-proxy, multi-threaded data fetching.
 - **Web console**: Built-in dashboard for monitoring signals, backtesting strategies in real time.
+
+---
+
+## 🖥 Screenshots
+
+### Dashboard
+
+![Dashboard overview](docs/images/dashboard.png)
+
+### Signal Filtering and Monitoring
+
+![Signal list and filters](docs/images/signal-list.png)
+
+### Strategy Management
+
+![Python strategy management](docs/images/strategy-management.png)
+
+### Backtesting
+
+![Backtest configuration](docs/images/backtest.png)
+
+### System Settings
+
+![System settings](docs/images/settings.png)
+
+---
+
+## 🧭 Project Status and Roadmap
+
+Crypto Trading is maintained as an open-source research and signal-analysis platform. Current focus areas:
+
+- Keep Java and Python strategy execution stable through CI.
+- Improve strategy upload, hot reload, and backtest workflows.
+- Add stronger exchange API compatibility checks.
+- Add Docker Compose support for easier local evaluation.
+- Expand strategy examples and backtest report exports.
 
 ---
 

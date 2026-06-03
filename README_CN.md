@@ -7,6 +7,8 @@
 [![Java 17](https://img.shields.io/badge/Java-17-blue.svg)](pom.xml)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-green.svg)](python-strategy-service/README.md)
 
+> **风险提示**：Crypto Trading 是用于策略研发和交易信号分析的研究型软件，不构成任何投资建议。使用真实资金前，请独立验证策略和风险。
+
 ## 📖 项目简介
 
 **Crypto Trading** 是一个开源的加密货币交易信号平台，专注于从各大加密货币交易所的公开API中爬取历史K线数据，并结合用户自定义的交易策略生成交易信号。项目支持Java后端 + Python策略引擎双架构，内置Elder三重过滤策略，同时提供灵活的扩展性，支持多线程数据拉取和代理配置。
@@ -17,6 +19,42 @@
 - **Python策略引擎**：用Python编写交易策略，支持热更新。
 - **高性能**：支持多代理、多线程加速数据拉取。
 - **Web控制台**：内置管理界面，实时监控爬取和信号状态，支持策略回测。
+
+---
+
+## 🖥 界面截图
+
+### 仪表盘
+
+![仪表盘概览](docs/images/dashboard.png)
+
+### 信号筛选与监控
+
+![信号列表和筛选器](docs/images/signal-list.png)
+
+### 策略管理
+
+![Python策略管理](docs/images/strategy-management.png)
+
+### 策略回测
+
+![回测配置](docs/images/backtest.png)
+
+### 系统设置
+
+![系统设置](docs/images/settings.png)
+
+---
+
+## 🧭 项目状态与路线图
+
+Crypto Trading 作为开源的策略研究和信号分析平台持续维护。当前重点方向：
+
+- 通过 CI 保持 Java 和 Python 策略执行链路稳定。
+- 优化策略上传、热更新和回测流程。
+- 增加交易所 API 兼容性检查。
+- 增加 Docker Compose，降低本地试用门槛。
+- 扩展策略示例和回测报告导出能力。
 
 ---
 
