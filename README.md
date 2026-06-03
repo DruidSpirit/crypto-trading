@@ -2,6 +2,11 @@
 
 # Crypto Trading
 
+[![CI](https://github.com/DruidSpirit/crypto-trading/actions/workflows/ci.yml/badge.svg)](https://github.com/DruidSpirit/crypto-trading/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Java 17](https://img.shields.io/badge/Java-17-blue.svg)](pom.xml)
+[![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-green.svg)](python-strategy-service/README.md)
+
 ## 📖 Project Overview
 
 **Crypto Trading** is an open-source crypto trading signal platform that crawls historical K-line data from public APIs of major cryptocurrency exchanges and generates trading signals with user-defined strategies. The project features a dual Java + Python architecture with Elder triple-filter strategies built in, along with flexible extensibility, multi-threaded data fetching, and proxy configuration support.

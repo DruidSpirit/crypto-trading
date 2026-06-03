@@ -1,5 +1,12 @@
 > [English Version](README.md)
 
+# Crypto Trading
+
+[![CI](https://github.com/DruidSpirit/crypto-trading/actions/workflows/ci.yml/badge.svg)](https://github.com/DruidSpirit/crypto-trading/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Java 17](https://img.shields.io/badge/Java-17-blue.svg)](pom.xml)
+[![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-green.svg)](python-strategy-service/README.md)
+
 ## 📖 项目简介
 
 **Crypto Trading** 是一个开源的加密货币交易信号平台，专注于从各大加密货币交易所的公开API中爬取历史K线数据，并结合用户自定义的交易策略生成交易信号。项目支持Java后端 + Python策略引擎双架构，内置Elder三重过滤策略，同时提供灵活的扩展性，支持多线程数据拉取和代理配置。

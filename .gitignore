@@ -21,9 +21,15 @@ tool.log.*
 
 # Release package
 crypto-trading-release.zip
+python-strategy-service.zip
 
-# Python strategy service (not included in this repo)
-python-strategy-service/
+# Python strategy service runtime data
+python-strategy-service/data/
+python-strategy-service/*.db
+python-strategy-service/**/*.db
+python-strategy-service/__pycache__/
+python-strategy-service/**/__pycache__/
+python-strategy-service/**/*.pyc
 
 # Local IDE and tool state
 .idea/
