@@ -6,6 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Java 17](https://img.shields.io/badge/Java-17-blue.svg)](pom.xml)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-green.svg)](python-strategy-service/README.md)
+[![Docker Compose](https://img.shields.io/badge/Docker-Compose-2496ED.svg)](docker-compose.yml)
 
 > **Disclaimer**: Crypto Trading is research software for strategy development and signal analysis. It is not financial advice. Always validate strategies independently before using real funds.
 
@@ -54,8 +55,10 @@ Crypto Trading is maintained as an open-source research and signal-analysis plat
 - Keep Java and Python strategy execution stable through CI.
 - Improve strategy upload, hot reload, and backtest workflows.
 - Add stronger exchange API compatibility checks.
-- Add Docker Compose support for easier local evaluation.
+- Improve Docker-based local evaluation.
 - Expand strategy examples and backtest report exports.
+
+See [CHANGELOG.md](CHANGELOG.md) for release history.
 
 ---
 
@@ -65,6 +68,35 @@ Crypto Trading is maintained as an open-source research and signal-analysis plat
 
 - **Java**: JRE 17 or above
 - **Python**: 3.9 or above
+
+### Docker Compose
+
+Docker Compose is the easiest way to run both services together.
+
+Requirements:
+
+- Docker
+- Docker Compose v2
+
+Start the stack:
+
+```bash
+docker compose up --build
+```
+
+Open the web console:
+
+```text
+http://localhost:5567
+```
+
+The Python strategy service is exposed at:
+
+```text
+http://localhost:8001
+```
+
+Docker volumes persist Java H2 data, Python SQLite data, logs, and shared strategy files.
 
 ### Windows
 
@@ -310,7 +342,7 @@ Remark: RSI+ATR breakout strategy
 
 3. **Docker containerized deployment**
    
-   - Provide a one-click Docker deployment solution for hassle-free setup.
+   - Use `docker compose up --build` to run the Java backend and Python strategy service together.
 
 ---
 
@@ -331,10 +363,15 @@ Remark: RSI+ATR breakout strategy
 │       ├── dto/                        # Data transfer objects
 │       └── enums/                      # Enumerations
 ├── python-strategy-service/            # Python strategy service
+│   ├── Dockerfile                      # Python service container image
 │   ├── main.py                         # FastAPI entry point
 │   ├── src/strategies/                 # Python strategy implementations
 │   ├── src/utils/                      # Technical indicators & backtest engine
 │   └── requirements.txt
+├── docs/images/                        # README screenshots
+├── Dockerfile                          # Java backend container image
+├── docker-compose.yml                  # One-command local stack
+├── CHANGELOG.md                        # Release history
 ├── pack-release.bat                    # One-click packaging script
 ├── release-template/                   # Production startup script templates
 └── pom.xml
@@ -346,8 +383,8 @@ Remark: RSI+ATR breakout strategy
 
 Contributions of any kind are welcome.
 
-- **Report issues**: Submit an [Issue](https://github.com/your-repo/issues) with a detailed description and reproduction steps.
-- **Submit code**: Open a [Pull Request](https://github.com/your-repo/pulls), follow the code style, and add necessary comments.
+- **Report issues**: Submit an [Issue](https://github.com/DruidSpirit/crypto-trading/issues) with a detailed description and reproduction steps.
+- **Submit code**: Open a [Pull Request](https://github.com/DruidSpirit/crypto-trading/pulls), follow the code style, and add necessary comments.
 
 ---
 

@@ -20,6 +20,7 @@ load_dotenv()
 if __name__ == "__main__":
     host = os.getenv("HOST", "0.0.0.0")
     port = int(os.getenv("PORT", 8001))
+    reload_enabled = os.getenv("RELOAD", "false").lower() in {"1", "true", "yes", "on"}
 
     print(f"Starting strategy service on {host}:{port}")
 
@@ -27,6 +28,6 @@ if __name__ == "__main__":
         "main:app",
         host=host,
         port=port,
-        reload=True,
+        reload=reload_enabled,
         log_level="info"
     )
