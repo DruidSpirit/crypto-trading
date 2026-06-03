@@ -37,6 +37,7 @@ services:
       PYTHON_STRATEGY_API_BASE_URL: http://python-strategy-service:8001
       PYTHON_STRATEGY_SERVICE_URL: http://python-strategy-service:8001
       STRATEGY_UPLOAD_PATH: /app/python-strategy-service/src/strategies
+      APP_BROWSER_ENABLED: "false"
     ports:
       - "5567:5567"
     volumes:
