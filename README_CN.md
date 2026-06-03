@@ -6,6 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Java 17](https://img.shields.io/badge/Java-17-blue.svg)](pom.xml)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-green.svg)](python-strategy-service/README.md)
+[![Docker Compose](https://img.shields.io/badge/Docker-Compose-2496ED.svg)](docker-compose.yml)
 
 > **风险提示**：Crypto Trading 是用于策略研发和交易信号分析的研究型软件，不构成任何投资建议。使用真实资金前，请独立验证策略和风险。
 
@@ -53,8 +54,10 @@ Crypto Trading 作为开源的策略研究和信号分析平台持续维护。�
 - 通过 CI 保持 Java 和 Python 策略执行链路稳定。
 - 优化策略上传、热更新和回测流程。
 - 增加交易所 API 兼容性检查。
-- 增加 Docker Compose，降低本地试用门槛。
+- 持续优化 Docker 本地试用体验。
 - 扩展策略示例和回测报告导出能力。
+
+版本记录见 [CHANGELOG.md](CHANGELOG.md)。
 
 ---
 
@@ -63,6 +66,35 @@ Crypto Trading 作为开源的策略研究和信号分析平台持续维护。�
 ### 环境要求
 - **Java**: JRE 17 或以上
 - **Python**: 3.9 或以上
+
+### Docker Compose
+
+Docker Compose 是最简单的一体化启动方式，会同时启动 Java 后端和 Python 策略服务。
+
+环境要求：
+
+- Docker
+- Docker Compose v2
+
+启动：
+
+```bash
+docker compose up --build
+```
+
+Web 控制台：
+
+```text
+http://localhost:5567
+```
+
+Python 策略服务：
+
+```text
+http://localhost:8001
+```
+
+Docker volumes 会持久化 Java H2 数据、Python SQLite 数据、日志和共享策略文件。
 
 ### Windows
 1. 下载并解压 `crypto-trading-release.zip`。
@@ -292,7 +324,7 @@ public class RsiAtrBreakoutStrategy extends AbstractTradeStrategy {
    - 借助Python生态（如Pandas、TA-Lib），增强项目的扩展性和灵活性。
 
 3. **Docker容器化部署**
-   - 提供Docker一键部署方案，免去环境配置烦恼。
+   - 使用 `docker compose up --build` 同时启动 Java 后端和 Python 策略服务。
 
 ---
 
@@ -312,10 +344,15 @@ public class RsiAtrBreakoutStrategy extends AbstractTradeStrategy {
 │       ├── dto/                        # 数据传输对象
 │       └── enums/                      # 枚举定义
 ├── python-strategy-service/            # Python策略服务
+│   ├── Dockerfile                      # Python服务容器镜像
 │   ├── main.py                         # FastAPI入口
 │   ├── src/strategies/                 # Python策略实现
 │   ├── src/utils/                      # 技术指标 & 回测引擎
 │   └── requirements.txt
+├── docs/images/                        # README截图
+├── Dockerfile                          # Java后端容器镜像
+├── docker-compose.yml                  # 一键启动本地服务栈
+├── CHANGELOG.md                        # 版本记录
 ├── pack-release.bat                    # 一键打包脚本
 ├── release-template/                   # 生产版启动脚本模板
 └── pom.xml
@@ -326,8 +363,8 @@ public class RsiAtrBreakoutStrategy extends AbstractTradeStrategy {
 ## 🤝 如何贡献
 
 我们欢迎任何形式的贡献！  
-- **报告问题**：提交 [Issue](https://github.com/your-repo/issues)，请附上详细描述和复现步骤。  
-- **提交代码**：发起 [Pull Request](https://github.com/your-repo/pulls)，请遵循代码规范并添加必要的注释。
+- **报告问题**：提交 [Issue](https://github.com/DruidSpirit/crypto-trading/issues)，请附上详细描述和复现步骤。
+- **提交代码**：发起 [Pull Request](https://github.com/DruidSpirit/crypto-trading/pulls)，请遵循代码规范并添加必要的注释。
 
 ---
 
