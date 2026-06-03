@@ -29,7 +29,7 @@
 
 ![Signal list and filters](docs/images/signal-list.png)
 
-### Signal List
+### Strategy Management
 
 ![Dashboard overview](docs/images/dashboard.png)
 
@@ -41,7 +41,7 @@
 
 ![Backtest configuration](docs/images/backtest.png)
 
-### Strategy Management
+### Signal List
 
 ![System settings](docs/images/settings.png)
 
