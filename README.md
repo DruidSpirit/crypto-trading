@@ -27,15 +27,15 @@
 
 ### Dashboard
 
-![Signal list and filters](docs/images/signal-list.png)
+![Dashboard overview](docs/images/dashboard.png)
 
 ### Strategy Management
 
-![Dashboard overview](docs/images/dashboard.png)
+![Python strategy management](docs/images/strategy-management.png)
 
 ### System Settings
 
-![Python strategy management](docs/images/strategy-management.png)
+![System settings](docs/images/settings.png)
 
 ### Backtesting
 
@@ -43,7 +43,7 @@
 
 ### Signal List
 
-![System settings](docs/images/settings.png)
+![Signal list and filters](docs/images/signal-list.png)
 
 ---
 
