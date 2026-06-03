@@ -1,84 +1,100 @@
-## 📖 项目简介
+> [中文版本](README_CN.md)
 
-**Crypto Trading** 是一个开源的加密货币交易信号平台，专注于从各大加密货币交易所的公开API中爬取历史K线数据，并结合用户自定义的交易策略生成交易信号。项目支持Java后端 + Python策略引擎双架构，内置Elder三重过滤策略，同时提供灵活的扩展性，支持多线程数据拉取和代理配置。
+# Crypto Trading
 
-### ✨ 核心功能
-- **数据爬取**：支持Binance、OKX、Gate.io、Bybit等交易所获取历史K线数据。
-- **信号生成**：基于自定义策略生成买入/卖出信号。
-- **Python策略引擎**：用Python编写交易策略，支持热更新。
-- **高性能**：支持多代理、多线程加速数据拉取。
-- **Web控制台**：内置管理界面，实时监控爬取和信号状态，支持策略回测。
+## 📖 Project Overview
+
+**Crypto Trading** is an open-source crypto trading signal platform that crawls historical K-line data from public APIs of major cryptocurrency exchanges and generates trading signals with user-defined strategies. The project features a dual Java + Python architecture with Elder triple-filter strategies built in, along with flexible extensibility, multi-threaded data fetching, and proxy configuration support.
+
+### ✨ Core Features
+
+- **Data crawling**: Fetch historical K-line data from Binance, OKX, Gate.io, Bybit, and more.
+- **Signal generation**: Generate buy/sell signals with custom strategies.
+- **Python strategy engine**: Write trading strategies in Python with hot-reload support.
+- **High performance**: Multi-proxy, multi-threaded data fetching.
+- **Web console**: Built-in dashboard for monitoring signals, backtesting strategies in real time.
 
 ---
 
-## 🚀 快速开始（生产版）
+## 🚀 Quick Start (Production)
 
-### 环境要求
-- **Java**: JRE 17 或以上
-- **Python**: 3.9 或以上
+### Requirements
+
+- **Java**: JRE 17 or above
+- **Python**: 3.9 or above
 
 ### Windows
-1. 下载并解压 `crypto-trading-release.zip`。
-2. **先**双击 `start-python.bat` 启动Python策略服务（首次运行会自动安装依赖）。
-3. **再**双击 `start-java.bat` 启动Java后端。
-4. 浏览器访问 http://localhost:5567
+
+1. Download and extract `crypto-trading-release.zip`.
+2. **First** double-click `start-python.bat` to start the Python strategy service (dependencies auto-install on first run).
+3. **Then** double-click `start-java.bat` to start the Java backend.
+4. Open browser at http://localhost:5567
 
 ### Linux / macOS
-1. 下载并解压 `crypto-trading-release.zip`。
-2. 给脚本添加执行权限：
+
+1. Download and extract `crypto-trading-release.zip`.
+2. Make scripts executable:
+   
    ```bash
    chmod +x start-python.sh start-java.sh
    ```
-3. 先启动Python策略服务：
+3. Start the Python strategy service first:
+   
    ```bash
    ./start-python.sh
    ```
-4. 再启动Java后端（新开一个终端窗口）：
+4. Then start the Java backend (in a new terminal window):
+   
    ```bash
    ./start-java.sh
    ```
-5. 浏览器访问 http://localhost:5567
+5. Open browser at http://localhost:5567
 
-> ⚠️ **注意**：
-> - 必须**先启动Python服务，再启动Java后端**。关闭对应的命令行窗口即可停止服务。
-> - 启动后需等待几分钟拉取数据，刷新页面即可查看最新交易信号数据。
-> - 若无法启动，请检查 `5567`（Java）和 `8001`（Python）端口是否被占用：
-> ```bash
-> netstat -aon | findstr :5567  # Windows
-> lsof -i :5567                 # Linux/macOS
-> ```
-
----
-
-## 🛠 使用指南
-
-### 数据拉取配置
-- **默认交易所**：Gate.io（可在设置页面切换其他交易所）。
-- **代理支持**：
-  - 数据拉取较慢时，可添加代理。
-  - 支持多个代理，多代理启用多线程爬取，提升效率。
-  - **建议**：低配电脑最多配置10个代理，避免性能瓶颈。
-- **币种选择**：
-  - 可自定义拉取特定交易对。
-  - 或选择 `all` 模式，爬取交易所全部数据。
-  - ⚠️ **警告**：`all` 模式数据量大，代理不足时请谨慎使用。
-
-### 自定义交易策略（Java）
-1. **实现步骤**：
-   - 继承 `AbstractTradeStrategy` 类。
-   - 重写 `doHandle` 方法，返回 `TradeStrategyDTO`。
-2. **代码示例**：见下方 [RSI+ATR突破策略示例](#rsi+atr突破策略示例)。
-
-### 自定义交易策略（Python）
-1. 在 `python-strategy-service/src/strategies/` 下新建 `.py` 文件。
-2. 继承 `BaseTradeStrategy`，实现 `execute()` 和 `get_strategy_name()` 方法。
-3. 将文件上传到Web界面的策略管理页面，或直接放入目录后热更新。
+> **Note**:
+> 
+> - The Python service **must be started before** the Java backend. Close the terminal window to stop a service.
+> - After startup, wait a few minutes for data fetching. Refresh the page to view the latest trading signals.
+> - If the application cannot start, check whether ports `5567` (Java) and `8001` (Python) are already in use:
+>   
+>   ```bash
+>   netstat -aon | findstr :5567  # Windows
+>   lsof -i :5567                 # Linux/macOS
+>   ```
 
 ---
 
-## 📈 RSI+ATR突破策略示例
+## 🛠 Usage Guide
 
-以下是一个自定义的 `RsiAtrBreakoutStrategy`，结合RSI判断趋势方向，ATR和布林带确定突破信号：
+### Data Fetching Configuration
+
+- **Default exchange**: Gate.io (changeable in the settings page).
+- **Proxy support**:
+  - Add proxies when data fetching is slow.
+  - Multiple proxies enable multi-threaded crawling and improve throughput.
+  - **Recommendation**: On low-spec machines, configure no more than 10 proxies to avoid performance bottlenecks.
+- **Symbol selection**:
+  - Fetch specific trading pairs with custom configuration.
+  - Or choose `all` mode to crawl all exchange data.
+  - **Warning**: `all` mode fetches a large amount of data. Use it carefully when proxy capacity is limited.
+
+### Custom Trading Strategies (Java)
+
+1. **Implementation steps**:
+   - Extend `AbstractTradeStrategy`.
+   - Override the `doHandle` method and return a `TradeStrategyDTO`.
+2. **Code example**: See the [RSI+ATR breakout strategy example](#rsiatr-breakout-strategy-example) below.
+
+### Custom Trading Strategies (Python)
+
+1. Create a new `.py` file in `python-strategy-service/src/strategies/`.
+2. Extend `BaseTradeStrategy`, implement `execute()` and `get_strategy_name()`.
+3. Upload via the web UI strategy management page, or place in the directory and hot-reload.
+
+---
+
+## 📈 RSI+ATR Breakout Strategy Example
+
+The following example shows a custom `RsiAtrBreakoutStrategy`. It uses RSI to determine trend direction, and ATR plus Bollinger Bands to identify breakout signals.
 
 ```java
 package druid.elf.tool.service.strategy.impl;
@@ -106,57 +122,57 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 /**
- * RSI+ATR突破策略
- * - 4小时RSI判断趋势方向（超买/超卖）
- * - 1小时布林带确定突破信号和止盈
- * - 15分钟ATR设置止损
+ * RSI+ATR breakout strategy.
+ * - Uses 4-hour RSI to determine trend direction (overbought/oversold).
+ * - Uses 1-hour Bollinger Bands to confirm breakout signals and set take-profit.
+ * - Uses 15-minute ATR to set stop-loss.
  */
 @Component
 @Slf4j
 public class RsiAtrBreakoutStrategy extends AbstractTradeStrategy {
 
-    private static final int CRYPTO_SCALE = 8; // 加密货币价格精度：8位小数
+    private static final int CRYPTO_SCALE = 8; // Cryptocurrency price precision: 8 decimal places
 
     @Override
     protected TradeStrategyDTO doHandle(Map<String, BarSeries> seriesMap) {
-        log.info("开始执行RSI+ATR突破策略...");
+        log.info("Starting RSI+ATR breakout strategy...");
 
-        // 获取不同时间级别的K线数据
+        // Get K-line data for different timeframes
         BarSeries fourHSeries = seriesMap.get(KlineInterval._4H.name());
         BarSeries oneHSeries = seriesMap.get(KlineInterval._1H.name());
         BarSeries fifteenMSeries = seriesMap.get(KlineInterval._15M.name());
 
-        // 数据检查
+        // Validate input data
         if (fourHSeries == null || oneHSeries == null || fifteenMSeries == null) {
-            log.warn("K线数据不完整：4H={}, 1H={}, 15M={}", fourHSeries, oneHSeries, fifteenMSeries);
+            log.warn("K-line data is incomplete: 4H={}, 1H={}, 15M={}", fourHSeries, oneHSeries, fifteenMSeries);
             return null;
         }
-        log.info("K线数据加载成功：4H={}条, 1H={}条, 15M={}条",
+        log.info("K-line data loaded: 4H={} bars, 1H={} bars, 15M={} bars",
                 fourHSeries.getBarCount(), oneHSeries.getBarCount(), fifteenMSeries.getBarCount());
 
-        // 获取最新索引
+        // Get latest indexes
         int lastIndex4H = fourHSeries.getEndIndex();
         int lastIndex1H = oneHSeries.getEndIndex();
         int lastIndex15M = fifteenMSeries.getEndIndex();
 
-        // 第一步：4小时RSI判断趋势方向
-        log.info("第一步：计算4小时RSI趋势...");
+        // Step 1: Use 4-hour RSI to determine trend direction
+        log.info("Step 1: Calculating 4-hour RSI trend...");
         Indicator<Num> close4H = new ClosePriceIndicator(fourHSeries);
         RSIIndicator rsi4H = new RSIIndicator(close4H, 14);
         Num rsiLast = rsi4H.getValue(lastIndex4H);
         Num rsiPrev = rsi4H.getValue(lastIndex4H - 1);
 
-        boolean isBullish = rsiPrev.doubleValue() < 40 && rsiLast.doubleValue() > 40; // RSI脱离弱势
-        boolean isBearish = rsiPrev.doubleValue() > 60 && rsiLast.doubleValue() < 60; // RSI脱离强势
+        boolean isBullish = rsiPrev.doubleValue() < 40 && rsiLast.doubleValue() > 40; // RSI exits weak zone
+        boolean isBearish = rsiPrev.doubleValue() > 60 && rsiLast.doubleValue() < 60; // RSI exits strong zone
 
         if (!isBullish && !isBearish) {
-            log.info("RSI趋势不明确，策略终止");
+            log.info("RSI trend is unclear, strategy stopped");
             return null;
         }
-        log.info("RSI趋势：看多={}，看空={}", isBullish, isBearish);
+        log.info("RSI trend: bullish={}, bearish={}", isBullish, isBearish);
 
-        // 第二步：1小时布林带判断突破并设置止盈
-        log.info("第二步：计算1小时布林带突破信号...");
+        // Step 2: Use 1-hour Bollinger Bands to detect breakouts and set take-profit
+        log.info("Step 2: Calculating 1-hour Bollinger Band breakout signal...");
         Indicator<Num> close1H = new ClosePriceIndicator(oneHSeries);
         BollingerBandsMiddleIndicator bbMiddle1H = new BollingerBandsMiddleIndicator(new SMAIndicator(close1H, 20));
         Indicator<Num> deviation1H = new StandardDeviationIndicator(close1H, 20);
@@ -167,11 +183,11 @@ public class RsiAtrBreakoutStrategy extends AbstractTradeStrategy {
         Num bbUpperLast = bbUpper1H.getValue(lastIndex1H);
         Num bbLowerLast = bbLower1H.getValue(lastIndex1H);
 
-        // 判断突破
+        // Detect breakout direction
         boolean breakUpper = isBullish && currentPrice.isGreaterThan(bbUpperLast);
         boolean breakLower = isBearish && currentPrice.isLessThan(bbLowerLast);
         if (!breakUpper && !breakLower) {
-            log.info("未检测到布林带突破，策略终止");
+            log.info("No Bollinger Band breakout detected, strategy stopped");
             return null;
         }
 
@@ -179,27 +195,27 @@ public class RsiAtrBreakoutStrategy extends AbstractTradeStrategy {
         BigDecimal takeProfit = isBullish 
             ? new BigDecimal(bbUpperLast.multipliedBy(oneHSeries.numOf(1.02)).toString()).setScale(CRYPTO_SCALE, RoundingMode.HALF_UP)
             : new BigDecimal(bbLowerLast.multipliedBy(oneHSeries.numOf(0.98)).toString()).setScale(CRYPTO_SCALE, RoundingMode.HALF_UP);
-        log.info("突破方向：{}，买入价={}，止盈价={}", isBullish ? "上轨" : "下轨", buyPrice, takeProfit);
+        log.info("Breakout direction: {}, buy price={}, take profit={}", isBullish ? "upper band" : "lower band", buyPrice, takeProfit);
 
-        // 第三步：15分钟ATR设置止损
-        log.info("第三步：计算15分钟ATR止损...");
+        // Step 3: Use 15-minute ATR to set stop-loss
+        log.info("Step 3: Calculating 15-minute ATR stop-loss...");
         ATRIndicator atr15M = new ATRIndicator(fifteenMSeries, 14);
         Num atrValue = atr15M.getValue(lastIndex15M);
         Num stopLossPrice = isBullish 
             ? currentPrice.minus(atrValue.multipliedBy(fifteenMSeries.numOf(2)))
             : currentPrice.plus(atrValue.multipliedBy(fifteenMSeries.numOf(2)));
         BigDecimal stopLoss = new BigDecimal(stopLossPrice.toString()).setScale(CRYPTO_SCALE, RoundingMode.HALF_UP);
-        log.info("ATR值={}，止损价={}", atrValue, stopLoss);
+        log.info("ATR value={}, stop loss={}", atrValue, stopLoss);
 
-        // 计算盈亏比
+        // Calculate profit-loss ratio
         BigDecimal profit = takeProfit.subtract(buyPrice).abs();
         BigDecimal loss = buyPrice.subtract(stopLoss).abs();
         BigDecimal profitLossRatio = loss.compareTo(BigDecimal.ZERO) > 0 
             ? profit.divide(loss, CRYPTO_SCALE, RoundingMode.HALF_UP) 
             : BigDecimal.ZERO;
-        log.info("盈亏比：{}", profitLossRatio);
+        log.info("Profit-loss ratio: {}", profitLossRatio);
 
-        // 构建交易信号
+        // Build the trading signal
         TradeStrategyDTO dto = new TradeStrategyDTO();
         dto.setSignal(isBullish ? "BUY" : "SELL");
         dto.setPrice(buyPrice);
@@ -208,9 +224,9 @@ public class RsiAtrBreakoutStrategy extends AbstractTradeStrategy {
         dto.setStopLoss(stopLoss);
         dto.setProfitLossRatio(profitLossRatio);
         dto.setExpiration(LocalDateTime.now().plusHours(8).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        dto.setRemark("RSI+ATR突破策略");
+        dto.setRemark("RSI+ATR breakout strategy");
 
-        log.info("交易信号生成：{}", dto);
+        log.info("Trading signal generated: {}", dto);
         return dto;
     }
 
@@ -220,70 +236,78 @@ public class RsiAtrBreakoutStrategy extends AbstractTradeStrategy {
     }
 }
 ```
-### 输出示例
+
+### Output Example
+
 ```text
-信号: BUY
-当前价格: 65000.00
-买入价格: 65000.00
-止盈价格: 66300.00
-止损价格: 64000.00
-盈亏比: 1.3
-有效期: 2025-02-27 20:00:00
-备注: RSI+ATR突破策略
+Signal: BUY
+Current price: 65000.00
+Buy price: 65000.00
+Take-profit price: 66300.00
+Stop-loss price: 64000.00
+Profit-loss ratio: 1.3
+Expiration: 2025-02-27 20:00:00
+Remark: RSI+ATR breakout strategy
 ```
----
-
-## 🌟 后续计划
-
-1. **引入AI功能**  
-   - 利用人工智能动态生成交易策略。
-   - 通过机器学习分析历史数据，优化参数并集成到系统中，提升信号准确性。
-
-2. **增强Python策略生态**  
-   - 丰富内置Python策略库，降低用户使用门槛。
-   - 支持策略在线编辑和调试。
-   - 借助Python生态（如Pandas、TA-Lib），增强项目的扩展性和灵活性。
-
-3. **Docker容器化部署**
-   - 提供Docker一键部署方案，免去环境配置烦恼。
 
 ---
 
-## 📂 项目结构
+## 🌟 Roadmap
+
+1. **Introduce AI capabilities**
+   
+   - Dynamically generate trading strategies with AI.
+   - Analyze historical data with machine learning, optimize parameters, integrate the results into the system, and improve signal accuracy.
+
+2. **Enhance Python strategy ecosystem**
+   
+   - Enrich the built-in Python strategy library to lower the barrier to entry.
+   - Support online strategy editing and debugging.
+   - Use the Python ecosystem (Pandas, TA-Lib, etc.) to improve extensibility and flexibility.
+
+3. **Docker containerized deployment**
+   
+   - Provide a one-click Docker deployment solution for hassle-free setup.
+
+---
+
+## 📂 Project Structure
+
 ```text
-├── src/                                # Java后端源码
+├── src/                                # Java backend source
 │   └── main/java/druid/elf/tool/
-│       ├── controller/                 # REST API控制器
-│       ├── service/                    # 业务逻辑层
-│       │   ├── exchangedata/           # 交易所数据爬取
-│       │   ├── strategy/               # 交易策略
+│       ├── controller/                 # REST API controllers
+│       ├── service/                    # Business logic
+│       │   ├── exchangedata/           # Exchange data crawling
+│       │   ├── strategy/               # Trading strategies
 │       │   │   └── impl/
 │       │   │       ├── ElderIntradayStrategyAdapter.java
 │       │   │       └── ElderSwingStrategyAdapter.java
-│       │   └── task/                   # 定时任务
-│       ├── entity/                     # 数据库实体
-│       ├── dto/                        # 数据传输对象
-│       └── enums/                      # 枚举定义
-├── python-strategy-service/            # Python策略服务
-│   ├── main.py                         # FastAPI入口
-│   ├── src/strategies/                 # Python策略实现
-│   ├── src/utils/                      # 技术指标 & 回测引擎
+│       │   └── task/                   # Scheduled tasks
+│       ├── entity/                     # Database entities
+│       ├── dto/                        # Data transfer objects
+│       └── enums/                      # Enumerations
+├── python-strategy-service/            # Python strategy service
+│   ├── main.py                         # FastAPI entry point
+│   ├── src/strategies/                 # Python strategy implementations
+│   ├── src/utils/                      # Technical indicators & backtest engine
 │   └── requirements.txt
-├── pack-release.bat                    # 一键打包脚本
-├── release-template/                   # 生产版启动脚本模板
+├── pack-release.bat                    # One-click packaging script
+├── release-template/                   # Production startup script templates
 └── pom.xml
 ```
 
 ---
 
-## 🤝 如何贡献
+## 🤝 How to Contribute
 
-我们欢迎任何形式的贡献！  
-- **报告问题**：提交 [Issue](https://github.com/your-repo/issues)，请附上详细描述和复现步骤。  
-- **提交代码**：发起 [Pull Request](https://github.com/your-repo/pulls)，请遵循代码规范并添加必要的注释。
+Contributions of any kind are welcome.
+
+- **Report issues**: Submit an [Issue](https://github.com/your-repo/issues) with a detailed description and reproduction steps.
+- **Submit code**: Open a [Pull Request](https://github.com/your-repo/pulls), follow the code style, and add necessary comments.
 
 ---
 
 <div align="center">
-  <p>⭐ 如果你喜欢这个项目，请给我们一个 Star！⭐</p>
+  <p>⭐ If you like this project, please give us a Star! ⭐</p>
 </div>
